@@ -18,6 +18,7 @@ export default function App() {
   const [spotRelations, setSpotRelations] = useState({});
   const [spotHovered, setSpotHovered] = useState();
   const [moving, setMoving] = useState(false);
+  const [batches, setBatches] = useState([]);
 
   const getAllSpotsPositions = useCallback(() => {
     const zone = document.getElementById("drag-zone");
@@ -106,100 +107,138 @@ export default function App() {
         value: Number(key.split("_")[2]),
         color: key.split("_")[1],
         position: {
-          x: column,
-          y: row
+          x: Number(column),
+          y: Number(row)
         }
       };
       emptyMatrix[row][column] = tile;
     });
-    console.log(spotRelations);
-    console.log(emptyMatrix);
-    console.log(Grid.validate(emptyMatrix))
+    setBatches(Grid.validate(emptyMatrix))
   };
+
+  const isTileSpotInBatch = ({ x, y }) => {
+    // Move to grid domain
+    const invalidBatches = batches.filter((batch) => !batch.isValid)
+    const batchPositions = invalidBatches.map((batch) => batch.position)
+    const positions = batchPositions.reduce((acc, position) => {
+      if (position.start.x === position.end.x) {
+        return [...acc, position.start]
+      }
+      const length = position.end.x - position.start.x + 1
+      const positions = Array.from({ length }).map((_, index) => {
+        return {
+          x: position.start.x + index,
+          y: position.start.y
+        }
+      })
+      return acc = [...acc, ...positions]
+    }, [])
+    return positions.find((position) => Number(position.x) === x && Number(position.y) === y)
+  }
 
   return (
     <div className="app">
       <button onClick={generateMatrix}>Hello</button>
       <div className="drag-zone" id="drag-zone">
         <TileSpot
-          hover={moving && spotHovered === 0}
           position={{ x: 0, y: 0 }}
+          inBatch={isTileSpotInBatch({ x: 0, y: 0 })}
+          hover={moving && spotHovered === 0}
         />
         <TileSpot
-          hover={moving && spotHovered === 1}
           position={{ x: 1, y: 0 }}
+          inBatch={isTileSpotInBatch({ x: 1, y: 0 })}
+          hover={moving && spotHovered === 1}
         />
         <TileSpot
-          hover={moving && spotHovered === 2}
           position={{ x: 2, y: 0 }}
+          inBatch={isTileSpotInBatch({ x: 2, y: 0 })}
+          hover={moving && spotHovered === 2}
         />
         <TileSpot
-          hover={moving && spotHovered === 3}
           position={{ x: 3, y: 0 }}
+          inBatch={isTileSpotInBatch({ x: 3, y: 0 })}
+          hover={moving && spotHovered === 3}
         />
         <TileSpot
-          hover={moving && spotHovered === 4}
           position={{ x: 4, y: 0 }}
+          inBatch={isTileSpotInBatch({ x: 4, y: 0 })}
+          hover={moving && spotHovered === 4}
         />
         <TileSpot
-          hover={moving && spotHovered === 5}
           position={{ x: 5, y: 0 }}
+          inBatch={isTileSpotInBatch({ x: 5, y: 0 })}
+          hover={moving && spotHovered === 5}
         />
         <TileSpot
-          hover={moving && spotHovered === 6}
           position={{ x: 6, y: 0 }}
+          inBatch={isTileSpotInBatch({ x: 6, y: 0 })}
+          hover={moving && spotHovered === 6}
         />
         <TileSpot
-          hover={moving && spotHovered === 7}
           position={{ x: 7, y: 0 }}
+          inBatch={isTileSpotInBatch({ x: 7, y: 0 })}
+          hover={moving && spotHovered === 7}
         />
         <TileSpot
-          hover={moving && spotHovered === 8}
           position={{ x: 8, y: 0 }}
+          inBatch={isTileSpotInBatch({ x: 8, y: 0 })}
+          hover={moving && spotHovered === 8}
         />
         <TileSpot
-          hover={moving && spotHovered === 9}
           position={{ x: 9, y: 0 }}
+          inBatch={isTileSpotInBatch({ x: 9, y: 0 })}
+          hover={moving && spotHovered === 9}
         />
         <TileSpot
-          hover={moving && spotHovered === 10}
           position={{ x: 0, y: 1 }}
+          inBatch={isTileSpotInBatch({ x: 0, y: 1 })}
+          hover={moving && spotHovered === 10}
         />
         <TileSpot
-          hover={moving && spotHovered === 11}
           position={{ x: 1, y: 1 }}
+          inBatch={isTileSpotInBatch({ x: 1, y: 1 })}
+          hover={moving && spotHovered === 11}
         />
         <TileSpot
-          hover={moving && spotHovered === 12}
           position={{ x: 2, y: 1 }}
+          inBatch={isTileSpotInBatch({ x: 2, y: 1 })}
+          hover={moving && spotHovered === 12}
         />
         <TileSpot
-          hover={moving && spotHovered === 13}
           position={{ x: 3, y: 1 }}
+          inBatch={isTileSpotInBatch({ x: 3, y: 1 })}
+          hover={moving && spotHovered === 13}
         />
         <TileSpot
-          hover={moving && spotHovered === 14}
           position={{ x: 4, y: 1 }}
+          inBatch={isTileSpotInBatch({ x: 4, y: 1 })}
+          hover={moving && spotHovered === 14}
         />
         <TileSpot
-          hover={moving && spotHovered === 15}
           position={{ x: 5, y: 1 }}
+          inBatch={isTileSpotInBatch({ x: 5, y: 1 })}
+          hover={moving && spotHovered === 15}
         />
         <TileSpot
-          hover={moving && spotHovered === 16}
           position={{ x: 6, y: 1 }}
+          inBatch={isTileSpotInBatch({ x: 6, y: 1 })}
+          hover={moving && spotHovered === 16}
         />
         <TileSpot
-          hover={moving && spotHovered === 17}
           position={{ x: 7, y: 1 }}
+          inBatch={isTileSpotInBatch({ x: 7, y: 1 })}
+          hover={moving && spotHovered === 17}
         />
         <TileSpot
-          hover={moving && spotHovered === 18}
           position={{ x: 8, y: 1 }}
+          inBatch={isTileSpotInBatch({ x: 8, y: 1 })}
+          hover={moving && spotHovered === 18}
         />
         <TileSpot
-          hover={moving && spotHovered === 19}
           position={{ x: 9, y: 1 }}
+          inBatch={isTileSpotInBatch({ x: 9, y: 1 })}
+          hover={moving && spotHovered === 19}
         />
       </div>
       <div className="player-zone">

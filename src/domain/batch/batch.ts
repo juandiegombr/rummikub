@@ -53,6 +53,8 @@ function validate(tiles:TileInt[]): boolean {
 }
 
 function getBatchPosition(tiles: TileInt[]): BatchPositionInt {
+  console.log(tiles[0]);
+  
   return {
     start: tiles[0].position,
     end: tiles[tiles.length - 1].position,

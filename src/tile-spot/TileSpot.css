@@ -21,3 +21,24 @@
 .tile-spot__mark:not(:last-child) {
   display: none;
 }
+
+.tile-spot--batch {
+  box-shadow: 1px 1px 4px 4px #de6c6c;
+  animation-name: example;
+  animation-duration: 2s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+/* The animation code */
+@keyframes example {
+  0% {
+    box-shadow: 1px 1px 4px 1px #de6c6c;
+  }
+  50% {
+    box-shadow: 1px 1px 4px 4px #de6c6c;
+  }
+  100% {
+    box-shadow: 1px 1px 4px 1px #de6c6c;
+  }
+}
