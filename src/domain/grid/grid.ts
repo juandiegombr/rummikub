@@ -13,30 +13,34 @@ export interface TileInt {
 
 export interface GridInt extends Array<Array<TileInt | null>> { }
 
-
-function getGroups(grid: GridInt): TileInt[][] {
-  const row = grid[0]
+function getGroupsByRow(row: TileInt[]): TileInt[][] {
   const groups = row.reduce((acc: Array<Array<TileInt>>, tile: TileInt | null) => {
-    if (!tile) {
+    const lastBatch = acc[acc.length - 1]
+
+    if (!tile && lastBatch.length > 0) {
       acc.push([])
       return acc
     }
 
-    if (acc.length === 0) {
-      acc.push([])
+    if (!tile) {
+      return acc
     }
 
-    const lastBatch: TileInt[] = acc[acc.length - 1]
     lastBatch.push(tile)
     return acc
-  }, [])
-  return groups
+  }, [[]])
+  return groups.filter(group => group.length > 0)
+}
+
+function getGroups(grid: GridInt): TileInt[][] {
+  const groups = grid.map(getGroupsByRow)
+  return groups.reduce((acc, group) => acc.concat(group), []);
 }
 
 function validate(grid: GridInt): BatchInt[] {
   const groups = getGroups(grid)
 
-  return groups.map((group) => Batch.create(group))
+  return groups.map((group:any) => Batch.create(group))
 }
 
 export const Grid = { getGroups, validate }

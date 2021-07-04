@@ -1,9 +1,17 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 import { TileSpot } from "./tile-spot";
 import { Tile } from "./tile";
 
+import { TileService } from "./domain/tile/tile"
+
 import "./App.css";
+import { Grid } from "./domain/grid";
+
+
+const tiles = TileService.generateTiles()
+const shuffledTiles = TileService.shuffle(tiles)
+const playingTiles = shuffledTiles.slice(0,14)
 
 export default function App() {
   const positions = useRef();
@@ -11,9 +19,19 @@ export default function App() {
   const [spotHovered, setSpotHovered] = useState();
   const [moving, setMoving] = useState(false);
 
+  const getAllSpotsPositions = useCallback(() => {
+    const zone = document.getElementById("drag-zone");
+    const spotPositions = [];
+    zone.childNodes.forEach((node) => {
+      const position = getSpotPositions(node);
+      spotPositions.push(position);
+    });
+    positions.current = spotPositions;
+  }, [])
+
   useEffect(() => {
     getAllSpotsPositions();
-  }, []);
+  }, [getAllSpotsPositions]);
 
   const hoverSpot = (position) => {
     const spotIndex = getSpotIndex(position);
@@ -71,22 +89,8 @@ export default function App() {
     };
   };
 
-  const getAllSpotsPositions = () => {
-    const zone = document.getElementById("drag-zone");
-    const spotPositions = [];
-    zone.childNodes.forEach((node) => {
-      const position = getSpotPositions(node);
-      spotPositions.push(position);
-    });
-    positions.current = spotPositions;
-  };
-
   const onDragTile = () => {
     setMoving(true);
-  };
-
-  const onMoveTile = (tileCenterPosition) => {
-    hoverSpot(tileCenterPosition);
   };
 
   const generateMatrix = () => {
@@ -99,8 +103,8 @@ export default function App() {
       const row = value.position.y;
       const column = value.position.x;
       const tile = {
-        value: Number(key.split("-")[1]),
-        color: key.split("-")[2],
+        value: Number(key.split("_")[2]),
+        color: key.split("_")[1],
         position: {
           x: column,
           y: row
@@ -110,6 +114,7 @@ export default function App() {
     });
     console.log(spotRelations);
     console.log(emptyMatrix);
+    console.log(Grid.validate(emptyMatrix))
   };
 
   return (
@@ -198,30 +203,41 @@ export default function App() {
         />
       </div>
       <div className="player-zone">
+        {playingTiles.map((tile, key) => {
+          return (
+            <Tile
+              key={key + '-' + tile.value}
+              id={tile.id}
+              value={tile.value}
+              color={tile.color}
+              spot={spotRelations[tile.id]}
+              onDrag={onDragTile}
+              onMove={hoverSpot}
+              onDrop={onDropTile}
+            />
+          )})
+        }
+        {/* <Tile
+          value={12}
+          color="red"
+          onDrag={onDragTile}
+          onMove={hoverSpot}
+          onDrop={onDropTile}
+        /> */}
+        {/* <Tile
+          value={13}
+          color="blue"
+          onDrag={onDragTile}
+          onMove={hoverSpot}
+          onDrop={onDropTile}
+        />
         <Tile
           value={8}
-          color="red"
-          getSpot={(id) => spotRelations[id]}
+          color="blue"
           onDrag={onDragTile}
-          onMove={onMoveTile}
+          onMove={hoverSpot}
           onDrop={onDropTile}
-        />
-        <Tile
-          value={9}
-          color="red"
-          getSpot={(id) => spotRelations[id]}
-          onDrag={onDragTile}
-          onMove={onMoveTile}
-          onDrop={onDropTile}
-        />
-        <Tile
-          value={10}
-          color="red"
-          getSpot={(id) => spotRelations[id]}
-          onDrag={onDragTile}
-          onMove={onMoveTile}
-          onDrop={onDropTile}
-        />
+        /> */}
       </div>
     </div>
   );

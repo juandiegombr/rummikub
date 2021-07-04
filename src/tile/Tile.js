@@ -2,14 +2,13 @@ import { useEffect, useRef, useState } from "react";
 
 import './Tile.css'
 
-const Tile = ({ value, color, getSpot, onDrag, onMove, onDrop }) => {
+const Tile = ({ id, value, color, spot, onDrag, onMove, onDrop }) => {
   const tileRef = useRef();
   const staticActive = useRef(false);
   const originalPosition = useRef({});
   const initialTranslation = useRef({});
   const [active, setActive] = useState(false);
   const [currentTranslation, setCurrentTranslation] = useState({ x: 0, y: 0 });
-  const id = `tile-${value}-${color}`;
 
   useEffect(() => {
     originalPosition.current = {
@@ -32,15 +31,14 @@ const Tile = ({ value, color, getSpot, onDrag, onMove, onDrop }) => {
   }, []);
 
   useEffect(() => {
-    const spot = getSpot(id);
     if (spot) {
       const currentTranslation = {
-        x: spot.startX - originalPosition.current.x,
-        y: spot.startY - originalPosition.current.y
+        x: spot.startX - originalPosition.current.x ,
+        y: spot.startY - originalPosition.current.y,
       };
       setCurrentTranslation(currentTranslation);
     }
-  }, [getSpot]);
+  }, [spot]);
 
   const getCursorPosition = (event) => {
     if (event.type === "touchstart" || event.type === "touchmove") {

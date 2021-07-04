@@ -42,6 +42,45 @@ test('should return two combined batches', () => {
    )
 })
 
+test('should return two combined batches with multiple spaces between', () => {
+ const grid = [
+   [{ color: 'red', value: 1 }, { color: 'red', value: 2 }, null, null, { color: 'red', value: 3}]
+  ]
+  const batches = Grid.getGroups(grid)
+
+  expect(batches).toHaveLength(2)
+  expect(batches[0]).toStrictEqual(
+    [{ color: 'red', value: 1 }, { color: 'red', value: 2 }],
+  )
+  expect(batches[1]).toStrictEqual(
+    [{ color: 'red', value: 3 }],
+   )
+})
+
+test('should return two combined batches with multiple spaces between_', () => {
+ const grid = [
+   [{ color: 'red', value: 1 }, { color: 'red', value: 2 }, null, null, null, null, null]
+  ]
+  const batches = Grid.getGroups(grid)
+
+  expect(batches).toHaveLength(1)
+  expect(batches[0]).toStrictEqual(
+    [{ color: 'red', value: 1 }, { color: 'red', value: 2 }],
+  )
+})
+
+test('should return two combined batches with multiple spaces between__', () => {
+ const grid = [
+   [null, null, null, { color: 'red', value: 1 }, { color: 'red', value: 2 }, null, null, null, null, null]
+  ]
+  const batches = Grid.getGroups(grid)
+
+  expect(batches).toHaveLength(1)
+  expect(batches[0]).toStrictEqual(
+    [{ color: 'red', value: 1 }, { color: 'red', value: 2 }],
+  )
+})
+
 test('should validate the batches', () => {
  const grid = [
    [
