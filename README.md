@@ -1,46 +1,42 @@
-# Getting Started with Create React App
+# Getting Started
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was created just for fun. The goal was learning while playing with docker, docker compose, nginx, react and node.
+
+The project is composed by three services. The API, the WEB and a NGINX in charge or routing all the requests.
 
 ## Available Scripts
 
-In the project directory, you can run:
+All the scripts are using `docker compose` to serve the applications. You can run:
 
-### `yarn start`
+### `make start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Runs all the services.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### `make start-web`
 
-### `yarn test`
+Runs the production web served by an nginx.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### `make start-web-hmr`
 
-### `yarn build`
+Runs the web in development mode with hot reloading.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### `make start-api`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Runs the api served by node.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### `make file-sync-setup`
 
-### `yarn eject`
+To install the `docker-sync` app used to improve the development experience with docker in OSX.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### `make file-sync-clear`
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+To clean the `docker-sync` files.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### `make destroy`
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+To remove all the docker containers and images created by this project in node.
 
-## Learn More
+### `make destroy-all`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+USE WITH CAUTION
+To remove all the docker containers and images.
