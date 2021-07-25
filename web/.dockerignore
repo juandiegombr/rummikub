@@ -1,0 +1,4 @@
+.git
+.gitignore
+.docker-sync
+./node_modules

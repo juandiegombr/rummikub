@@ -1,0 +1,7 @@
+version: "2"
+
+syncs:
+  docker-demo-sync-files:
+    notify_terminal: true
+    src: './web'
+    sync_excludes: ['.git', '.idea', 'node_modules', 'docker']

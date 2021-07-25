@@ -12,6 +12,11 @@ import { Grid } from "./domain/grid";
 const tiles = TileService.generateTiles()
 const shuffledTiles = TileService.shuffle(tiles)
 const playingTiles = shuffledTiles.slice(0,14)
+const spots = Array.from({ length: 2}).map((_, row) => {
+  return Array.from({length: 10}).map((_, column) => {
+    return { x: column, y: row }
+  })
+}).reduce((acc, row) => [...acc, ...row], [])
 
 export default function App() {
   const positions = useRef();
@@ -136,110 +141,24 @@ export default function App() {
     return positions.find((position) => Number(position.x) === x && Number(position.y) === y)
   }
 
+  const serverRequest = () => {
+    fetch('/api/users').then(response => response.json()).then(console.log)
+  }
+
   return (
     <div className="app">
       <button onClick={generateMatrix}>Hello</button>
+      <button onClick={serverRequest}>Server</button>
       <div className="drag-zone" id="drag-zone">
-        <TileSpot
-          position={{ x: 0, y: 0 }}
-          inBatch={isTileSpotInBatch({ x: 0, y: 0 })}
-          hover={moving && spotHovered === 0}
-        />
-        <TileSpot
-          position={{ x: 1, y: 0 }}
-          inBatch={isTileSpotInBatch({ x: 1, y: 0 })}
-          hover={moving && spotHovered === 1}
-        />
-        <TileSpot
-          position={{ x: 2, y: 0 }}
-          inBatch={isTileSpotInBatch({ x: 2, y: 0 })}
-          hover={moving && spotHovered === 2}
-        />
-        <TileSpot
-          position={{ x: 3, y: 0 }}
-          inBatch={isTileSpotInBatch({ x: 3, y: 0 })}
-          hover={moving && spotHovered === 3}
-        />
-        <TileSpot
-          position={{ x: 4, y: 0 }}
-          inBatch={isTileSpotInBatch({ x: 4, y: 0 })}
-          hover={moving && spotHovered === 4}
-        />
-        <TileSpot
-          position={{ x: 5, y: 0 }}
-          inBatch={isTileSpotInBatch({ x: 5, y: 0 })}
-          hover={moving && spotHovered === 5}
-        />
-        <TileSpot
-          position={{ x: 6, y: 0 }}
-          inBatch={isTileSpotInBatch({ x: 6, y: 0 })}
-          hover={moving && spotHovered === 6}
-        />
-        <TileSpot
-          position={{ x: 7, y: 0 }}
-          inBatch={isTileSpotInBatch({ x: 7, y: 0 })}
-          hover={moving && spotHovered === 7}
-        />
-        <TileSpot
-          position={{ x: 8, y: 0 }}
-          inBatch={isTileSpotInBatch({ x: 8, y: 0 })}
-          hover={moving && spotHovered === 8}
-        />
-        <TileSpot
-          position={{ x: 9, y: 0 }}
-          inBatch={isTileSpotInBatch({ x: 9, y: 0 })}
-          hover={moving && spotHovered === 9}
-        />
-        <TileSpot
-          position={{ x: 0, y: 1 }}
-          inBatch={isTileSpotInBatch({ x: 0, y: 1 })}
-          hover={moving && spotHovered === 10}
-        />
-        <TileSpot
-          position={{ x: 1, y: 1 }}
-          inBatch={isTileSpotInBatch({ x: 1, y: 1 })}
-          hover={moving && spotHovered === 11}
-        />
-        <TileSpot
-          position={{ x: 2, y: 1 }}
-          inBatch={isTileSpotInBatch({ x: 2, y: 1 })}
-          hover={moving && spotHovered === 12}
-        />
-        <TileSpot
-          position={{ x: 3, y: 1 }}
-          inBatch={isTileSpotInBatch({ x: 3, y: 1 })}
-          hover={moving && spotHovered === 13}
-        />
-        <TileSpot
-          position={{ x: 4, y: 1 }}
-          inBatch={isTileSpotInBatch({ x: 4, y: 1 })}
-          hover={moving && spotHovered === 14}
-        />
-        <TileSpot
-          position={{ x: 5, y: 1 }}
-          inBatch={isTileSpotInBatch({ x: 5, y: 1 })}
-          hover={moving && spotHovered === 15}
-        />
-        <TileSpot
-          position={{ x: 6, y: 1 }}
-          inBatch={isTileSpotInBatch({ x: 6, y: 1 })}
-          hover={moving && spotHovered === 16}
-        />
-        <TileSpot
-          position={{ x: 7, y: 1 }}
-          inBatch={isTileSpotInBatch({ x: 7, y: 1 })}
-          hover={moving && spotHovered === 17}
-        />
-        <TileSpot
-          position={{ x: 8, y: 1 }}
-          inBatch={isTileSpotInBatch({ x: 8, y: 1 })}
-          hover={moving && spotHovered === 18}
-        />
-        <TileSpot
-          position={{ x: 9, y: 1 }}
-          inBatch={isTileSpotInBatch({ x: 9, y: 1 })}
-          hover={moving && spotHovered === 19}
-        />
+        { spots.map((spot, index) => {
+          return (
+            <TileSpot
+              position={spot}
+              inBatch={isTileSpotInBatch(spot)}
+              hover={moving && spotHovered === index}
+            />
+          )
+        })}
       </div>
       <div className="player-zone">
         {playingTiles.map((tile, key) => {
@@ -256,27 +175,6 @@ export default function App() {
             />
           )})
         }
-        {/* <Tile
-          value={12}
-          color="red"
-          onDrag={onDragTile}
-          onMove={hoverSpot}
-          onDrop={onDropTile}
-        /> */}
-        {/* <Tile
-          value={13}
-          color="blue"
-          onDrag={onDragTile}
-          onMove={hoverSpot}
-          onDrop={onDropTile}
-        />
-        <Tile
-          value={8}
-          color="blue"
-          onDrag={onDragTile}
-          onMove={hoverSpot}
-          onDrop={onDropTile}
-        /> */}
       </div>
     </div>
   );

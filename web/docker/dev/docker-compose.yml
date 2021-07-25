@@ -1,0 +1,17 @@
+version: '3.5'
+
+services:
+  node:
+    build:
+      context: ../..
+      dockerfile: ./docker/dev/Dockerfile
+    volumes:
+      - 'docker-demo-sync-files:/usr/src/app'
+      - '/usr/src/app/node_modules'
+    ports:
+      - '3000:3000'
+    command: 'npm start'
+
+volumes:
+  docker-demo-sync-files:
+    external: true
