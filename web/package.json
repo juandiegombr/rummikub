@@ -29,6 +29,7 @@
       "react-app/jest"
     ],
     "rules": {
+      "no-trailing-spaces": "error",
       "indent": ["error", 2, {"ignoredNodes": ["JSXElement"]}],
       "react/jsx-indent": ["error", 2],
       "semi": ["error", "never"],
@@ -39,7 +40,8 @@
         "imports": "always-multiline",
         "exports": "always-multiline",
         "functions": "always-multiline"
-      }]
+      }],
+      "react-hooks/exhaustive-deps": "off"
     }
   },
   "browserslist": {

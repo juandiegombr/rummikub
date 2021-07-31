@@ -1,21 +1,21 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback } from "react"
 
-import { TileSpot } from "./tile-spot";
-import { Tile } from "./tile";
-import { Initialize } from "./initialize";
+import { TileSpot } from "./tile-spot"
+import { Tile } from "./tile"
+import { Initialize } from "./initialize"
 
 import { TileService } from "./domain/tile/tile"
-import { Grid } from "./domain/grid";
+import { Grid } from "./domain/grid"
 import { Socket } from './services/socket'
 
-import "./App.css";
+import "./App.css"
 
 
 const tiles = TileService.generateTiles()
 const shuffledTiles = TileService.shuffle(tiles)
 const playingTiles = shuffledTiles.slice(0,14)
-const spots = Array.from({ length: 2}).map((_, row) => {
-  return Array.from({length: 10}).map((_, column) => {
+const spots = Array.from({ length: 2 }).map((_, row) => {
+  return Array.from({ length: 10 }).map((_, column) => {
     return { x: column, y: row }
   })
 }).reduce((acc, row) => [...acc, ...row], [])
@@ -32,36 +32,36 @@ Socket.init()
 
 
 export default function App() {
-  const positions = useRef();
-  const [spotRelations, setSpotRelations] = useState({});
-  const [spotHovered, setSpotHovered] = useState();
-  const [moving, setMoving] = useState(false);
-  const [batches, setBatches] = useState([]);
+  const positions = useRef()
+  const [spotRelations, setSpotRelations] = useState({})
+  const [spotHovered, setSpotHovered] = useState()
+  const [moving, setMoving] = useState(false)
+  const [batches, setBatches] = useState([])
 
   const getAllSpotsPositions = useCallback(() => {
-    const zone = document.getElementById("drag-zone");
-    const spotPositions = [];
+    const zone = document.getElementById("drag-zone")
+    const spotPositions = []
     zone.childNodes.forEach((node) => {
-      const position = getSpotPositions(node);
-      spotPositions.push(position);
-    });
-    positions.current = spotPositions;
+      const position = getSpotPositions(node)
+      spotPositions.push(position)
+    })
+    positions.current = spotPositions
   }, [])
 
   useEffect(() => {
-    getAllSpotsPositions();
-  }, [getAllSpotsPositions]);
+    getAllSpotsPositions()
+  }, [getAllSpotsPositions])
 
   const hoverSpot = (position) => {
-    const spotIndex = getSpotIndex(position);
-    setSpotHovered(spotIndex);
-  };
+    const spotIndex = getSpotIndex(position)
+    setSpotHovered(spotIndex)
+  }
 
   const onDropTile = (position, id) => {
-    const spot = getSpot(position);
-    setSpotRelations((value) => ({ ...value, [id]: spot }));
-    setMoving(false);
-  };
+    const spot = getSpot(position)
+    setSpotRelations((value) => ({ ...value, [id]: spot }))
+    setMoving(false)
+  }
 
   const getSpot = (position) => {
     const spot = positions.current.find((spot) => {
@@ -71,12 +71,12 @@ export default function App() {
         position.y >= spot.startY &&
         position.y <= spot.endY
       ) {
-        return spot;
+        return spot
       }
-      return undefined;
-    });
-    return spot;
-  };
+      return undefined
+    })
+    return spot
+  }
 
   const getSpotIndex = (position) => {
     const spot = positions.current.findIndex((spot) => {
@@ -86,53 +86,53 @@ export default function App() {
         position.y >= spot.startY &&
         position.y <= spot.endY
       ) {
-        return spot;
+        return spot
       }
-      return undefined;
-    });
-    return spot;
-  };
+      return undefined
+    })
+    return spot
+  }
 
   const getSpotPositions = (node) => {
     const position = {
       x: node.id.split("-")[0],
-      y: node.id.split("-")[1]
-    };
-    const { left, top, height, width } = node.getBoundingClientRect();
+      y: node.id.split("-")[1],
+    }
+    const { left, top, height, width } = node.getBoundingClientRect()
     return {
       startX: left,
       endX: left + width,
       startY: top,
       endY: top + height,
-      position
-    };
-  };
+      position,
+    }
+  }
 
   const onDragTile = () => {
-    setMoving(true);
-  };
+    setMoving(true)
+  }
 
   const generateMatrix = () => {
-    const columns = 10;
-    const rows = 2;
+    const columns = 10
+    const rows = 2
     const emptyMatrix = Array.from({ length: rows }).map((row) =>
-      Array.from({ length: columns })
-    );
+      Array.from({ length: columns }),
+    )
     Object.entries(spotRelations).forEach(([key, value]) => {
-      const row = value.position.y;
-      const column = value.position.x;
+      const row = value.position.y
+      const column = value.position.x
       const tile = {
         value: Number(key.split("_")[2]),
         color: key.split("_")[1],
         position: {
           x: Number(column),
-          y: Number(row)
-        }
-      };
-      emptyMatrix[row][column] = tile;
-    });
+          y: Number(row),
+        },
+      }
+      emptyMatrix[row][column] = tile
+    })
     setBatches(Grid.validate(emptyMatrix))
-  };
+  }
 
   const isTileSpotInBatch = ({ x, y }) => {
     // Move to grid domain
@@ -146,7 +146,7 @@ export default function App() {
       const positions = Array.from({ length }).map((_, index) => {
         return {
           x: position.start.x + index,
-          y: position.start.y
+          y: position.start.y,
         }
       })
       return acc = [...acc, ...positions]
@@ -192,5 +192,5 @@ export default function App() {
         }
       </div>
     </div>
-  );
+  )
 }

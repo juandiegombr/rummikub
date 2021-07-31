@@ -8,7 +8,7 @@ function TileSpot({ position, hover, inBatch }) {
     >
       <div className="tile-spot__mark" />
     </div>
-  );
+  )
 }
 
-export { TileSpot };
+export { TileSpot }

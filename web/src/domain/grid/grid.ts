@@ -34,7 +34,7 @@ function getGroupsByRow(row: TileInt[]): TileInt[][] {
 
 function getGroups(grid: GridInt): TileInt[][] {
   const groups = grid.map(getGroupsByRow)
-  return groups.reduce((acc, group) => acc.concat(group), []);
+  return groups.reduce((acc, group) => acc.concat(group), [])
 }
 
 function validate(grid: GridInt): BatchInt[] {
