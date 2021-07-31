@@ -3,11 +3,12 @@ import { io } from "socket.io-client";
 
 import { TileSpot } from "./tile-spot";
 import { Tile } from "./tile";
+import { Initialize } from "./initialize";
 
 import { TileService } from "./domain/tile/tile"
+import { Grid } from "./domain/grid";
 
 import "./App.css";
-import { Grid } from "./domain/grid";
 
 
 const tiles = TileService.generateTiles()
@@ -159,12 +160,14 @@ export default function App() {
 
   return (
     <div className="app">
+      <Initialize/>
       <button onClick={generateMatrix}>Hello</button>
       <button onClick={serverRequest}>Server</button>
       <div className="drag-zone" id="drag-zone">
         { spots.map((spot, index) => {
           return (
             <TileSpot
+              key={'spot-' + index}
               position={spot}
               inBatch={isTileSpotInBatch(spot)}
               hover={moving && spotHovered === index}

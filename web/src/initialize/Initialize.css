@@ -1,0 +1,52 @@
+.initialize-dialog__overlay {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.2);
+  color: #2e2e2e
+}
+
+.initialize-dialog {
+  min-width: 320px;
+  background-color: white;
+  border-radius: 16px;
+  padding: 32px;
+  padding-top: 40px;
+  box-shadow: rgb(0 0 0 / 20%) 0px 6px 20px;
+  text-align: center;
+}
+
+.initialize-dialog__title {
+  margin: 0;
+  margin-bottom: 16px;
+}
+
+.initialize-dialog__description {
+  margin: 0;
+  margin-bottom: 32px;
+}
+
+.initialize-dialog__actions {
+  display: flex;
+  gap: 16px;
+}
+
+.ui-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 48px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  background: linear-gradient(to right, #E61E4D 0%, #E31C5F 50%, #D70466 100%);
+  cursor: pointer;
+}
