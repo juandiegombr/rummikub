@@ -25,7 +25,7 @@ const Initialize = () => {
           </div>
         </div>
       </div>,
-      document.getElementById('dialog')
+      document.getElementById('dialog'),
     )
   )
 }
