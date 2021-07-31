@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from "react";
+import { io } from "socket.io-client";
 
 import { TileSpot } from "./tile-spot";
 import { Tile } from "./tile";
@@ -17,6 +18,17 @@ const spots = Array.from({ length: 2}).map((_, row) => {
     return { x: column, y: row }
   })
 }).reduce((acc, row) => [...acc, ...row], [])
+
+const socket = io(process.env.REACT_APP_WEBSOCKET_HOST, {transports: ['websocket']});
+
+socket.on("JOINED", () => {
+  alert('User joined')
+});
+
+socket.on("LEAVED", () => {
+  alert('User leaved')
+});
+
 
 export default function App() {
   const positions = useRef();

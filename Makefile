@@ -2,18 +2,27 @@
 
 PROJECT_NAME := rummikub
 
-start: ## Run the application
-	docker compose -f ./docker-compose.yml -p rummikub up --build
+start_server: ## Run the application
+	cd server && npm run start:watch
 
-start-web: ## Run the web application
-	docker compose -f web/docker-compose.yml -p rummikub-web up --build
+start_web: ## Run the application
+	cd web && npm run start
 
-start-web-hmr: ## Run the web application
+test_web: ## Run the application
+	cd web && npm run test
+
+start_web_docker: ## Run the web application
 	docker-sync start -c web/docker/dev/docker-sync.yml
 	docker compose -f web/docker/dev/docker-compose.yml -p rummikub-web run --rm -p 3000:3000 node
 
-start-api: ## Run the api application
-	docker compose -f api/docker-compose.yml -p rummikub-server up --build
+build: ## Run the application
+	docker compose -f ./docker-compose.yml -p rummikub up --build
+
+build_web: ## Run the web application
+	docker compose -f web/docker-compose.yml -p rummikub-web up --build
+
+build_server: ## Run the server application
+	docker compose -f server/docker-compose.yml -p rummikub-server up --build
 
 down: ## Destroy the application
 	docker compose -p rummikub down
@@ -21,8 +30,8 @@ down: ## Destroy the application
 down-web: ## Destroy the web application
 	docker compose -f web/docker-compose.yml -p rummikub-web down
 
-down-api: ## Destroy the api application
-	docker compose -f api/docker-compose.yml -p rummikub-server down
+down-server: ## Destroy the server application
+	docker compose -f server/docker-compose.yml -p rummikub-server down
 
 file-sync-setup:  ## Install docker-sync to update files in the container
 	sudo gem install docker-sync -n /usr/local/bin
