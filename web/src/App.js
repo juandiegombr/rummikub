@@ -1,5 +1,4 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { io } from "socket.io-client";
 
 import { TileSpot } from "./tile-spot";
 import { Tile } from "./tile";
@@ -7,6 +6,7 @@ import { Initialize } from "./initialize";
 
 import { TileService } from "./domain/tile/tile"
 import { Grid } from "./domain/grid";
+import { Socket } from './services/socket'
 
 import "./App.css";
 
@@ -20,15 +20,15 @@ const spots = Array.from({ length: 2}).map((_, row) => {
   })
 }).reduce((acc, row) => [...acc, ...row], [])
 
-const socket = io(process.env.REACT_APP_WEBSOCKET_HOST, {transports: ['websocket']});
+Socket.init()
 
-socket.on("JOINED", () => {
-  alert('User joined')
-});
+// Socket.socket.on("JOINED", () => {
+//   alert('User joined')
+// });
 
-socket.on("LEAVED", () => {
-  alert('User leaved')
-});
+// Socket.socket.on("LEAVED", () => {
+//   alert('User leaved')
+// });
 
 
 export default function App() {
