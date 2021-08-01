@@ -10,7 +10,6 @@ import { Socket } from './services/socket'
 
 import "./App.css"
 
-
 const tiles = TileService.generateTiles()
 const shuffledTiles = TileService.shuffle(tiles)
 const playingTiles = shuffledTiles.slice(0,14)
@@ -19,17 +18,6 @@ const spots = Array.from({ length: 2 }).map((_, row) => {
     return { x: column, y: row }
   })
 }).reduce((acc, row) => [...acc, ...row], [])
-
-Socket.init()
-
-// Socket.socket.on("JOINED", () => {
-//   alert('User joined')
-// });
-
-// Socket.socket.on("LEAVED", () => {
-//   alert('User leaved')
-// });
-
 
 export default function App() {
   const positions = useRef()
@@ -46,6 +34,10 @@ export default function App() {
       spotPositions.push(position)
     })
     positions.current = spotPositions
+  }, [])
+
+  useEffect(() => {
+    Socket.init()
   }, [])
 
   useEffect(() => {

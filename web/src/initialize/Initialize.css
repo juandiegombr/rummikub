@@ -50,3 +50,8 @@
   background: linear-gradient(to right, #E61E4D 0%, #E31C5F 50%, #D70466 100%);
   cursor: pointer;
 }
+
+.ui-button:focus {
+  outline: none;
+  box-shadow: white 0px 0px 0px 2px, rgb(34 34 34) 0px 0px 0px 4px;
+}

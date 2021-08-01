@@ -13,7 +13,16 @@ const getInstance = () => {
   return socket
 }
 
+const on = (...args) => {
+  return getInstance().on(...args)
+}
+
+const emit = (...args) => {
+  return getInstance().emit(...args)
+}
+
 export const Socket = {
   init,
-  getInstance,
+  on,
+  emit,
 }

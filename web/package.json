@@ -30,17 +30,37 @@
     ],
     "rules": {
       "no-trailing-spaces": "error",
-      "indent": ["error", 2, {"ignoredNodes": ["JSXElement"]}],
-      "react/jsx-indent": ["error", 2],
-      "semi": ["error", "never"],
-      "object-curly-spacing": ["error", "always"],
-      "comma-dangle": ["error", {
-        "arrays": "always-multiline",
-        "objects": "always-multiline",
-        "imports": "always-multiline",
-        "exports": "always-multiline",
-        "functions": "always-multiline"
-      }],
+      "indent": [
+        "error",
+        2,
+        {
+          "ignoredNodes": [
+            "JSXElement"
+          ]
+        }
+      ],
+      "react/jsx-indent": [
+        "error",
+        2
+      ],
+      "semi": [
+        "error",
+        "never"
+      ],
+      "object-curly-spacing": [
+        "error",
+        "always"
+      ],
+      "comma-dangle": [
+        "error",
+        {
+          "arrays": "always-multiline",
+          "objects": "always-multiline",
+          "imports": "always-multiline",
+          "exports": "always-multiline",
+          "functions": "always-multiline"
+        }
+      ],
       "react-hooks/exhaustive-deps": "off"
     }
   },

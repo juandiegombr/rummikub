@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 const setupPortal = () => {
@@ -16,13 +16,54 @@ screen.getByButton = (name) => {
   return screen.getByRole('button', { name })
 }
 
+screen.findByButton = (name) => {
+  return screen.findByRole('button', { name })
+}
+
+screen.getByDialog = (name) => {
+  return screen.getByRole('dialog', { name })
+}
+
+screen.findByDialog = (name) => {
+  return screen.findByRole('dialog', { name })
+}
+
+let events = {}
+
+export const SocketServer = {
+  emit: (event) => {
+    events[event]()
+  },
+}
+
 jest.mock('socket.io-client', () => {
   const socket = {
-    on: jest.fn(),
     emit: jest.fn(),
+    on: (event, callback) => {
+      events[event] = callback
+    },
   }
   return {
-    io: () => socket
+    io: () => socket,
+  }
+})
+
+
+jest.mock('services/socket', () => {
+  const originalModule = jest.requireActual('services/socket')
+  return {
+    Socket: {
+      ...originalModule.Socket,
+      emit: jest.spyOn(originalModule.Socket, 'emit'),
+    },
+  }
+})
+
+jest.mock('services/http', () => {
+  return {
+    Http: {
+      get: jest.fn(),
+    },
   }
 })
 
