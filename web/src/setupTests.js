@@ -24,6 +24,10 @@ screen.getByDialog = (name) => {
   return screen.getByRole('dialog', { name })
 }
 
+screen.queryByDialog = (name) => {
+  return screen.queryByRole('dialog', { name })
+}
+
 screen.findByDialog = (name) => {
   return screen.findByRole('dialog', { name })
 }
@@ -31,8 +35,8 @@ screen.findByDialog = (name) => {
 let events = {}
 
 export const SocketServer = {
-  emit: (event) => {
-    events[event]()
+  emit: (event, ...args) => {
+    act(() => events[event](...args))
   },
 }
 
@@ -59,13 +63,13 @@ jest.mock('services/socket', () => {
   }
 })
 
-jest.mock('services/http', () => {
-  return {
-    Http: {
-      get: jest.fn(),
-    },
-  }
-})
+// jest.mock('services/http', () => {
+//   return {
+//     Http: {
+//       get: jest.fn(),
+//     },
+//   }
+// })
 
 beforeEach(() => {
   setupPortal()

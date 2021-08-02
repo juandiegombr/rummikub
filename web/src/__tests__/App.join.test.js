@@ -2,21 +2,32 @@ import { render, screen, waitForElementToBeRemoved } from '@testing-library/reac
 import userEvent from '@testing-library/user-event'
 
 import App from '../App'
-import { Http } from 'services/http'
+
+it('renders the join dialog', async () => {
+  render(<App />)
+
+  userEvent.click(screen.getByButton('Join game'))
+
+  const joinDialog = screen.getByDialog('Join game 🎯')
+  expect(joinDialog).toHaveTextContent('Join game 🎯')
+  expect(joinDialog).toHaveTextContent('Code:')
+  expect(joinDialog).toHaveTextContent('Confirm')
+})
 
 it('joins a new game', async () => {
   const blob = new Blob(
-    [ JSON.stringify(null, null, 2) ],
+    [ JSON.stringify({ code: 'AAAA' }, null, 2) ],
     { type : 'application/json' },
   )
   const options = { status: 200 }
   const response = new Response(blob, options)
-  Http.get = jest.fn().mockResolvedValue(response)
+  global.fetch = jest.fn(() => Promise.resolve(response))
   render(<App />)
 
-  const dialog = screen.getByDialog('Welcome! 👋')
   userEvent.click(screen.getByButton('Join game'))
-  await waitForElementToBeRemoved(() => screen.getByDialog('Welcome! 👋'))
+  userEvent.type(screen.getByLabelText('Code:'), 'AAAA')
+  userEvent.click(screen.getByButton('Confirm'))
+  await waitForElementToBeRemoved(() => screen.getByDialog('Join game 🎯'))
 
-  expect(dialog).not.toBeInTheDocument()
+  expect(screen.queryByDialog('Join game 🎯')).not.toBeInTheDocument()
 })

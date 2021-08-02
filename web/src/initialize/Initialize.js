@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Http } from 'services/http'
 import { Socket } from 'services/socket'
+import { Http } from 'services/http'
 
 import './Initialize.css'
 
@@ -37,6 +37,27 @@ const FirstStep = ({ create, join }) => {
   )
 }
 
+const Join = ({ confirm }) => {
+  return (
+    createPortal(
+      <div className="initialize-dialog__overlay">
+        <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
+          <h2 id="initialize-title" className="initialize-dialog__title">Join game 🎯</h2>
+          <p className="initialize-dialog__description">What do you want to do?</p>
+          <form onSubmit={confirm}>
+            <label>
+              <span>Code:</span>
+              <input type="text" name="code"/>
+            </label>
+            <button className="ui-button" type="submit">Confirm</button>
+          </form>
+        </div>
+      </div>,
+      document.getElementById('dialog'),
+    )
+  )
+}
+
 const STATUS = {
   INIT: 'init',
   CREATE: 'create',
@@ -48,28 +69,40 @@ const Initialize = () => {
   const [game, setGame] = useState()
 
   const createGame = async () => {
-    const game = await Http
-      .get('/game/create')
-      .then(response => response.json())
-    Socket.on(`game:join:${game.code}`, () => {
-      setStatus(null)
-    })
+    const game = await Http.get('/game/create').then(response => response.json())
+    await Http.get(`/game/join/${game.code}`)
     setGame(game)
     setStatus(STATUS.CREATE)
+    Socket.emit('game:join', game)
+    Socket.on('user:joined', (data) => {
+      setStatus(null)
+    })
   }
 
-  const joinGame = async (gameCode = 'AAAA') => {
-    try {
-      await Http
-        .get(`/game/join/${gameCode}`)
-        .then(response => response.json())
-      setStatus(STATUS.JOIN)
-    } catch (error) {
+  const joinGame = async () => {
+    setStatus(STATUS.JOIN)
+  }
+
+  const confirmJoin = async (event) => {
+    event.preventDefault()
+    const cuvoForm = new FormData(event.target)
+    const formElements = Object.fromEntries(cuvoForm)
+    const response = await Http
+      .get(`/game/join/${formElements.code}`)
+    if (response.status === 404) {
+      return
     }
+    const game = await response.json()
+    Socket.emit('game:join', game)
+    setStatus(null)
   }
 
   if (status === STATUS.INIT) {
     return <FirstStep create={createGame} join={joinGame} />
+  }
+
+  if (status === STATUS.JOIN) {
+    return <Join confirm={confirmJoin} />
   }
 
   if (status === STATUS.CREATE) {

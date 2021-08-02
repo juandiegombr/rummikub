@@ -1,5 +1,6 @@
 const get = (url, options) => {
-  const request = new Request(url, { method: 'GET', ...options })
+  const path = `${process.env.REACT_APP_API_HOST}${url}`
+  const request = new Request(path, { method: 'GET', ...options })
   return fetch(request)
 }
 
