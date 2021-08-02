@@ -31,9 +31,51 @@
   margin-bottom: 32px;
 }
 
+.initialize-dialog__code {
+  width: fit-content;
+  margin: auto;
+  padding: 8px 16px;
+  border-radius: 4px;
+  color: rgba(0,0,0,0.6);
+  background-color: rgba(0,0,0,0.05);
+}
+
 .initialize-dialog__actions {
   display: flex;
   gap: 16px;
+}
+
+.initialize-dialog__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ui-input {
+  position: relative;
+}
+
+.ui-input__label {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  color: rgba(19, 10, 10, 0.6);
+  pointer-events: none;
+}
+
+.ui-input__input {
+  height: 48px;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.2);
+  padding: 0 16px;
+}
+
+.ui-input__input:focus {
+  outline: none;
+  box-shadow: white 0px 0px 0px 2px, rgb(34 34 34) 0px 0px 0px 4px;
 }
 
 .ui-button {

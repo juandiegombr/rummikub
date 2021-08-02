@@ -1,23 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Socket } from 'services/socket'
 import { Http } from 'services/http'
 
 import './Initialize.css'
-
-const Waiting = ({ game }) => {
-  return (
-    createPortal(
-      <div className="initialize-dialog__overlay">
-        <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
-          <h2 id="initialize-title" className="initialize-dialog__title">Waiting for a player...</h2>
-          <p className="initialize-dialog__description">{game.code}</p>
-        </div>
-      </div>,
-      document.getElementById('dialog'),
-    )
-  )
-}
 
 const FirstStep = ({ create, join }) => {
   return (
@@ -37,18 +23,38 @@ const FirstStep = ({ create, join }) => {
   )
 }
 
+const Waiting = ({ game }) => {
+  return (
+    createPortal(
+      <div className="initialize-dialog__overlay">
+        <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
+          <h2 id="initialize-title" className="initialize-dialog__title">⏳ Waiting for a player</h2>
+          <p className="initialize-dialog__description">Share the game code to start playing</p>
+          <div className="initialize-dialog__code">{game.code}</div>
+        </div>
+      </div>,
+      document.getElementById('dialog'),
+    )
+  )
+}
+
 const Join = ({ confirm }) => {
+  const inputRef = useRef()
+
+  useEffect(() => {
+    inputRef.current.focus()
+  }, [])
+
   return (
     createPortal(
       <div className="initialize-dialog__overlay">
         <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
           <h2 id="initialize-title" className="initialize-dialog__title">Join game 🎯</h2>
-          <p className="initialize-dialog__description">What do you want to do?</p>
-          <form onSubmit={confirm}>
-            <label>
-              <span>Code:</span>
-              <input type="text" name="code"/>
-            </label>
+          <form className="initialize-dialog__form" onSubmit={confirm}>
+            <div className="ui-input">
+              <label htmlFor="code-field" className="ui-input__label">Code:</label>
+              <input id="code-field" ref={inputRef} className="ui-input__input" type="text" name="code" placeholder="Write your code here"/>
+            </div>
             <button className="ui-button" type="submit">Confirm</button>
           </form>
         </div>

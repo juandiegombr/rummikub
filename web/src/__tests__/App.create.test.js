@@ -15,7 +15,7 @@ it('creates a new game', async () => {
   render(<App />)
 
   userEvent.click(screen.getByButton('Create game'))
-  const waitingDialog = await screen.findByDialog('Waiting for a player...')
+  const waitingDialog = await screen.findByDialog('⏳ Waiting for a player')
 
   expect(waitingDialog).toBeInTheDocument()
   expect(waitingDialog).toHaveTextContent('AAAA')
@@ -32,7 +32,7 @@ it('closes the waiting dialog after a new player is joined', async () => {
   render(<App />)
 
   userEvent.click(screen.getByButton('Create game'))
-  const waitingDialog = await screen.findByDialog('Waiting for a player...')
+  const waitingDialog = await screen.findByDialog('⏳ Waiting for a player')
   SocketServer.emit('user:joined')
 
   expect(waitingDialog).not.toBeInTheDocument()
