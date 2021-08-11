@@ -1,0 +1,266 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should generate all the tiles 1`] = `
+Array [
+  Object {
+    "color": "red",
+    "id": "id_red_1",
+    "value": 1,
+  },
+  Object {
+    "color": "red",
+    "id": "id_red_2",
+    "value": 2,
+  },
+  Object {
+    "color": "red",
+    "id": "id_red_3",
+    "value": 3,
+  },
+  Object {
+    "color": "red",
+    "id": "id_red_4",
+    "value": 4,
+  },
+  Object {
+    "color": "red",
+    "id": "id_red_5",
+    "value": 5,
+  },
+  Object {
+    "color": "red",
+    "id": "id_red_6",
+    "value": 6,
+  },
+  Object {
+    "color": "red",
+    "id": "id_red_7",
+    "value": 7,
+  },
+  Object {
+    "color": "red",
+    "id": "id_red_8",
+    "value": 8,
+  },
+  Object {
+    "color": "red",
+    "id": "id_red_9",
+    "value": 9,
+  },
+  Object {
+    "color": "red",
+    "id": "id_red_10",
+    "value": 10,
+  },
+  Object {
+    "color": "red",
+    "id": "id_red_11",
+    "value": 11,
+  },
+  Object {
+    "color": "red",
+    "id": "id_red_12",
+    "value": 12,
+  },
+  Object {
+    "color": "red",
+    "id": "id_red_13",
+    "value": 13,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_1",
+    "value": 1,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_2",
+    "value": 2,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_3",
+    "value": 3,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_4",
+    "value": 4,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_5",
+    "value": 5,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_6",
+    "value": 6,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_7",
+    "value": 7,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_8",
+    "value": 8,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_9",
+    "value": 9,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_10",
+    "value": 10,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_11",
+    "value": 11,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_12",
+    "value": 12,
+  },
+  Object {
+    "color": "blue",
+    "id": "id_blue_13",
+    "value": 13,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_1",
+    "value": 1,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_2",
+    "value": 2,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_3",
+    "value": 3,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_4",
+    "value": 4,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_5",
+    "value": 5,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_6",
+    "value": 6,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_7",
+    "value": 7,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_8",
+    "value": 8,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_9",
+    "value": 9,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_10",
+    "value": 10,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_11",
+    "value": 11,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_12",
+    "value": 12,
+  },
+  Object {
+    "color": "orange",
+    "id": "id_orange_13",
+    "value": 13,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_1",
+    "value": 1,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_2",
+    "value": 2,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_3",
+    "value": 3,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_4",
+    "value": 4,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_5",
+    "value": 5,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_6",
+    "value": 6,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_7",
+    "value": 7,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_8",
+    "value": 8,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_9",
+    "value": 9,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_10",
+    "value": 10,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_11",
+    "value": 11,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_12",
+    "value": 12,
+  },
+  Object {
+    "color": "black",
+    "id": "id_black_13",
+    "value": 13,
+  },
+]
+`;
