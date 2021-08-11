@@ -1,5 +1,6 @@
 const cors = require('cors')
 const express = require('express')
+const { generateGameCode } = require('./helpers')
 const app = express()
 const http = require('http')
 const server = http.createServer(app)
@@ -49,7 +50,7 @@ app.get('/api/users/', (req, res) => {
 })
 
 app.get('/game/create/', (req, res) => {
-  const data = { code: 'AAAA' }
+  const data = { code: generateGameCode() }
   games[data.code] = data
   res.json(data)
 })
