@@ -57,14 +57,12 @@ async function afterUserJoined(game, socket) {
 io.on('connection', (socket) => {
   console.log('Websocket: User connected')
 
-  socket.on('game:create', () => {
-    const game = { code: 'BBBB'}
-    socket.emit('game:create', game)
-    socket.join(`room:${game.code}`)
+  socket.on('game:join', async ({ data: game }) => {
+    await afterUserJoined(game, socket)
   })
 
-  socket.on('game:join', async (game) => {
-    await afterUserJoined(game, socket)
+  socket.on('game:move', async ({room, data: tile}) => {
+    socket.to(room).emit('game:move', tile)
   })
 
   socket.on('disconnect', () => {

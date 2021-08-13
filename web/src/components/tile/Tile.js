@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 
 import './Tile.css'
 
-const Tile = ({ id, value, color, spot, onDrag, onMove, onDrop }) => {
+const Tile = ({ tile, spot, onDrag, onMove, onDrop }) => {
   const tileRef = useRef()
   const staticActive = useRef(false)
   const originalPosition = useRef({})
@@ -90,7 +90,7 @@ const Tile = ({ id, value, color, spot, onDrag, onMove, onDrop }) => {
       }
       staticActive.current = false
       setActive(false)
-      onDrop(getTileCenterPosition(), id)
+      onDrop({ tile, position: getTileCenterPosition() })
     }
   }
 
@@ -106,13 +106,13 @@ const Tile = ({ id, value, color, spot, onDrag, onMove, onDrop }) => {
   return (
     <div
       ref={tileRef}
-      id={id}
-      className={`tile tile--${color}`}
+      id={tile.id}
+      className={`tile tile--${tile.color}`}
       onMouseDown={take}
       onTouchStart={take}
       style={{ transform: getTransformValue(), zIndex: active ? 99 : 0 }}
     >
-      <div className="tile__number">{value}</div>
+      <div className="tile__number">{tile.value}</div>
       <div className="tile__brand">
         <div className="tile__brand-letter">Rummikub</div>
       </div>

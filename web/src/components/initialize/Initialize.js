@@ -70,9 +70,8 @@ const STATUS = {
   JOIN: 'join',
 }
 
-const Initialize = ({ setTiles }) => {
+const Initialize = ({ game, setGame, setTiles }) => {
   const [status, setStatus] = useState(STATUS.INIT)
-  const [game, setGame] = useState()
 
   const createGame = async () => {
     const game = await Http.get('/game/create').then(response => response.json())
@@ -80,11 +79,15 @@ const Initialize = ({ setTiles }) => {
     setGame(game)
     setStatus(STATUS.CREATE)
     Socket.emit('game:join', game)
+    Socket.setRoom(game)
     Socket.on('user:joined', () => {
       setStatus(null)
     })
     Socket.on('game:start', (tiles) => {
       setTiles(tiles)
+    })
+    Socket.on('game:move', (tile) => {
+      /* eslint-disable */ console.log('tile', tile)
     })
   }
 
@@ -102,9 +105,14 @@ const Initialize = ({ setTiles }) => {
       return
     }
     const game = await response.json()
+    setGame(game)
     Socket.emit('game:join', game)
+    Socket.setRoom(game)
     Socket.on('game:start', (tiles) => {
       setTiles(tiles)
+    })
+    Socket.on('game:move', (tile) => {
+      /* eslint-disable */ console.log('tile', tile)
     })
     setStatus(null)
   }

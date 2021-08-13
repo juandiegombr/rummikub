@@ -10,28 +10,31 @@ import "./App.css"
 
 
 export default function App() {
+  const [game, setGame] = useState()
   const [playingTiles, setTiles] = useState([])
 
   useEffect(() => {
     Socket.init()
   }, [])
 
+  const dropTile = ({ tile }) => {
+    Socket.emit('game:move', tile)
+  }
+
   return (
     <div className="app">
-      <Initialize setTiles={setTiles} />
+      <Initialize game={game} setGame={setGame} setTiles={setTiles} />
       <Grid/>
       <div className="player-zone">
         {playingTiles.map((tile, key) => {
           return (
             <Tile
               key={key + '-' + tile.value}
-              id={tile.id}
-              value={tile.value}
-              color={tile.color}
+              tile={tile}
               spot={null}
               onDrag={() => null}
               onMove={() => null}
-              onDrop={() => null}
+              onDrop={dropTile}
             />
           )})
         }
