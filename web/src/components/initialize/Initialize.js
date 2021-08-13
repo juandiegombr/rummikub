@@ -70,7 +70,7 @@ const STATUS = {
   JOIN: 'join',
 }
 
-const Initialize = () => {
+const Initialize = ({ setTiles }) => {
   const [status, setStatus] = useState(STATUS.INIT)
   const [game, setGame] = useState()
 
@@ -80,8 +80,11 @@ const Initialize = () => {
     setGame(game)
     setStatus(STATUS.CREATE)
     Socket.emit('game:join', game)
-    Socket.on('user:joined', (data) => {
+    Socket.on('user:joined', () => {
       setStatus(null)
+    })
+    Socket.on('game:start', (tiles) => {
+      setTiles(tiles)
     })
   }
 
@@ -100,6 +103,9 @@ const Initialize = () => {
     }
     const game = await response.json()
     Socket.emit('game:join', game)
+    Socket.on('game:start', (tiles) => {
+      setTiles(tiles)
+    })
     setStatus(null)
   }
 
