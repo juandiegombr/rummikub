@@ -12,7 +12,7 @@ app.use(cors())
 const server = http.createServer(app)
 const io = new Server(server)
 
-const PORT = 5000
+const PORT = process.env.PORT || 5000
 const GAMES = {}
 
 const Socket = {
@@ -86,7 +86,7 @@ app.get('/api/users/', (req, res) => {
   res.json(data)
 })
 
-app.get('/game/create/', (req, res) => {
+app.get('/api/game/create/', (req, res) => {
   const data = {
     code: generateGameCode(),
     tiles: TileService.shuffle(TileService.generateTiles()),
@@ -95,7 +95,7 @@ app.get('/game/create/', (req, res) => {
   res.json(data)
 })
 
-app.get('/game/join/:gameCode', (req, res) => {
+app.get('/api/game/join/:gameCode', (req, res) => {
   const data = { code: req.params.gameCode }
   if (GAMES[data.code]) {
     res.json(data)
