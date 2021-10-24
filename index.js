@@ -2,9 +2,10 @@ const cors = require('cors')
 const express = require('express')
 const http = require('http')
 const { Server } = require("socket.io")
+const path = require('path')
 
-const TileService = require('./domain/tile')
-const { generateGameCode } = require('./helpers')
+const TileService = require('./server/src/domain/tile')
+const { generateGameCode } = require('./server/src/helpers')
 
 const app = express()
 app.use(cors())
