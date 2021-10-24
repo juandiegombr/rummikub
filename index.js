@@ -2,14 +2,12 @@ const cors = require('cors')
 const express = require('express')
 const http = require('http')
 const { Server } = require("socket.io")
-const path = require('path')
 
-const TileService = require('./server/src/domain/tile')
-const { generateGameCode } = require('./server/src/helpers')
+const TileService = require('./domain/tile')
+const { generateGameCode } = require('./helpers')
 
 const app = express()
 app.use(cors())
-app.use(express.static(path.join(__dirname, 'web/build')));
 
 const server = http.createServer(app)
 const io = new Server(server)
@@ -20,6 +18,8 @@ const GAMES = {}
 const Socket = {
   getById: (id) => io.sockets.sockets.get(id)
 }
+
+const Grids = {}
 
 const Room = {
   getSockets: async (room) => {
@@ -53,6 +53,7 @@ async function afterUserJoined(game, socket) {
 
   if (socketsInRoom.length === 2) {
     shuffleTiles(socketsInRoom, game)
+    Grids[roomName] = {}
   }
 }
 
@@ -63,8 +64,14 @@ io.on('connection', (socket) => {
     await afterUserJoined(game, socket)
   })
 
-  socket.on('game:move', async ({room, data: tile}) => {
-    socket.to(room).emit('game:move', tile)
+  socket.on('game:move', async ({room, data: move}) => {
+    Grids[room][move.tile.id] = move
+    const grid = Grids[room]
+    // socket.to(room).emit('game:move', grid)
+    const socketsInRoom = await Room.getSockets(room)
+    socketsInRoom.forEach(socket => {
+      socket.to(room).emit('game:move', grid)
+    })
   })
 
   socket.on('disconnect', () => {
@@ -111,6 +118,5 @@ app.get('*', (req, res) => {
 })
 
 server.listen(PORT, () => {
-  /* eslint-disable */ console.log('', __dirname)
   console.log(`Listening on port: ${PORT}`)
 });

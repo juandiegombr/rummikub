@@ -113,6 +113,10 @@ app.get('/api/game/join/:gameCode', (req, res) => {
   res.sendStatus(404)
 })
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/web/build/index.html'));
+})
+
 server.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`)
 });
