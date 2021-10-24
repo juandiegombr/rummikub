@@ -38,6 +38,13 @@
   color: rgb(255, 131, 59);
 }
 
+.tile--selected {
+  transform: rotate(5deg) scale(1.05);
+  box-shadow: 1px 1px 0px rgb(240, 225, 206), 2px 2px 0px rgb(240, 225, 206),
+    8px 8px 8px rgba(0, 0, 0, 0.1);
+  z-index: 99;
+}
+
 .tile__number {
   display: flex;
   justify-content: center;

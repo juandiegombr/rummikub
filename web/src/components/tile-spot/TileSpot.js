@@ -1,13 +1,14 @@
 import './TileSpot.css'
 
-function TileSpot({ position, hover, inBatch }) {
+function TileSpot({ position, hover, inBatch, onClick }) {
   return (
-    <div
+    <button
       id={`${position.x}-${position.y}`}
       className={`tile-spot ${hover ? "tile-spot--hover" : ""} ${inBatch ? "tile-spot--batch" : ""}`}
+      onClick={() => onClick(position)}
     >
       <div className="tile-spot__mark" />
-    </div>
+    </button>
   )
 }
 

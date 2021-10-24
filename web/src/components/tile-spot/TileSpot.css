@@ -3,14 +3,21 @@
   width: 80px;
   height: 110px;
   border-radius: 8px;
+  background-color: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
 }
 
+.tile-spot:hover .tile-spot__mark,
 .tile-spot--hover .tile-spot__mark {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
 .tile-spot__mark {
   position: absolute;
+  top: 0;
+  left: 0;
   width: calc(100% - 2px);
   height: calc(100% - 2px);
   border-radius: 8px;

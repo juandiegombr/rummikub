@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 
 import './Tile.css'
 
-const Tile = ({ tile, spot, onDrag, onMove, onDrop }) => {
+const Tile = ({ tile, spot, selected, onDrag, onMove, onDrop, onClick }) => {
   const tileRef = useRef()
   const staticActive = useRef(false)
   const originalPosition = useRef({})
@@ -31,13 +31,17 @@ const Tile = ({ tile, spot, onDrag, onMove, onDrop }) => {
   }, [])
 
   useEffect(() => {
-    if (spot) {
-      const currentTranslation = {
-        x: spot.startX - originalPosition.current.x ,
-        y: spot.startY - originalPosition.current.y,
-      }
-      setCurrentTranslation(currentTranslation)
+    if(!spot) return
+
+    const spotElement = document.getElementById(`${spot.x}-${spot.y}`)
+    if(!spotElement) {
+      return
     }
+    const currentTranslation = {
+      x: spotElement.getBoundingClientRect().left - originalPosition.current.x ,
+      y: spotElement.getBoundingClientRect().top - originalPosition.current.y,
+    }
+    setCurrentTranslation(currentTranslation)
   }, [spot])
 
   const getCursorPosition = (event) => {
@@ -107,9 +111,10 @@ const Tile = ({ tile, spot, onDrag, onMove, onDrop }) => {
     <div
       ref={tileRef}
       id={tile.id}
-      className={`tile tile--${tile.color}`}
-      onMouseDown={take}
-      onTouchStart={take}
+      className={`tile tile--${tile.color} ${selected ? 'tile--selected' : ''}`}
+      // onMouseDown={take}
+      // onTouchStart={take}
+      onClick={() => onClick(tile)}
       style={{ transform: getTransformValue(), zIndex: active ? 99 : 0 }}
     >
       <div className="tile__number">{tile.value}</div>

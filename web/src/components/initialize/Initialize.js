@@ -70,7 +70,7 @@ const STATUS = {
   JOIN: 'join',
 }
 
-const Initialize = ({ game, setGame, setTiles }) => {
+const Initialize = ({ game, setGame, setTiles, onMove }) => {
   const [status, setStatus] = useState(STATUS.INIT)
 
   const createGame = async () => {
@@ -86,8 +86,9 @@ const Initialize = ({ game, setGame, setTiles }) => {
     Socket.on('game:start', (tiles) => {
       setTiles(tiles)
     })
-    Socket.on('game:move', (tile) => {
-      /* eslint-disable */ console.log('tile', tile)
+    Socket.on('game:move', (move) => {
+      /* eslint-disable */ console.log('move', move)
+      onMove(move)
     })
   }
 
@@ -111,8 +112,9 @@ const Initialize = ({ game, setGame, setTiles }) => {
     Socket.on('game:start', (tiles) => {
       setTiles(tiles)
     })
-    Socket.on('game:move', (tile) => {
-      /* eslint-disable */ console.log('tile', tile)
+    Socket.on('game:move', (move) => {
+      /* eslint-disable */ console.log('move', move)
+      onMove(move)
     })
     setStatus(null)
   }

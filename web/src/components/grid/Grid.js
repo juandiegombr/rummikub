@@ -6,7 +6,7 @@ const spots = Array.from({ length: 2 }).map((_, row) => {
   })
 }).reduce((acc, row) => [...acc, ...row], [])
 
-const Grid = () => {
+const Grid = ({ onSelectSpot }) => {
   return (
     <div className="drag-zone" id="drag-zone">
       { spots.map((spot, index) => {
@@ -14,6 +14,7 @@ const Grid = () => {
           <TileSpot
             key={'spot-' + index}
             position={spot}
+            onClick={() => onSelectSpot(spot)}
           />
         )
       })}

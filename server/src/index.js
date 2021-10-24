@@ -19,6 +19,8 @@ const Socket = {
   getById: (id) => io.sockets.sockets.get(id)
 }
 
+const Grids = {}
+
 const Room = {
   getSockets: async (room) => {
     const ids = await io.in(room).allSockets()
@@ -51,6 +53,7 @@ async function afterUserJoined(game, socket) {
 
   if (socketsInRoom.length === 2) {
     shuffleTiles(socketsInRoom, game)
+    Grids[roomName] = {}
   }
 }
 
@@ -61,8 +64,14 @@ io.on('connection', (socket) => {
     await afterUserJoined(game, socket)
   })
 
-  socket.on('game:move', async ({room, data: tile}) => {
-    socket.to(room).emit('game:move', tile)
+  socket.on('game:move', async ({room, data: move}) => {
+    Grids[room][move.tile.id] = move
+    const grid = Grids[room]
+    // socket.to(room).emit('game:move', grid)
+    const socketsInRoom = await Room.getSockets(room)
+    socketsInRoom.forEach(socket => {
+      socket.to(room).emit('game:move', grid)
+    })
   })
 
   socket.on('disconnect', () => {

@@ -12,6 +12,8 @@ import "./App.css"
 export default function App() {
   const [game, setGame] = useState()
   const [playingTiles, setTiles] = useState([])
+  const [grid, setGrid] = useState({})
+  const [selectedTile, setSelectedTile] = useState(null)
 
   useEffect(() => {
     Socket.init()
@@ -21,20 +23,51 @@ export default function App() {
     Socket.emit('game:move', tile)
   }
 
+  const performTileMove = (spot) => {
+    if (!selectedTile) return
+    const move = {
+      tile: selectedTile,
+      spot,
+    }
+    Socket.emit('game:move', move)
+    setSelectedTile(null)
+  }
+
+  const handleMove = (grid) => {
+    setGrid(grid)
+  }
+
+  const gridTiles = Object.values(grid)
+
   return (
     <div className="app">
-      <Initialize game={game} setGame={setGame} setTiles={setTiles} />
-      <Grid/>
+      <Initialize game={game} setGame={setGame} setTiles={setTiles} onMove={handleMove}/>
+      <Grid onSelectSpot={performTileMove}/>
       <div className="player-zone">
         {playingTiles.map((tile, key) => {
           return (
             <Tile
               key={key + '-' + tile.value}
               tile={tile}
-              spot={null}
+              spot={grid[tile.id]}
+              selected={selectedTile?.id === tile.id}
               onDrag={() => null}
               onMove={() => null}
               onDrop={dropTile}
+              onClick={setSelectedTile}
+            />
+          )})
+        }
+      </div>
+      <div className="player-zone">
+        {gridTiles.map(({ tile, spot }, key) => {
+          return (
+            <Tile
+              key={key + '-' + tile.value}
+              tile={tile}
+              spot={spot}
+              onDrag={() => null}
+              onMove={() => null}
             />
           )})
         }
