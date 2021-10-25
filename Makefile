@@ -3,7 +3,7 @@
 PROJECT_NAME := rummikub
 
 start_server: ## Run the application
-	cd server && npm run start:watch
+	npm run start:watch
 
 start_web: ## Run the application
 	cd web && npm run start
@@ -18,20 +18,8 @@ start_web_docker: ## Run the web application
 build: ## Run the application
 	docker compose -f ./docker-compose.yml -p rummikub up --build
 
-build_web: ## Run the web application
-	docker compose -f web/docker-compose.yml -p rummikub-web up --build
-
-build_server: ## Run the server application
-	docker compose -f server/docker-compose.yml -p rummikub-server up --build
-
 down: ## Destroy the application
 	docker compose -p rummikub down
-
-down-web: ## Destroy the web application
-	docker compose -f web/docker-compose.yml -p rummikub-web down
-
-down-server: ## Destroy the server application
-	docker compose -f server/docker-compose.yml -p rummikub-server down
 
 file-sync-setup:  ## Install docker-sync to update files in the container
 	sudo gem install docker-sync -n /usr/local/bin
