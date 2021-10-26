@@ -32,13 +32,15 @@ screen.findByDialog = (name) => {
   return screen.findByRole('dialog', { name })
 }
 
-let events = {}
+export let events = {}
 
 export const SocketServer = {
   emit: (event, ...args) => {
     act(() => events[event](...args))
   },
 }
+
+
 
 jest.mock('socket.io-client', () => {
   const socket = {
@@ -63,14 +65,23 @@ jest.mock('services/socket', () => {
   }
 })
 
-// jest.mock('services/http', () => {
-//   return {
-//     Http: {
-//       get: jest.fn(),
-//     },
-//   }
-// })
-
 beforeEach(() => {
   setupPortal()
 })
+
+const toBeListening = (eventName) => {
+  const event = events[eventName]
+  if (!event) {
+    return {
+      pass: false,
+      message: () => `📡 Socket: The event ${eventName} is not being listened.`,
+    }
+  }
+  return {
+    pass: true,
+    message: () => null,
+  }
+}
+
+expect.extend({ toBeListening })
+

@@ -38,7 +38,6 @@ export default function App() {
   }
 
   const gridTiles = Object.values(grid)
-  /* eslint-disable */ console.log('gridTiles', gridTiles)
 
   return (
     <div className="app">
@@ -62,7 +61,6 @@ export default function App() {
       </div>
       <div className="player-zone">
         {gridTiles.map(({ tile, spot }, key) => {
-          /* eslint-disable */ console.log('tile', tile)
           return (
             <Tile
               key={key + '-' + tile.value}

@@ -111,6 +111,7 @@ const Tile = ({ tile, spot, selected, onDrag, onMove, onDrop, onClick }) => {
     <div
       ref={tileRef}
       id={tile.id}
+      aria-label={`Tile ${tile.value} ${tile.color}`}
       className={`tile tile--${tile.color} ${selected ? 'tile--selected' : ''}`}
       // onMouseDown={take}
       // onTouchStart={take}

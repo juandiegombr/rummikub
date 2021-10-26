@@ -80,14 +80,11 @@ const Initialize = ({ game, setGame, setTiles, onMove }) => {
     setStatus(STATUS.CREATE)
     Socket.emit('game:join', game)
     Socket.setRoom(game)
-    Socket.on('user:joined', () => {
-      setStatus(null)
-    })
     Socket.on('game:start', (tiles) => {
+      setStatus(null)
       setTiles(tiles)
     })
     Socket.on('game:move', (move) => {
-      /* eslint-disable */ console.log('move', move)
       onMove(move)
     })
   }
@@ -113,7 +110,6 @@ const Initialize = ({ game, setGame, setTiles, onMove }) => {
       setTiles(tiles)
     })
     Socket.on('game:move', (move) => {
-      /* eslint-disable */ console.log('move', move)
       onMove(move)
     })
     setStatus(null)

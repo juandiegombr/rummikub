@@ -24,10 +24,8 @@ const on = (...args) => {
 
 const emit = (event, data) => {
   if (config.room) {
-    /* eslint-disable */ console.log('room', )
     return getInstance().emit(event, { room: config.room, data })
   }
-  /* eslint-disable */ console.log('noo room', data)
   return getInstance().emit(event, { data })
 }
 
