@@ -7,7 +7,7 @@
     "start": "node index.js",
     "start:watch": "nodemon src/index.js",
     "heroku-postbuild": "cd web && npm install && npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watchAll"
   },
   "repository": {
     "type": "git",
@@ -21,10 +21,21 @@
   "homepage": "https://github.com/juandiegombr/rummikub#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "jest": "^27.3.1",
     "nodemon": "^2.0.14",
     "socket.io": "^4.3.1"
   },
   "engines": {
     "node": "14.x"
+  },
+  "jest": {
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/?(*.)(spec|test).{js,jsx}",
+      "<rootDir>/src/**/test?(s)/?(*)(Spec).js?(x)",
+      "<rootDir>/src/**/?(*.)(spec|test).js?(x)"
+    ]
+  },
+  "devDependencies": {
+    "supertest": "^6.1.6"
   }
 }

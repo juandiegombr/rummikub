@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should generate all the tiles 1`] = `
+exports[`generates all the tiles 1`] = `
 Array [
   Object {
     "color": "red",
