@@ -1,7 +1,7 @@
 import { TileSpot } from "components/tile-spot"
 
-const spots = Array.from({ length: 2 }).map((_, row) => {
-  return Array.from({ length: 10 }).map((_, column) => {
+const spots = Array.from({ length: 4 }).map((_, row) => {
+  return Array.from({ length: 12 }).map((_, column) => {
     return { x: column, y: row }
   })
 }).reduce((acc, row) => [...acc, ...row], [])

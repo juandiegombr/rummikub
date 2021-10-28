@@ -39,7 +39,7 @@ async function joinRoom(game, socket) {
   const roomName = `room:${game.code}`
   socket.join(roomName)
   const socketsInRoom = await Room.getSockets(roomName)
-  console.log(`Websocket: ${socketsInRoom.length + 1} user joined to the game ${game.code}`)
+  console.log(`Websocket: ${socketsInRoom.length} user joined to the game ${game.code}`)
   return socketsInRoom
 }
 
@@ -116,4 +116,4 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/web/build/index.html'));
 })
 
-module.exports = { app, io }
+module.exports = { app, server, io }

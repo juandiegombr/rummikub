@@ -30,6 +30,8 @@ export default function App() {
       spot,
     }
     Socket.emit('game:move', move)
+    const newPlayingTiles = playingTiles.filter((tile) => tile.id !== selectedTile.id)
+    setTiles(newPlayingTiles)
     setSelectedTile(null)
   }
 
@@ -59,15 +61,17 @@ export default function App() {
           )})
         }
       </div>
-      <div className="player-zone">
+      <div className="played-zone">
         {gridTiles.map(({ tile, spot }, key) => {
           return (
             <Tile
               key={key + '-' + tile.value}
               tile={tile}
               spot={spot}
+              selected={selectedTile?.id === tile.id}
               onDrag={() => null}
               onMove={() => null}
+              onClick={setSelectedTile}
             />
           )})
         }
