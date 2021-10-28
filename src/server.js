@@ -78,10 +78,6 @@ io.on('connection', (socket) => {
   });
 })
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-
 app.get('/api/users/', (req, res) => {
   const data = [
     {
