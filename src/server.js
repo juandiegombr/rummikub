@@ -9,7 +9,7 @@ const { generateGameCode } = require('./helpers')
 
 const app = express()
 app.use(cors())
-app.use(express.static(path.join(__dirname, 'web/build')));
+app.use(express.static(path.join(__dirname.replace('/src', ''), 'web/build')));
 
 const server = http.createServer(app)
 const io = new Server(server)
@@ -109,7 +109,7 @@ app.get('/api/game/join/:gameCode', (req, res) => {
 })
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/web/build/index.html'));
+  res.sendFile(path.join(__dirname.replace('/src', '') + '/web/build/index.html'));
 })
 
 module.exports = { app, server, io }
