@@ -21,7 +21,7 @@
   "homepage": "https://github.com/juandiegombr/rummikub#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "jest": "^27.3.1",
+    "jest": "26.6.0",
     "nodemon": "^2.0.14",
     "socket.io": "^4.3.1"
   },
