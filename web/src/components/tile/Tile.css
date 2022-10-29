@@ -1,4 +1,7 @@
 .tile {
+  --tile-weight: 1px 1px 0px rgb(240, 225, 206), 2px 2px 0px rgb(240, 225, 206);
+  --tile-shadow: 8px 8px 8px rgba(0, 0, 0, 0.1);
+  --tile-shadow--big: 8px 8px 8px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -10,17 +13,36 @@
   background-color: antiquewhite;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
-  box-shadow: 1px 1px 0px rgb(240, 225, 206), 2px 2px 0px rgb(240, 225, 206),
-    4px 4px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--tile-weight), var(--tile-shadow);
   cursor: pointer;
   user-select: none;
 }
 
-.tile--selected,
 .tile:hover {
-  box-shadow: 1px 1px 0px rgb(240, 225, 206), 2px 2px 0px rgb(240, 225, 206),
-    8px 8px 8px rgba(0, 0, 0, 0.1), 1px 1px 6px 2px rgba(255,255,255);
+  box-shadow: var(--tile-weight), var(--tile-shadow--big), 1px 1px 2px 4px rgba(255, 255, 255, 0.2);
+  animation: tile-hover .3s ease-in;
+}
+
+@keyframes tile-hover {
+  from {
+    box-shadow: var(--tile-weight), var(--tile-shadow--big), 1px 1px 1px 2px rgba(255, 255, 255, 0);
+  }
+  to {
+    box-shadow: var(--tile-weight), var(--tile-shadow--big), 1px 1px 2px 4px rgba(255, 255, 255, 0.2);
+  }
+}
+
+.tile.tile--selected {
+  animation: tile-selected .6s infinite alternate-reverse;
+}
+
+@keyframes tile-selected {
+  from {
+    box-shadow: var(--tile-weight), 1px 1px 1px 2px rgba(255, 190, 20, 0.4);
+  }
+  to {
+    box-shadow: var(--tile-weight), 1px 1px 2px 4px rgba(255, 190, 20, 0.8);
+  }
 }
 
 .tile--red .tile__number {

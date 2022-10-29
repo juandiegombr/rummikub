@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { Tile } from "components/tile"
 import { Initialize } from "components/initialize"
 import { Grid } from "components/grid"
+import { Buttons } from "components/buttons"
 
 import { Socket } from 'services/socket'
 
@@ -36,6 +37,7 @@ export default function App() {
   }
 
   const handleMove = (grid) => {
+    /* eslint-disable */ console.log('grid', grid)
     setGrid(grid)
   }
 
@@ -45,6 +47,7 @@ export default function App() {
     <div className="app">
       <Initialize game={game} setGame={setGame} setTiles={setTiles} onMove={handleMove}/>
       <Grid onSelectSpot={performTileMove}/>
+      <Buttons/>
       <div className="player-zone">
         {playingTiles.map((tile, key) => {
           return (

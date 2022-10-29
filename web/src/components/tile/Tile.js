@@ -75,16 +75,16 @@ const Tile = ({ tile, spot, selected, onDrag, onMove, onDrop, onClick }) => {
     }
   }
 
-  const take = (event) => {
-    const cursor = getCursorPosition(event)
-    initialTranslation.current = {
-      x: cursor.x - currentTranslation.x,
-      y: cursor.y - currentTranslation.y,
-    }
-    staticActive.current = true
-    setActive(true)
-    onDrag()
-  }
+  // const take = (event) => {
+  //   const cursor = getCursorPosition(event)
+  //   initialTranslation.current = {
+  //     x: cursor.x - currentTranslation.x,
+  //     y: cursor.y - currentTranslation.y,
+  //   }
+  //   staticActive.current = true
+  //   setActive(true)
+  //   onDrag()
+  // }
 
   const leave = () => {
     if (staticActive.current) {
