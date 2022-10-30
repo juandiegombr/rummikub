@@ -11,7 +11,7 @@ import "./App.css"
 
 
 export default function App() {
-  const [game, setGame] = useState()
+  const [gameCode, setGameCode] = useState()
   const [playingTiles, setTiles] = useState([])
   const [grid, setGrid] = useState({})
   const [selectedTile, setSelectedTile] = useState(null)
@@ -37,7 +37,6 @@ export default function App() {
   }
 
   const handleMove = (grid) => {
-    /* eslint-disable */ console.log('grid', grid)
     setGrid(grid)
   }
 
@@ -45,7 +44,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Initialize game={game} setGame={setGame} setTiles={setTiles} onMove={handleMove}/>
+      <Initialize gameCode={gameCode} setGameCode={setGameCode} setTiles={setTiles} onMove={handleMove}/>
       <Grid onSelectSpot={performTileMove}/>
       <Buttons/>
       <div className="player-zone">

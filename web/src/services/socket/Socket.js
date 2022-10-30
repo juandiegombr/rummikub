@@ -6,7 +6,12 @@ let config = {}
 const init = () => {
   socket = io(
     process.env.REACT_APP_WEBSOCKET_HOST,
-    { transports: ['websocket'] },
+    {
+      transports: ['websocket'],
+      auth: (cb) => {
+        cb({ token: localStorage.userId })
+      },
+    },
   )
 }
 
@@ -16,6 +21,10 @@ const setRoom = (game) => {
 
 const getInstance = () => {
   return socket
+}
+
+const getId = () => {
+  return getInstance().id
 }
 
 const on = (...args) => {
@@ -29,8 +38,15 @@ const emit = (event, data) => {
   return getInstance().emit(event, { data })
 }
 
+const reconnect = () => {
+  socket.auth.token = localStorage.userId
+  socket.disconnect().connect()
+}
+
 export const Socket = {
   init,
+  reconnect,
+  getId,
   on,
   emit,
   setRoom,

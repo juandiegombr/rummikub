@@ -1,7 +1,3 @@
-const Logger = {
-  send: (message, data) => {
-    console.log(message, data)
-  }
-}
+const { Logger } = require('./Logger')
 
 module.exports = { Logger }

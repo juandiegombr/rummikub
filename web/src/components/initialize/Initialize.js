@@ -23,14 +23,14 @@ const FirstStep = ({ create, join }) => {
   )
 }
 
-const Waiting = ({ game }) => {
+const Waiting = ({ gameCode }) => {
   return (
     createPortal(
       <div className="initialize-dialog__overlay">
         <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
           <h2 id="initialize-title" className="initialize-dialog__title">⏳ Waiting for a player</h2>
           <p className="initialize-dialog__description">Share the game code to start playing</p>
-          <div className="initialize-dialog__code">{game.code}</div>
+          <div className="initialize-dialog__code">{gameCode}</div>
         </div>
       </div>,
       document.getElementById('dialog'),
@@ -70,16 +70,17 @@ const STATUS = {
   JOIN: 'join',
 }
 
-const Initialize = ({ game, setGame, setTiles, onMove }) => {
+const Initialize = ({ gameCode, setGameCode, setTiles, onMove }) => {
   const [status, setStatus] = useState(STATUS.INIT)
 
   const createGame = async () => {
-    const game = await Http.get('/game/create').then(response => response.json())
-    await Http.get(`/game/join/${game.code}`)
-    setGame(game)
+    const { userId, gameCode } = await Http.get('/game/create').then(response => response.json())
+    localStorage.setItem('userId', userId)
+    setGameCode(gameCode)
     setStatus(STATUS.CREATE)
-    Socket.emit('game:join', game)
-    Socket.setRoom(game)
+    Socket.reconnect()
+    Socket.emit('game:join', { gameCode })
+    Socket.setRoom(gameCode)
     Socket.on('game:start', (tiles) => {
       setStatus(null)
       setTiles(tiles)
@@ -93,19 +94,18 @@ const Initialize = ({ game, setGame, setTiles, onMove }) => {
     setStatus(STATUS.JOIN)
   }
 
-  const confirmJoin = async (event) => {
-    event.preventDefault()
-    const cuvoForm = new FormData(event.target)
-    const formElements = Object.fromEntries(cuvoForm)
+  const initialJoinToGame = async (gameCodeInput) => {
     const response = await Http
-      .get(`/game/join/${formElements.code}`)
+      .get(`/game/join/${gameCodeInput}`)
     if (response.status === 404) {
       return
     }
-    const game = await response.json()
-    setGame(game)
-    Socket.emit('game:join', game)
-    Socket.setRoom(game)
+    const { userId, gameCode } = await response.json()
+    localStorage.setItem('userId', userId)
+    Socket.reconnect()
+    setGameCode(gameCode)
+    Socket.emit('game:join', { gameCode })
+    Socket.setRoom(gameCode)
     Socket.on('game:start', (tiles) => {
       setTiles(tiles)
     })
@@ -113,6 +113,34 @@ const Initialize = ({ game, setGame, setTiles, onMove }) => {
       onMove(move)
     })
     setStatus(null)
+  }
+
+  const reJoinToGame = async (gameCodeInput) => {
+    const response = await Http.get(`/game/rejoin/${gameCodeInput}`)
+    const { gameCode } = await response.json()
+    setGameCode(gameCode)
+    Socket.emit('game:join', { gameCode })
+    Socket.setRoom(gameCode)
+    Socket.on('game:start', (tiles) => {
+      setTiles(tiles)
+    })
+    Socket.on('game:move', (move) => {
+      onMove(move)
+    })
+    setStatus(null)
+  }
+
+  const confirmJoin = async (event) => {
+    event.preventDefault()
+    const formData = new FormData(event.target)
+    const gameCode = formData.get('code')
+    const userId = localStorage.getItem('userId')
+
+    if (userId) {
+      return reJoinToGame(gameCode)
+    }
+
+    return initialJoinToGame(gameCode)
   }
 
   if (status === STATUS.INIT) {
@@ -124,7 +152,7 @@ const Initialize = ({ game, setGame, setTiles, onMove }) => {
   }
 
   if (status === STATUS.CREATE) {
-    return <Waiting game={game}/>
+    return <Waiting gameCode={gameCode}/>
   }
 
   return null
