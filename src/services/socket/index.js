@@ -31,11 +31,6 @@ function initializeSocketService(io) {
   }
 
   async function afterUserJoined(game, socket) {
-    GAMES[game.code] = {
-      code: generateGameCode(),
-      tiles: TileService.shuffle(TileService.generateTiles()),
-      grid: {},
-    }
     const socketsInRoom = await joinRoom(game, socket)
 
     if (socketsInRoom.length === 2) {
