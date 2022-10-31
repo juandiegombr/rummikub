@@ -2,21 +2,28 @@ const { initializeSocketService } = require('../../socket')
 const DB = require('../../../db')
 
 jest.mock('../../../services/logger')
-DB.getGames = jest.fn().mockImplementation(() => {
+DB.getGame = jest.fn().mockImplementation(() => {
   return {
-    'ABCD': {
-      code: 'ABCD',
-      tiles: [
-        { id: 'id_blue_13', value: 13, color: 'blue' },
-        { id: 'id_red_3', value: 3, color: 'red' },
-      ],
-      grid: {},
-      players: {
-        1: [],
-        2: [],
-      },
-    }
+    code: 'ABCD',
+    tiles: [
+      { id: 'id_blue_13', value: 13, color: 'blue' },
+      { id: 'id_red_3', value: 3, color: 'red' },
+    ],
+    grid: {},
+    players: {
+      1: [],
+      2: [],
+    },
   }
+})
+DB.getPlayerTiles = jest.fn().mockImplementation(() => {
+  return [
+    { id: 'id_blue_13', value: 13, color: 'blue' },
+    { id: 'id_red_3', value: 3, color: 'red' },
+  ]
+})
+DB.getGrid = jest.fn().mockImplementation(() => {
+  return {}
 })
 
 const SocketServerMock = () => {
@@ -53,16 +60,21 @@ const SocketServerMock = () => {
       const socketClient =  {
         id,
         roomId: null,
-        on: (event, callback) => {
-          EVENTS[event] = callback
-        },
-        to: (roomId) => {
-          SOCKETS[id].roomId = roomId
-        },
         emit: jest.fn(async (event, payload) => {
           const triggeredEvent = EVENTS[event]
           await triggeredEvent(payload)
         }),
+      }
+      const socketServer =  {
+        id,
+        roomId: null,
+        on: jest.fn((event, callback) => {
+          EVENTS[event] = callback
+        }),
+        to: (roomId) => {
+          SOCKETS[id].roomId = roomId
+        },
+        emit: jest.fn(),
         join: (roomId) => {
           SOCKETS[id].roomId = roomId
         },
@@ -73,10 +85,12 @@ const SocketServerMock = () => {
           auth: { token: id },
         },
       }
-      SOCKETS[id] = socketClient
+      SOCKETS[id] = socketServer
       const connectionEvent = GLOBAL_EVENTS['connection']
-      connectionEvent(socketClient)
-      return socketClient
+      connectionEvent(socketServer)
+      const client = socketClient
+      const server = socketServer
+      return [ client, server ]
     }
   }
 }
@@ -85,35 +99,51 @@ const SocketServerMock = () => {
 it('disconnects from the socket server', function(done) {
   const io = SocketServerMock()
   initializeSocketService(io)
-  const socketClient = io.client('1')
+  const [ client, server ] = io.client('1')
 
-  socketClient.emit('disconnect')
+  client.emit('disconnect')
 
-  expect(socketClient.broadcast.emit).toHaveBeenCalledWith('LEAVED')
+  expect(server.broadcast.emit).toHaveBeenCalledWith('LEAVED')
   done()
 })
 
 it('joins to a game', async function(done) {
   const io = SocketServerMock()
   initializeSocketService(io)
-  const firstPlayer = io.client('1')
+  const [ client, server ] = io.client('1')
 
-  await firstPlayer.emit('game:join', { data: { gameCode: 'ABCD' } })
+  await client.emit('game:join', { data: { gameCode: 'ABCD' } })
 
-  expect(firstPlayer.roomId).toBe('room:ABCD')
-  expect(firstPlayer.emit).not.toHaveBeenCalledWith('game:start', expect.any(Array))
+  expect(server.roomId).toBe('room:ABCD')
+  expect(server.emit).not.toHaveBeenCalledWith('game:start', expect.any(Array))
   done()
 })
 
 it('joins two players to a game', async function(done) {
   const io = SocketServerMock()
   initializeSocketService(io)
-  const firstPlayer = io.client('1')
-  await firstPlayer.emit('game:join', { data: { gameCode: 'ABCD' } })
-  const secondPlayer = io.client('2')
-  await secondPlayer.emit('game:join', { data: { gameCode: 'ABCD' } })
+  const [ firstClient, firstServer ] = io.client('1')
+  await firstClient.emit('game:join', { data: { gameCode: 'ABCD' } })
+  const [ secondClient, secondServer ] = io.client('2')
+  await secondClient.emit('game:join', { data: { gameCode: 'ABCD' } })
 
-  expect(firstPlayer.emit).toHaveBeenCalledWith('game:start', expect.any(Array))
-  expect(secondPlayer.emit).toHaveBeenCalledWith('game:start', expect.any(Array))
+  expect(firstServer.emit).toHaveBeenCalledWith('game:start', expect.any(Array))
+  expect(secondServer.emit).toHaveBeenCalledWith('game:start', expect.any(Array))
+  done()
+})
+
+it('rejoins to a game', async function(done) {
+  const io = SocketServerMock()
+  initializeSocketService(io)
+  const [ firstClient, firstServer ] = io.client('1')
+  await firstClient.emit('game:join', { data: { gameCode: 'ABCD' } })
+  const [ secondClient, secondServer ] = io.client('2')
+  await secondClient.emit('game:join', { data: { gameCode: 'ABCD' } })
+  await secondClient.emit('game:rejoin', { room: 'room:ABCD', data: { gameCode: 'ABCD' } })
+
+  expect(firstServer.emit).toHaveBeenCalledWith('game:start', expect.any(Array))
+  expect(firstServer.emit).not.toHaveBeenCalledWith('game:move', {})
+  expect(secondServer.emit).toHaveBeenCalledWith('game:start', expect.any(Array))
+  expect(secondServer.emit).toHaveBeenCalledWith('game:move', {})
   done()
 })

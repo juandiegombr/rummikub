@@ -3,6 +3,13 @@ import { io } from 'socket.io-client'
 let socket
 let config = {}
 
+const getConfig = () => {
+  return {
+    ...config,
+    room: `room:${localStorage.gameCode}`,
+  }
+}
+
 const init = () => {
   socket = io(
     process.env.REACT_APP_WEBSOCKET_HOST,
@@ -13,10 +20,6 @@ const init = () => {
       },
     },
   )
-}
-
-const setRoom = (game) => {
-  config.room = `room:${game.code}`
 }
 
 const getInstance = () => {
@@ -32,6 +35,7 @@ const on = (...args) => {
 }
 
 const emit = (event, data) => {
+  const config = getConfig()
   if (config.room) {
     return getInstance().emit(event, { room: config.room, data })
   }
@@ -49,5 +53,4 @@ export const Socket = {
   getId,
   on,
   emit,
-  setRoom,
 }

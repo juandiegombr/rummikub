@@ -1,3 +1,3 @@
-const { getGames } = require('./DB')
+const DB = require('./DB')
 
-module.exports = { getGames }
+module.exports = DB

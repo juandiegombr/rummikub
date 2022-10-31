@@ -11,7 +11,6 @@ import "./App.css"
 
 
 export default function App() {
-  const [gameCode, setGameCode] = useState()
   const [playingTiles, setTiles] = useState([])
   const [grid, setGrid] = useState({})
   const [selectedTile, setSelectedTile] = useState(null)
@@ -44,7 +43,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Initialize gameCode={gameCode} setGameCode={setGameCode} setTiles={setTiles} onMove={handleMove}/>
+      <Initialize setTiles={setTiles} onMove={handleMove}/>
       <Grid onSelectSpot={performTileMove}/>
       <Buttons/>
       <div className="player-zone">

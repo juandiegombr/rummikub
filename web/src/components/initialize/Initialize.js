@@ -70,17 +70,28 @@ const STATUS = {
   JOIN: 'join',
 }
 
-const Initialize = ({ gameCode, setGameCode, setTiles, onMove }) => {
-  const [status, setStatus] = useState(STATUS.INIT)
+const Initialize = ({ setTiles, onMove }) => {
+  const [status, setStatus] = useState(null)
+
+  useEffect(() => {
+    const userId = localStorage.userId
+    const gameCode = localStorage.gameCode
+    if (userId && gameCode) {
+      return reJoinToGame(gameCode)
+    }
+
+    setStatus(STATUS.INIT)
+
+    localStorage.clear()
+  }, [])
 
   const createGame = async () => {
     const { userId, gameCode } = await Http.get('/game/create').then(response => response.json())
     localStorage.setItem('userId', userId)
-    setGameCode(gameCode)
+    localStorage.setItem('gameCode', gameCode)
     setStatus(STATUS.CREATE)
     Socket.reconnect()
     Socket.emit('game:join', { gameCode })
-    Socket.setRoom(gameCode)
     Socket.on('game:start', (tiles) => {
       setStatus(null)
       setTiles(tiles)
@@ -94,7 +105,7 @@ const Initialize = ({ gameCode, setGameCode, setTiles, onMove }) => {
     setStatus(STATUS.JOIN)
   }
 
-  const initialJoinToGame = async (gameCodeInput) => {
+  const joinToGame = async (gameCodeInput) => {
     const response = await Http
       .get(`/game/join/${gameCodeInput}`)
     if (response.status === 404) {
@@ -102,10 +113,9 @@ const Initialize = ({ gameCode, setGameCode, setTiles, onMove }) => {
     }
     const { userId, gameCode } = await response.json()
     localStorage.setItem('userId', userId)
+    localStorage.setItem('gameCode', gameCode)
     Socket.reconnect()
-    setGameCode(gameCode)
     Socket.emit('game:join', { gameCode })
-    Socket.setRoom(gameCode)
     Socket.on('game:start', (tiles) => {
       setTiles(tiles)
     })
@@ -115,32 +125,30 @@ const Initialize = ({ gameCode, setGameCode, setTiles, onMove }) => {
     setStatus(null)
   }
 
-  const reJoinToGame = async (gameCodeInput) => {
-    const response = await Http.get(`/game/rejoin/${gameCodeInput}`)
-    const { gameCode } = await response.json()
-    setGameCode(gameCode)
-    Socket.emit('game:join', { gameCode })
-    Socket.setRoom(gameCode)
-    Socket.on('game:start', (tiles) => {
-      setTiles(tiles)
-    })
-    Socket.on('game:move', (move) => {
-      onMove(move)
-    })
-    setStatus(null)
+  const reJoinToGame = async (gameCode) => {
+    try {
+      const response = await Http.get(`/game/rejoin/${gameCode}`)
+      if (response.status === 404) throw new Error()
+      if (response.status === 403) throw new Error()
+      Socket.emit('game:rejoin', { gameCode })
+      Socket.on('game:start', (tiles) => {
+        setTiles(tiles)
+      })
+      Socket.on('game:move', (move) => {
+        onMove(move)
+      })
+    } catch (error) {
+      setStatus(STATUS.INIT)
+      localStorage.clear()
+    }
   }
 
   const confirmJoin = async (event) => {
     event.preventDefault()
     const formData = new FormData(event.target)
     const gameCode = formData.get('code')
-    const userId = localStorage.getItem('userId')
 
-    if (userId) {
-      return reJoinToGame(gameCode)
-    }
-
-    return initialJoinToGame(gameCode)
+    return joinToGame(gameCode)
   }
 
   if (status === STATUS.INIT) {
@@ -152,7 +160,7 @@ const Initialize = ({ gameCode, setGameCode, setTiles, onMove }) => {
   }
 
   if (status === STATUS.CREATE) {
-    return <Waiting gameCode={gameCode}/>
+    return <Waiting gameCode={localStorage.gameCode}/>
   }
 
   return null

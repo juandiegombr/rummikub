@@ -3,52 +3,97 @@ const DB = require('../../db')
 
 function initializeSocketService(io) {
   const Socket = {
-    getById: (io, id) => io.sockets.sockets.get(id)
+    getById: (io, id) => io.sockets.sockets.get(id),
+    getId: (socket) => socket.handshake.auth.token,
+    startGame: (socket, gameCode) => {
+      const userId = socket.handshake.auth.token
+      const playerTiles = DB.getPlayerTiles(gameCode, userId)
+      socket.emit('game:start', playerTiles)
+    },
+    sendGrid: (socket, gameCode) => {
+      const grid = DB.getGrid(gameCode)
+      socket.emit('game:move', grid)
+    },
+    reJoinGame: (socket, gameCode) => {
+      const userId = socket.handshake.auth.token
+      const playerTiles = DB.getPlayerTiles(gameCode, userId)
+      const grid = DB.getGrid(gameCode)
+      socket.emit('game:start', playerTiles)
+      socket.emit('game:move', grid)
+    },
+    move: (socket, gameCode, grid) => {
+      const room = Room.getRoom(gameCode)
+      socket.to(room).emit('game:move', grid)
+    },
   }
 
   const Room = {
-    getSockets: async (io, room) => {
-      const ids = await io.in(room).allSockets()
+    getSockets: async (io, roomName) => {
+      const ids = await io.in(roomName).allSockets()
       return [...ids].map((id) => {
         return Socket.getById(io, id)
       })
+    },
+    getPlayers: async (io, gameCode) => {
+      const roomName = `room:${gameCode}`
+      const ids = await io.in(roomName).allSockets()
+      return [...ids].map((id) => {
+        return Socket.getById(io, id)
+      })
+    },
+    count: async (io, room) => {
+      const ids = await io.in(room).allSockets()
+      return ids.size
+    },
+    getGameCode: (room) => {
+      return room.split(':')[1]
+    },
+    getRoom: (gameCode) => {
+      return `room:${gameCode}`
     }
+  }
+
+  async function reJoinRoom(gameCode, socket) {
+    const roomName = `room:${gameCode}`
+    socket.join(roomName)
+    Logger.send(`Websocket: User rejoined to the game ${gameCode}`)
   }
 
   async function joinRoom(gameCode, socket) {
     const roomName = `room:${gameCode}`
     socket.join(roomName)
-    const socketsInRoom = await Room.getSockets(io, roomName)
-    Logger.send(`Websocket: ${socketsInRoom.length} user joined to the game ${gameCode}`)
-    return socketsInRoom
-  }
-
-  async function afterUserJoined(gameCode, socket) {
-    const socketsInRoom = await joinRoom(gameCode, socket)
-
-    if (socketsInRoom.length === 2) {
-      socketsInRoom.forEach((playerSocket) => {
-        const userId = playerSocket.handshake.auth.token
-        const gameData = DB.getGames()[gameCode]
-        playerSocket.emit('game:start', gameData.players[userId])
-      })
-    }
+    const playersInRoom = await Room.count(io, roomName)
+    Logger.send(`Websocket: ${playersInRoom} user joined to the game ${gameCode}`)
   }
 
   io.on('connection', (socket) => {
     Logger.send('Websocket: User connected')
 
     socket.on('game:join', async ({ data: { gameCode } }) => {
-      await afterUserJoined(gameCode, socket)
+      await joinRoom(gameCode, socket)
+      const players = await Room.getPlayers(io, gameCode)
+
+      if (players.length === 2) {
+        players.forEach((player) => {
+          Socket.startGame(player, gameCode)
+        })
+      }
+    })
+
+    socket.on('game:rejoin', async ({ data: { gameCode } }) => {
+      await reJoinRoom(gameCode, socket)
+      const player = socket
+      Socket.reJoinGame(player, gameCode)
     })
 
     socket.on('game:move', async ({ room, data: move }) => {
-      const code = room.split(':')[1]
-      const game = DB.getGames()[code]
-      game.grid = {...game.grid, [move.tile.id]: move}
-      const socketsInRoom = await Room.getSockets(io, room)
-      socketsInRoom.forEach(socket => {
-        socket.to(room).emit('game:move', game.grid)
+      const gameCode = Room.getGameCode(room)
+      const userId = Socket.getId(socket)
+      const grid = DB.move(gameCode, userId, move)
+
+      const players = await Room.getPlayers(io, gameCode)
+      players.forEach(player => {
+        Socket.move(player, gameCode, grid)
       })
     })
 
