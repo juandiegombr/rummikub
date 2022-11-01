@@ -3,12 +3,20 @@ const DB = require('../../db')
 
 function initializeSocketService(io) {
   const Socket = {
-    getById: (io, id) => io.sockets.sockets.get(id),
+    getById: (io, socketId) => {
+      return io.sockets.sockets.get(socketId)
+    },
     getId: (socket) => socket.handshake.auth.token,
     startGame: (socket, gameCode) => {
       const userId = socket.handshake.auth.token
       const playerTiles = DB.getPlayerTiles(gameCode, userId)
       socket.emit('game:start', playerTiles)
+    },
+    startTurn: (gameCode) => {
+      const game = DB.getGameByCode(gameCode)
+      const firstPlayer = DB.getUser(game.turn)
+      const firstPlayerSocket = io.sockets.sockets.get(firstPlayer.socketId)
+      firstPlayerSocket.emit('game:turn:on')
     },
     sendGrid: (socket, gameCode) => {
       const grid = DB.getGrid(gameCode)
@@ -21,9 +29,9 @@ function initializeSocketService(io) {
       socket.emit('game:start', playerTiles)
       socket.emit('game:move', grid)
     },
-    move: (socket, gameCode, grid) => {
-      const room = Room.getRoom(gameCode)
-      socket.to(room).emit('game:move', grid)
+    move: (socket, gameCode) => {
+      const grid = DB.getGrid(gameCode)
+      socket.emit('game:move', grid)
     },
   }
 
@@ -62,6 +70,8 @@ function initializeSocketService(io) {
   async function joinRoom(gameCode, socket) {
     const roomName = `room:${gameCode}`
     socket.join(roomName)
+    const userId = Socket.getId(socket)
+    DB.linkUserSocket(userId, socket.id)
     const playersInRoom = await Room.count(io, roomName)
     Logger.send(`Websocket: ${playersInRoom} user joined to the game ${gameCode}`)
   }
@@ -77,6 +87,7 @@ function initializeSocketService(io) {
         players.forEach((player) => {
           Socket.startGame(player, gameCode)
         })
+        Socket.startTurn(gameCode)
       }
     })
 
@@ -89,12 +100,19 @@ function initializeSocketService(io) {
     socket.on('game:move', async ({ room, data: move }) => {
       const gameCode = Room.getGameCode(room)
       DB.move(gameCode, move)
-      const grid = DB.getGrid(gameCode)
 
       const players = await Room.getPlayers(io, gameCode)
       players.forEach(player => {
-        Socket.move(player, gameCode, grid)
+        Socket.sendGrid(player, gameCode)
       })
+    })
+
+    socket.on('game:turn:off', async ({ room }) => {
+      const gameCode = Room.getGameCode(room)
+      const nextPlayer = DB.nextTurn(gameCode)
+
+      const nextPlayerSocket = Socket.getById(io, nextPlayer.socketId)
+      nextPlayerSocket.emit('game:turn:on')
     })
 
     socket.on('disconnect', () => {

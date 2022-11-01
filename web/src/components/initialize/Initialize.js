@@ -99,6 +99,9 @@ const Initialize = ({ setTiles, onMove }) => {
     Socket.on('game:move', (move) => {
       onMove(move)
     })
+    Socket.on('game:turn:on', () => {
+      /* eslint-disable */ console.log('Turn', )
+    })
   }
 
   const joinGame = async () => {
@@ -122,6 +125,9 @@ const Initialize = ({ setTiles, onMove }) => {
     Socket.on('game:move', (move) => {
       onMove(move)
     })
+    Socket.on('game:turn:on', () => {
+      /* eslint-disable */ console.log('Turn', )
+    })
     setStatus(null)
   }
 
@@ -136,6 +142,9 @@ const Initialize = ({ setTiles, onMove }) => {
       })
       Socket.on('game:move', (move) => {
         onMove(move)
+      })
+      Socket.on('game:turn:on', () => {
+        /* eslint-disable */ console.log('Turn', )
       })
     } catch (error) {
       setStatus(STATUS.INIT)

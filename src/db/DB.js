@@ -29,7 +29,8 @@ const User = {
   create: () => {
     const user = {
       id: v4(),
-      name: null
+      name: null,
+      socketId: null,
     }
     USERS[user.id] = user
     return user
@@ -70,6 +71,14 @@ function createGame(user) {
   return game
 }
 
+function linkUserSocket(userId, socketId) {
+  USERS[userId].socketId = socketId
+}
+
+function getUser(userId) {
+  return USERS[userId]
+}
+
 function joinGame(game, user) {
   game.users.push(user.id)
   assignInitialTiles(game, user)
@@ -88,7 +97,6 @@ function getPlayerTiles(gameCode, userId) {
   const game = getGameByCode(gameCode)
   const userTiles = Object.values(TILES).filter((tile) => tile.gameId === game.id && tile.userId === userId)
   return userTiles
-  // return getGame(gameCode).players[userId]
 }
 
 function getGrid(gameCode) {
@@ -110,12 +118,29 @@ function move(gameCode, move) {
   tile.userId = null
 }
 
+function nextTurn(gameCode) {
+  const game = getGameByCode(gameCode)
+  const currentUserId = game.turn
+  const currentUserIdPosition = game.users.findIndex((userId) => userId === currentUserId)
+  const isLast = game.users.length === currentUserIdPosition + 1
+  if (isLast) {
+    const nextUserIdPosition = 0
+    const nextUserId = game.users[nextUserIdPosition]
+    game.turn = nextUserId
+    return USERS[nextUserId]
+  }
+  const nextUserIdPosition = currentUserIdPosition + 1
+  const nextUserId = game.users[nextUserIdPosition]
+  game.turn = nextUserId
+  return USERS[nextUserId]
+}
+
 function debug() {
-  return {
+  console.log({
     GAMES,
     USERS,
     TILES,
-  }
+  })
 }
 
 function reset() {
@@ -127,4 +152,20 @@ function reset() {
   TILES = {}
 }
 
-module.exports = { User, Game, Tile, debug, reset, createGame, joinGame, getGame, getGameByCode, getGrid, getPlayerTiles, move }
+module.exports = {
+  User,
+  Game,
+  Tile,
+  createGame,
+  joinGame,
+  linkUserSocket,
+  getUser,
+  getGame,
+  getGameByCode,
+  getGrid,
+  getPlayerTiles,
+  move,
+  nextTurn,
+  debug,
+  reset,
+}

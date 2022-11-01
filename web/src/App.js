@@ -8,7 +8,6 @@ import { Buttons } from "components/buttons"
 import { Socket } from 'services/socket'
 
 import "./App.css"
-import { Http } from "services/http"
 
 
 export default function App() {
@@ -18,17 +17,14 @@ export default function App() {
 
   useEffect(() => {
     Socket.init()
-    Http.get('/ramon/').then((res) => res.json()).then(console.log)
   }, [])
 
   const dropTile = ({ tile }) => {
-    /* eslint-disable */ console.log('tile', tile)
     Socket.emit('game:move', tile)
   }
 
   const performTileMove = (spot) => {
     if (!selectedTile) return
-    /* eslint-disable */ console.log('selectedTile', selectedTile)
     const move = {
       tile: selectedTile,
       spot,
