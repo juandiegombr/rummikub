@@ -16,7 +16,7 @@ jest.mock('uuid', () => {
 })
 
 afterEach(() => {
-  DB.getGames = jest.fn().mockImplementation(() => ({}))
+  DB.reset()
 })
 
 it('creates a new game', (done) => {
@@ -25,38 +25,30 @@ it('creates a new game', (done) => {
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
       expect(res.body).toEqual({ userId: 'uuid', gameCode: 'ABCD' })
-      expect(DB.getGames()).toEqual({ 'ABCD': expect.any(Object) })
+      expect(DB.getGameByCode('ABCD')).toEqual(
+        { code: 'ABCD', id: 'uuid', users: ['uuid'], turn: 'uuid' }
+      )
     })
     .end(done)
 })
 
 it('joins a created game', (done) => {
-  DB.getGames = jest.fn().mockImplementationOnce(() => {
-    return {
-      'ABCD': {
-        code: 'ABCD',
-        tiles: [
-          { id: 'id_blue_13', value: 13, color: 'blue' },
-          { id: 'id_red_3', value: 3, color: 'red' },
-        ],
-        grid: {},
-        players: {
-          1: [],
-          2: [],
-        },
-      }
-    }
-  })
+  const user = DB.User.create()
+  const game = DB.Game.create(user)
+
   request(app)
-    .get('/api/game/join/ABCD')
+    .get(`/api/game/join/${game.code}`)
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
-      expect(res.body).toEqual({ userId: 'uuid', gameCode: 'ABCD' })
+      expect(res.body).toEqual({ userId: user.id, gameCode: game.code })
     })
     .end(done)
 })
 
 it('tries to joins a not found game', (done) => {
+  const user = DB.User.create()
+  DB.Game.create(user)
+
   request(app)
     .get('/api/game/join/BBBB')
     .expect(404)
@@ -64,24 +56,12 @@ it('tries to joins a not found game', (done) => {
 })
 
 it('re-joins a created game', (done) => {
-  DB.getGames = jest.fn().mockImplementationOnce(() => {
-    return {
-      'ABCD': {
-        code: 'ABCD',
-        tiles: [
-          { id: 'id_blue_13', value: 13, color: 'blue' },
-          { id: 'id_red_3', value: 3, color: 'red' },
-        ],
-        grid: {},
-        players: {
-          1: [],
-          2: [],
-        },
-      }
-    }
-  })
+  const user = DB.User.create()
+  const game = DB.Game.create(user)
+
   request(app)
-    .get('/api/game/join/ABCD')
+    .get(`/api/game/rejoin/${game.code}`)
+    .set('x-user-id', user.id)
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
       expect(res.body).toEqual({ userId: 'uuid', gameCode: 'ABCD' })
@@ -90,22 +70,8 @@ it('re-joins a created game', (done) => {
 })
 
 it('tries to re-joins to a not allowed game', (done) => {
-  DB.getGames = jest.fn().mockImplementation(() => {
-    return {
-      'ABCD': {
-        code: 'ABCD',
-        tiles: [
-          { id: 'id_blue_13', value: 13, color: 'blue' },
-          { id: 'id_red_3', value: 3, color: 'red' },
-        ],
-        grid: {},
-        players: {
-          1: [],
-          2: [],
-        },
-      }
-    }
-  })
+  const user = DB.User.create()
+  DB.Game.create(user)
 
   request(app)
     .get('/api/game/rejoin/ABCD')
@@ -114,7 +80,7 @@ it('tries to re-joins to a not allowed game', (done) => {
     .end(done)
 })
 
-it('re-joins a not found game', (done) => {
+it('tries to re-joins to a not found game', (done) => {
   request(app)
     .get('/api/game/rejoin/BBBB')
     .expect(404)

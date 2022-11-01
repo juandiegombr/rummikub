@@ -8,6 +8,7 @@ import { Buttons } from "components/buttons"
 import { Socket } from 'services/socket'
 
 import "./App.css"
+import { Http } from "services/http"
 
 
 export default function App() {
@@ -17,14 +18,17 @@ export default function App() {
 
   useEffect(() => {
     Socket.init()
+    Http.get('/ramon/').then((res) => res.json()).then(console.log)
   }, [])
 
   const dropTile = ({ tile }) => {
+    /* eslint-disable */ console.log('tile', tile)
     Socket.emit('game:move', tile)
   }
 
   const performTileMove = (spot) => {
     if (!selectedTile) return
+    /* eslint-disable */ console.log('selectedTile', selectedTile)
     const move = {
       tile: selectedTile,
       spot,
@@ -63,12 +67,12 @@ export default function App() {
         }
       </div>
       <div className="played-zone">
-        {gridTiles.map(({ tile, spot }, key) => {
+        {gridTiles.map((tile, key) => {
           return (
             <Tile
               key={key + '-' + tile.value}
               tile={tile}
-              spot={spot}
+              spot={{ x: tile.spotX, y: tile.spotY }}
               selected={selectedTile?.id === tile.id}
               onDrag={() => null}
               onMove={() => null}

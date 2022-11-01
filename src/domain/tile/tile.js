@@ -3,7 +3,7 @@ const TILES_FOR_BRAND = 13
 
 const generateTile = (value, color) => {
   return {
-    id: `id_${color}_${value}`,
+    code: `id_${color}_${value}`,
     value,
     color,
   }

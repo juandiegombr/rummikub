@@ -88,8 +88,8 @@ function initializeSocketService(io) {
 
     socket.on('game:move', async ({ room, data: move }) => {
       const gameCode = Room.getGameCode(room)
-      const userId = Socket.getId(socket)
-      const grid = DB.move(gameCode, userId, move)
+      DB.move(gameCode, move)
+      const grid = DB.getGrid(gameCode)
 
       const players = await Room.getPlayers(io, gameCode)
       players.forEach(player => {

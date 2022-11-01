@@ -3,12 +3,9 @@ const express = require('express')
 const http = require('http')
 const { Server } = require("socket.io")
 const path = require('path')
-const { v4 } = require('uuid')
 
-const TileService = require('./domain/tile')
 const DB = require('./db')
 const { initializeSocketService } = require('./services/socket')
-const { generateGameCode } = require('./helpers')
 
 const app = express()
 app.use(cors())
@@ -31,28 +28,18 @@ app.get('/api/users/', (req, res) => {
 })
 
 app.get('/api/game/create/', (req, res) => {
-  const userId = v4()
-  const initialTiles = TileService.shuffle(TileService.generateTiles())
-  const playerTiles = initialTiles.splice(0, 14)
-  const data = {
-    code: generateGameCode(),
-    tiles: TileService.shuffle(TileService.generateTiles()),
-    grid: {},
-    players: {
-      [userId]: playerTiles
-    }
-  }
-  DB.getGames()[data.code] = data
-  res.json({ userId, gameCode: data.code })
+  const user = DB.User.create()
+  const game = DB.createGame(user)
+  res.json({ userId: user.id, gameCode: game.code })
 })
 
 app.get('/api/game/join/:gameCode', (req, res) => {
   const gameCode = req.params.gameCode
-  const game = DB.getGames()[gameCode]
+  const user = DB.User.create()
+  const game = DB.getGameByCode(gameCode)
   if (game) {
-    const userId = v4()
-    game.players[userId] = game.tiles.splice(0, 14)
-    res.json({ userId, gameCode })
+    DB.joinGame(game, user)
+    res.json({ userId: user.id, gameCode: game.code })
     return
   }
   res.sendStatus(404)
@@ -61,12 +48,12 @@ app.get('/api/game/join/:gameCode', (req, res) => {
 app.get('/api/game/rejoin/:gameCode', (req, res) => {
   const gameCode = req.params.gameCode
   const userId = req.get('x-user-id')
-  const game = DB.getGames()[gameCode]
+  const game = DB.getGameByCode(gameCode)
   if (!game) {
     res.sendStatus(404)
     return
   }
-  if (!game.players[userId]) {
+  if (!game.users.includes(userId)) {
     res.sendStatus(403)
     return
   }
