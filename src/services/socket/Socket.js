@@ -1,5 +1,6 @@
 const { Logger } = require('../../services/logger')
 const DB = require('../../db')
+const Brain = require('../brain')
 
 function initializeSocketService(io) {
   const Socket = {
@@ -26,10 +27,15 @@ function initializeSocketService(io) {
     reJoinGame: (socket, gameCode) => {
       const userId = socket.handshake.auth.token
       const playerTiles = DB.getPlayerTiles(gameCode, userId)
+      const game = DB.Game.getByCode(gameCode)
       const grid = DB.getGrid(gameCode)
       const users = DB.User.getByGameCode(gameCode)
       socket.emit('game:start', { tiles: playerTiles, users })
       socket.emit('game:move', grid)
+      const hasTurn = game.turn === userId
+      if (hasTurn) {
+        socket.emit('game:turn')
+      }
     },
     move: (socket, gameCode) => {
       const grid = DB.getGrid(gameCode)
@@ -113,6 +119,12 @@ function initializeSocketService(io) {
       const gameCode = Room.getGameCode(room)
       const nextPlayer = DB.nextTurn(gameCode)
 
+      if (!Brain.validate(DB.getGrid(gameCode))) {
+        socket.emit('game:play:ko')
+        return
+      }
+
+      socket.emit('game:play:ok')
       const nextPlayerSocket = Socket.getById(io, nextPlayer.socketId)
       nextPlayerSocket.emit('game:turn')
     })
@@ -125,7 +137,8 @@ function initializeSocketService(io) {
       const unassignedTile = DB.Tile.getUnassigned(game.id)
       const tile = DB.Tile.update(unassignedTile.id, { userId })
 
-      socket.emit('game:pass', tile)
+      socket.emit('game:pass:ok', tile)
+      /* eslint-disable */ console.log('nextPlayer', nextPlayer)
       const nextPlayerSocket = Socket.getById(io, nextPlayer.socketId)
       nextPlayerSocket.emit('game:turn')
     })

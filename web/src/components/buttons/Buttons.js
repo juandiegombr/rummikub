@@ -7,12 +7,10 @@ import './Buttons.css'
 const Buttons = ({ setTurn }) => {
   const play = () => {
     Socket.emit('game:play')
-    setTurn(false)
   }
 
   const pass = () => {
     Socket.emit('game:pass')
-    setTurn(false)
   }
 
   return (

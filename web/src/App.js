@@ -14,7 +14,7 @@ export default function App() {
   const [users, setUsers] = useState([])
   const [turn, setTurn] = useState(false)
   const [playingTiles, setTiles] = useState([])
-  const [grid, setGrid] = useState({})
+  const [grid, setGrid] = useState([])
   const [selectedTile, setSelectedTile] = useState(null)
 
   useEffect(() => {
@@ -40,8 +40,6 @@ export default function App() {
   const handleMove = (grid) => {
     setGrid(grid)
   }
-
-  const gridTiles = Object.values(grid)
 
   return (
     <div className="app">
@@ -76,7 +74,7 @@ export default function App() {
         }
       </div>
       <div className="played-zone">
-        {gridTiles.map((tile, key) => {
+        {grid.map((tile, key) => {
           return (
             <Tile
               key={key + '-' + tile.value}

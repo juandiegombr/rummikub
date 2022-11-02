@@ -1,5 +1,6 @@
 const { initializeSocketService } = require('..')
 const DB = require('../../../db')
+const Brain = require('../../brain')
 const SocketServerMock = require('./SocketServerMock')
 
 jest.mock('../../../services/logger')
@@ -42,7 +43,8 @@ it('makes a move', async function(done) {
   done()
 })
 
-it('confirms the play', async function(done) {
+it('confirms an invalid play', async function(done) {
+  Brain.validate = jest.fn(() => false)
   const firstUser = DB.User.create()
   const secondUser = DB.User.create()
   const game = DB.createGame(firstUser)
@@ -57,7 +59,27 @@ it('confirms the play', async function(done) {
 
   await firstClient.emit('game:play', { room: `room:${game.code}` })
 
-  expect(secondServer.emit).toHaveBeenCalledWith('game:turn')
+  expect(firstServer.emit).toHaveBeenCalledWith('game:play:ko')
+  done()
+})
+
+it('confirms a valid play', async function(done) {
+  Brain.validate = jest.fn(() => true)
+  const firstUser = DB.User.create()
+  const secondUser = DB.User.create()
+  const game = DB.createGame(firstUser)
+  DB.joinGame(game, secondUser)
+  const io = SocketServerMock()
+  initializeSocketService(io)
+
+  const [ firstClient, firstServer ] = io.client('1', { userId: firstUser.id })
+  await firstClient.emit('game:join', { data: { gameCode: game.code } })
+  const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
+  await secondClient.emit('game:join', { data: { gameCode: game.code } })
+
+  await firstClient.emit('game:play', { room: `room:${game.code}` })
+
+  expect(firstServer.emit).toHaveBeenCalledWith('game:turn')
   done()
 })
 
@@ -76,7 +98,7 @@ it('pass the turn', async function(done) {
 
   await firstClient.emit('game:pass', { room: `room:${game.code}` })
 
-  expect(firstServer.emit).toHaveBeenCalledWith('game:pass', expect.any(Object))
+  expect(firstServer.emit).toHaveBeenCalledWith('game:pass:ok', expect.any(Object))
   expect(secondServer.emit).toHaveBeenCalledWith('game:turn')
   done()
 })

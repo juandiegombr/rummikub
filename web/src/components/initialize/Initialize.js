@@ -128,13 +128,23 @@ const Initialize = ({ setTiles, setUsers, setTurn, onMove }) => {
       setTiles(tiles)
       setUsers(users)
     })
-    Socket.on('game:move', (move) => {
-      onMove(move)
+    Socket.on('game:move', (grid) => {
+      onMove(grid)
     })
-    Socket.on('game:pass', (tile) => {
+    Socket.on('game:play:ok', () => {
+      setTurn(false)
+    })
+    Socket.on('game:play:ko', () => {
+      setTurn(true)
+    })
+    Socket.on('game:pass:ok', (tile) => {
       setTiles((tiles) => {
         return [...tiles, tile]
       })
+      setTurn(false)
+    })
+    Socket.on('game:pass:ko', () => {
+      setTurn(true)
     })
     Socket.on('game:turn', () => {
       setTurn(true)
