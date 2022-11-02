@@ -70,20 +70,38 @@ const STATUS = {
   JOIN: 'join',
 }
 
-const Initialize = ({ setTiles, onMove }) => {
+const Initialize = ({ setTiles, setTurn, onMove }) => {
   const [status, setStatus] = useState(null)
 
   useEffect(() => {
     const userId = localStorage.userId
     const gameCode = localStorage.gameCode
+
     if (userId && gameCode) {
       return reJoinToGame(gameCode)
     }
 
     setStatus(STATUS.INIT)
-
     localStorage.clear()
   }, [])
+
+  const listenToGameEvents = () => {
+    Socket.on('game:start', (tiles) => {
+      setStatus(null)
+      setTiles(tiles)
+    })
+    Socket.on('game:move', (move) => {
+      onMove(move)
+    })
+    Socket.on('game:pass', (tile) => {
+      setTiles((tiles) => {
+        return [...tiles, tile]
+      })
+    })
+    Socket.on('game:turn', () => {
+      setTurn(true)
+    })
+  }
 
   const createGame = async () => {
     const { userId, gameCode } = await Http.get('/game/create').then(response => response.json())
@@ -92,16 +110,7 @@ const Initialize = ({ setTiles, onMove }) => {
     setStatus(STATUS.CREATE)
     Socket.reconnect()
     Socket.emit('game:join', { gameCode })
-    Socket.on('game:start', (tiles) => {
-      setStatus(null)
-      setTiles(tiles)
-    })
-    Socket.on('game:move', (move) => {
-      onMove(move)
-    })
-    Socket.on('game:turn:on', () => {
-      /* eslint-disable */ console.log('Turn', )
-    })
+    listenToGameEvents()
   }
 
   const joinGame = async () => {
@@ -119,15 +128,7 @@ const Initialize = ({ setTiles, onMove }) => {
     localStorage.setItem('gameCode', gameCode)
     Socket.reconnect()
     Socket.emit('game:join', { gameCode })
-    Socket.on('game:start', (tiles) => {
-      setTiles(tiles)
-    })
-    Socket.on('game:move', (move) => {
-      onMove(move)
-    })
-    Socket.on('game:turn:on', () => {
-      /* eslint-disable */ console.log('Turn', )
-    })
+    listenToGameEvents()
     setStatus(null)
   }
 
@@ -137,15 +138,7 @@ const Initialize = ({ setTiles, onMove }) => {
       if (response.status === 404) throw new Error()
       if (response.status === 403) throw new Error()
       Socket.emit('game:rejoin', { gameCode })
-      Socket.on('game:start', (tiles) => {
-        setTiles(tiles)
-      })
-      Socket.on('game:move', (move) => {
-        onMove(move)
-      })
-      Socket.on('game:turn:on', () => {
-        /* eslint-disable */ console.log('Turn', )
-      })
+      listenToGameEvents()
     } catch (error) {
       setStatus(STATUS.INIT)
       localStorage.clear()

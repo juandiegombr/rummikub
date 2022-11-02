@@ -36,7 +36,7 @@ app.get('/api/game/create/', (req, res) => {
 app.get('/api/game/join/:gameCode', (req, res) => {
   const gameCode = req.params.gameCode
   const user = DB.User.create()
-  const game = DB.getGameByCode(gameCode)
+  const game = DB.Game.getByCode(gameCode)
   if (game) {
     DB.joinGame(game, user)
     res.json({ userId: user.id, gameCode: game.code })
@@ -48,7 +48,7 @@ app.get('/api/game/join/:gameCode', (req, res) => {
 app.get('/api/game/rejoin/:gameCode', (req, res) => {
   const gameCode = req.params.gameCode
   const userId = req.get('x-user-id')
-  const game = DB.getGameByCode(gameCode)
+  const game = DB.Game.getByCode(gameCode)
   if (!game) {
     res.sendStatus(404)
     return

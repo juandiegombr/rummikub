@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 
 import './Tile.css'
 
-const Tile = ({ tile, spot, selected, onDrag, onMove, onDrop, onClick }) => {
+const Tile = ({ tile, spot, selected, onDrag, onMove, onDrop, onClick, disabled }) => {
   const tileRef = useRef()
   const staticActive = useRef(false)
   const originalPosition = useRef({})
@@ -115,7 +115,10 @@ const Tile = ({ tile, spot, selected, onDrag, onMove, onDrop, onClick }) => {
       className={`tile tile--${tile.color} ${selected ? 'tile--selected' : ''}`}
       // onMouseDown={take}
       // onTouchStart={take}
-      onClick={() => onClick(tile)}
+      onClick={() => {
+        if (disabled) return
+        onClick(tile)
+      }}
       style={{ transform: getTransformValue(), zIndex: active ? 99 : 0 }}
     >
       <div className="tile__number">{tile.value}</div>

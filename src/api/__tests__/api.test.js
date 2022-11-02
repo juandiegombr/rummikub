@@ -25,7 +25,7 @@ it('creates a new game', (done) => {
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
       expect(res.body).toEqual({ userId: 'uuid', gameCode: 'ABCD' })
-      expect(DB.getGameByCode('ABCD')).toEqual(
+      expect(DB.Game.getByCode('ABCD')).toEqual(
         { code: 'ABCD', id: 'uuid', users: ['uuid'], turn: 'uuid' }
       )
     })

@@ -22,6 +22,13 @@ const Tile = {
     }
     TILES[tile.id] = tile
     return tile
+  },
+  update: (tileId, payload) => {
+    TILES[tileId] = {...TILES[tileId], ...payload}
+    return TILES[tileId]
+  },
+  getUnassigned: (gameId) => {
+    return Object.values(TILES).find((tile) => !tile.userId && tile.gameId === gameId && !tile.spotX && !tile.spotY)
   }
 }
 
@@ -34,6 +41,13 @@ const User = {
     }
     USERS[user.id] = user
     return user
+  },
+  get: (userId) => {
+    return USERS[userId]
+  },
+  update: (userId, payload) => {
+    USERS[userId] = {...USERS[userId], ...payload}
+    return USERS[userId]
   }
 }
 
@@ -47,6 +61,12 @@ const Game = {
     }
     GAMES[game.id] = game
     return game
+  },
+  get: (gameId) => {
+    GAMES[gameId]
+  },
+  getByCode: (gameCode) => {
+    return Object.values(GAMES).find((game) => game.code === gameCode)
   }
 }
 
@@ -71,55 +91,41 @@ function createGame(user) {
   return game
 }
 
-function linkUserSocket(userId, socketId) {
-  USERS[userId].socketId = socketId
-}
-
-function getUser(userId) {
-  return USERS[userId]
-}
-
 function joinGame(game, user) {
   game.users.push(user.id)
   assignInitialTiles(game, user)
   return game
 }
 
-function getGame(gameId) {
-  return GAMES[gameId]
-}
-
-function getGameByCode(gameCode) {
-  return Object.values(GAMES).find((game) => game.code === gameCode)
-}
-
 function getPlayerTiles(gameCode, userId) {
-  const game = getGameByCode(gameCode)
+  const game = Game.getByCode(gameCode)
   const userTiles = Object.values(TILES).filter((tile) => tile.gameId === game.id && tile.userId === userId)
   return userTiles
 }
 
 function getGrid(gameCode) {
-  const game = getGameByCode(gameCode)
+  const game = Game.getByCode(gameCode)
   const tilesInGrid = Object.values(TILES).filter((tile) => tile.gameId === game.id && Number.isInteger(tile.spotX) && Number.isInteger(tile.spotY))
   return tilesInGrid
 }
 
 function move(gameCode, move) {
-  const game = getGameByCode(gameCode)
+  const game = Game.getByCode(gameCode)
   const tileId = move.tile.id
   const tile = TILES[tileId]
   if (tile.gameId !== game.id) {
     Logger.send('Tile is not from game:', { tile, gameCode})
     return
   }
-  tile.spotX = move.spot.x
-  tile.spotY = move.spot.y
-  tile.userId = null
+  Tile.update(tileId, {
+    spotX: move.spot.x,
+    spotY: move.spot.y,
+    userId: null,
+  })
 }
 
 function nextTurn(gameCode) {
-  const game = getGameByCode(gameCode)
+  const game = Game.getByCode(gameCode)
   const currentUserId = game.turn
   const currentUserIdPosition = game.users.findIndex((userId) => userId === currentUserId)
   const isLast = game.users.length === currentUserIdPosition + 1
@@ -158,10 +164,6 @@ module.exports = {
   Tile,
   createGame,
   joinGame,
-  linkUserSocket,
-  getUser,
-  getGame,
-  getGameByCode,
   getGrid,
   getPlayerTiles,
   move,

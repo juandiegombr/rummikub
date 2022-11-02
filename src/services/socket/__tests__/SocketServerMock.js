@@ -2,7 +2,6 @@
 const SocketServerMock = () => {
   const SOCKETS = {}
   const GLOBAL_EVENTS = {}
-  const EVENTS = {}
 
   const on = (event, callback) => {
     GLOBAL_EVENTS[event] = callback
@@ -29,6 +28,7 @@ const SocketServerMock = () => {
       }
     },
     client: (socketId, { userId }) => {
+      const EVENTS = {}
       EVENTS['game:start'] = jest.fn()
       const socketClient =  {
         id: socketId,

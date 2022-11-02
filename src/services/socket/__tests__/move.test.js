@@ -17,7 +17,7 @@ it('receives the turn when the game starts', async function(done) {
   const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
   await secondClient.emit('game:join', { data: { gameCode: game.code } })
 
-  expect(firstServer.emit).toHaveBeenCalledWith('game:turn:on')
+  expect(firstServer.emit).toHaveBeenCalledWith('game:turn')
   done()
 })
 
@@ -42,7 +42,7 @@ it('makes a move', async function(done) {
   done()
 })
 
-it('confirms the turn', async function(done) {
+it('confirms the play', async function(done) {
   const firstUser = DB.User.create()
   const secondUser = DB.User.create()
   const game = DB.createGame(firstUser)
@@ -55,13 +55,33 @@ it('confirms the turn', async function(done) {
   const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
   await secondClient.emit('game:join', { data: { gameCode: game.code } })
 
-  await firstClient.emit('game:turn:off', { room: `room:${game.code}` })
+  await firstClient.emit('game:play', { room: `room:${game.code}` })
 
-  expect(secondServer.emit).toHaveBeenCalledWith('game:turn:on')
+  expect(secondServer.emit).toHaveBeenCalledWith('game:turn')
   done()
 })
 
-it('confirms the turn the last user', async function(done) {
+fit('pass the turn', async function(done) {
+  const firstUser = DB.User.create()
+  const secondUser = DB.User.create()
+  const game = DB.createGame(firstUser)
+  DB.joinGame(game, secondUser)
+  const io = SocketServerMock()
+  initializeSocketService(io)
+
+  const [ firstClient, firstServer ] = io.client('1', { userId: firstUser.id })
+  await firstClient.emit('game:join', { data: { gameCode: game.code } })
+  const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
+  await secondClient.emit('game:join', { data: { gameCode: game.code } })
+
+  await firstClient.emit('game:pass', { room: `room:${game.code}` })
+
+  expect(firstServer.emit).toHaveBeenCalledWith('game:pass', expect.any(Object))
+  expect(secondServer.emit).toHaveBeenCalledWith('game:turn')
+  done()
+})
+
+it('returns the turn to the first user when the las user plays', async function(done) {
   const firstUser = DB.User.create()
   const secondUser = DB.User.create()
   const game = DB.createGame(firstUser)
@@ -73,9 +93,9 @@ it('confirms the turn the last user', async function(done) {
   const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
   await secondClient.emit('game:join', { data: { gameCode: game.code } })
 
-  await firstClient.emit('game:turn:off', { room: `room:${game.code}` })
-  await secondClient.emit('game:turn:off', { room: `room:${game.code}` })
+  await firstClient.emit('game:play', { room: `room:${game.code}` })
+  await secondClient.emit('game:play', { room: `room:${game.code}` })
 
-  expect(firstServer.emit).toHaveBeenCalledWith('game:turn:on')
+  expect(firstServer.emit).toHaveBeenCalledWith('game:turn')
   done()
 })

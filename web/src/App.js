@@ -11,6 +11,7 @@ import "./App.css"
 
 
 export default function App() {
+  const [turn, setTurn] = useState(false)
   const [playingTiles, setTiles] = useState([])
   const [grid, setGrid] = useState({})
   const [selectedTile, setSelectedTile] = useState(null)
@@ -43,9 +44,9 @@ export default function App() {
 
   return (
     <div className="app">
-      <Initialize setTiles={setTiles} onMove={handleMove}/>
+      <Initialize setTiles={setTiles} setTurn={setTurn} onMove={handleMove}/>
       <Grid onSelectSpot={performTileMove}/>
-      <Buttons/>
+      {turn && <Buttons setTurn={setTurn}/>}
       <div className="player-zone">
         {playingTiles.map((tile, key) => {
           return (
@@ -58,6 +59,7 @@ export default function App() {
               onMove={() => null}
               onDrop={dropTile}
               onClick={setSelectedTile}
+              disabled={!turn}
             />
           )})
         }
@@ -73,6 +75,7 @@ export default function App() {
               onDrag={() => null}
               onMove={() => null}
               onClick={setSelectedTile}
+              disabled={!turn}
             />
           )})
         }
