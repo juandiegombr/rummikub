@@ -61,7 +61,7 @@ it('confirms the play', async function(done) {
   done()
 })
 
-fit('pass the turn', async function(done) {
+it('pass the turn', async function(done) {
   const firstUser = DB.User.create()
   const secondUser = DB.User.create()
   const game = DB.createGame(firstUser)

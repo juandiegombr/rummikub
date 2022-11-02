@@ -5,6 +5,32 @@ import { Http } from 'services/http'
 
 import './Initialize.css'
 
+const NameStep = ({ confirm }) => {
+  const inputRef = useRef()
+
+  useEffect(() => {
+    inputRef.current.focus()
+  }, [])
+
+  return (
+    createPortal(
+      <div className="initialize-dialog__overlay">
+        <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
+          <h2 id="initialize-title" className="initialize-dialog__title">Join game 🎯</h2>
+          <form className="initialize-dialog__form" onSubmit={confirm}>
+            <div className="ui-input">
+              <label htmlFor="name-field" className="ui-input__label">Name:</label>
+              <input id="name-field" ref={inputRef} className="ui-input__input" type="text" name="name" placeholder="Write your name here"/>
+            </div>
+            <button className="ui-button" type="submit">Confirm</button>
+          </form>
+        </div>
+      </div>,
+      document.getElementById('dialog'),
+    )
+  )
+}
+
 const FirstStep = ({ create, join }) => {
   return (
     createPortal(
@@ -65,6 +91,7 @@ const Join = ({ confirm }) => {
 }
 
 const STATUS = {
+  NAME: 'name',
   INIT: 'init',
   CREATE: 'create',
   JOIN: 'join',
@@ -81,9 +108,19 @@ const Initialize = ({ setTiles, setTurn, onMove }) => {
       return reJoinToGame(gameCode)
     }
 
-    setStatus(STATUS.INIT)
+    setStatus(STATUS.NAME)
     localStorage.clear()
   }, [])
+
+  const createUser = async (event) => {
+    event.preventDefault()
+    const formData = new FormData(event.target)
+    const name = formData.get('name')
+    const user = await Http.get(`/user/${name}`).then(response => response.json())
+    localStorage.setItem('userId', user.id)
+    localStorage.setItem('userName', user.name)
+    setStatus(STATUS.INIT)
+  }
 
   const listenToGameEvents = () => {
     Socket.on('game:start', (tiles) => {
@@ -104,8 +141,7 @@ const Initialize = ({ setTiles, setTurn, onMove }) => {
   }
 
   const createGame = async () => {
-    const { userId, gameCode } = await Http.get('/game/create').then(response => response.json())
-    localStorage.setItem('userId', userId)
+    const { gameCode } = await Http.get('/game/create').then(response => response.json())
     localStorage.setItem('gameCode', gameCode)
     setStatus(STATUS.CREATE)
     Socket.reconnect()
@@ -123,8 +159,7 @@ const Initialize = ({ setTiles, setTurn, onMove }) => {
     if (response.status === 404) {
       return
     }
-    const { userId, gameCode } = await response.json()
-    localStorage.setItem('userId', userId)
+    const { gameCode } = await response.json()
     localStorage.setItem('gameCode', gameCode)
     Socket.reconnect()
     Socket.emit('game:join', { gameCode })
@@ -140,7 +175,7 @@ const Initialize = ({ setTiles, setTurn, onMove }) => {
       Socket.emit('game:rejoin', { gameCode })
       listenToGameEvents()
     } catch (error) {
-      setStatus(STATUS.INIT)
+      setStatus(STATUS.NAME)
       localStorage.clear()
     }
   }
@@ -151,6 +186,10 @@ const Initialize = ({ setTiles, setTurn, onMove }) => {
     const gameCode = formData.get('code')
 
     return joinToGame(gameCode)
+  }
+
+  if (status === STATUS.NAME) {
+    return <NameStep confirm={createUser} />
   }
 
   if (status === STATUS.INIT) {

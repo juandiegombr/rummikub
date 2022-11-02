@@ -33,10 +33,10 @@ const Tile = {
 }
 
 const User = {
-  create: () => {
+  create: (userName) => {
     const user = {
       id: v4(),
-      name: null,
+      name: userName,
       socketId: null,
     }
     USERS[user.id] = user

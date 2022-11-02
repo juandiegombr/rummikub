@@ -16,26 +16,23 @@ const io = new Server(server)
 
 initializeSocketService(io)
 
-app.get('/api/users/', (req, res) => {
-  const data = [
-    {
-      id: 1,
-      name: 'John Doe__',
-      email: 'johndoe@gmail.com',
-    }
-  ]
-  res.json(data)
+app.get('/api/user/:userName', (req, res) => {
+  const userName = req.params.userName
+  const user = DB.User.create(userName)
+  res.json(user)
 })
 
 app.get('/api/game/create/', (req, res) => {
-  const user = DB.User.create()
+  const userId = req.get('x-user-id')
+  const user = DB.User.get(userId)
   const game = DB.createGame(user)
   res.json({ userId: user.id, gameCode: game.code })
 })
 
 app.get('/api/game/join/:gameCode', (req, res) => {
   const gameCode = req.params.gameCode
-  const user = DB.User.create()
+  const userId = req.get('x-user-id')
+  const user = DB.User.get(userId)
   const game = DB.Game.getByCode(gameCode)
   if (game) {
     DB.joinGame(game, user)

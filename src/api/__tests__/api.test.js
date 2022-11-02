@@ -20,8 +20,10 @@ afterEach(() => {
 })
 
 it('creates a new game', (done) => {
+  const user = DB.User.create()
   request(app)
     .get('/api/game/create/')
+    .set('x-user-id', user.id)
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
       expect(res.body).toEqual({ userId: 'uuid', gameCode: 'ABCD' })
@@ -38,6 +40,7 @@ it('joins a created game', (done) => {
 
   request(app)
     .get(`/api/game/join/${game.code}`)
+    .set('x-user-id', user.id)
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
       expect(res.body).toEqual({ userId: user.id, gameCode: game.code })

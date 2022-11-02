@@ -17,16 +17,17 @@ it('disconnects from the socket server', async function(done) {
 })
 
 it('joins to a game', async function(done) {
-  const firstUser = DB.User.create()
-  const game = DB.createGame(firstUser)
+  const user = DB.User.create('Ramon')
+  const game = DB.createGame(user)
   const io = SocketServerMock()
   initializeSocketService(io)
 
-  const [ client, server ] = io.client('1', { userId: firstUser.id })
+  const [ client, server ] = io.client('1', { userId: user.id })
   await client.emit('game:join', { data: { gameCode: game.code } })
 
+  const updatedUser = DB.User.get(user.id)
+  expect(updatedUser.socketId).toBe('1')
   expect(server.roomId).toBe(`room:${game.code}`)
-  expect(firstUser.socketId).toBe('1')
   expect(server.emit).not.toHaveBeenCalledWith('game:start', expect.any(Array))
   done()
 })
