@@ -97,7 +97,7 @@ const STATUS = {
   JOIN: 'join',
 }
 
-const Initialize = ({ setTiles, setTurn, onMove }) => {
+const Initialize = ({ setTiles, setUsers, setTurn, onMove }) => {
   const [status, setStatus] = useState(null)
 
   useEffect(() => {
@@ -123,9 +123,10 @@ const Initialize = ({ setTiles, setTurn, onMove }) => {
   }
 
   const listenToGameEvents = () => {
-    Socket.on('game:start', (tiles) => {
+    Socket.on('game:start', ({ tiles, users }) => {
       setStatus(null)
       setTiles(tiles)
+      setUsers(users)
     })
     Socket.on('game:move', (move) => {
       onMove(move)

@@ -45,6 +45,11 @@ const User = {
   get: (userId) => {
     return USERS[userId]
   },
+  getByGameCode: (gameCode) => {
+    const game = Game.getByCode(gameCode)
+    const userIds = game.users
+    return userIds.map((userId) => USERS[userId])
+  },
   update: (userId, payload) => {
     USERS[userId] = {...USERS[userId], ...payload}
     return USERS[userId]

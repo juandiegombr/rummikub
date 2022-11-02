@@ -11,6 +11,7 @@ import "./App.css"
 
 
 export default function App() {
+  const [users, setUsers] = useState([])
   const [turn, setTurn] = useState(false)
   const [playingTiles, setTiles] = useState([])
   const [grid, setGrid] = useState({})
@@ -44,7 +45,17 @@ export default function App() {
 
   return (
     <div className="app">
-      <Initialize setTiles={setTiles} setTurn={setTurn} onMove={handleMove}/>
+      <Initialize
+        setUsers={setUsers}
+        setTiles={setTiles}
+        setTurn={setTurn}
+        onMove={handleMove}
+      />
+      {users.map((user) => {
+        return (
+          <div>{user.name}</div>
+        )
+      })}
       <Grid onSelectSpot={performTileMove}/>
       {turn && <Buttons setTurn={setTurn}/>}
       <div className="player-zone">

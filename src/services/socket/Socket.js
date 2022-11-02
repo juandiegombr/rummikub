@@ -10,7 +10,8 @@ function initializeSocketService(io) {
     startGame: (socket, gameCode) => {
       const userId = socket.handshake.auth.token
       const playerTiles = DB.getPlayerTiles(gameCode, userId)
-      socket.emit('game:start', playerTiles)
+      const users = DB.User.getByGameCode(gameCode)
+      socket.emit('game:start', { tiles: playerTiles, users })
     },
     startTurn: (gameCode) => {
       const game = DB.Game.getByCode(gameCode)
@@ -26,7 +27,8 @@ function initializeSocketService(io) {
       const userId = socket.handshake.auth.token
       const playerTiles = DB.getPlayerTiles(gameCode, userId)
       const grid = DB.getGrid(gameCode)
-      socket.emit('game:start', playerTiles)
+      const users = DB.User.getByGameCode(gameCode)
+      socket.emit('game:start', { tiles: playerTiles, users })
       socket.emit('game:move', grid)
     },
     move: (socket, gameCode) => {
