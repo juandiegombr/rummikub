@@ -93,8 +93,27 @@ function createTiles(game) {
 function assignInitialTiles(game, user) {
   const unassignedTiles = Object.values(TILES).filter((tile) => tile.gameId === game.id && tile.userId === null)
   const tilesToAssign = unassignedTiles.splice(0, 14)
-  tilesToAssign.forEach(tile => {
-    tile = tile.userId = user.id
+  const userSpots = [
+    { x: 0, y: 0 },
+    { x: 1, y: 0 },
+    { x: 2, y: 0 },
+    { x: 3, y: 0 },
+    { x: 4, y: 0 },
+    { x: 5, y: 0 },
+    { x: 6, y: 0 },
+    { x: 7, y: 0 },
+    { x: 8, y: 0 },
+    { x: 9, y: 0 },
+    { x: 0, y: 1 },
+    { x: 1, y: 1 },
+    { x: 2, y: 1 },
+    { x: 3, y: 1 },
+  ]
+  tilesToAssign.forEach((tile, index) => {
+    tile.userId = user.id
+    const spot = userSpots[index]
+    tile.spotX = spot.x
+    tile.spotY = spot.y
   })
 }
 
@@ -119,7 +138,12 @@ function getPlayerTiles(gameCode, userId) {
 
 function getGrid(gameCode) {
   const game = Game.getByCode(gameCode)
-  const tilesInGrid = Object.values(TILES).filter((tile) => tile.gameId === game.id && Number.isInteger(tile.spotX) && Number.isInteger(tile.spotY))
+  const tilesInGrid = Object.values(TILES).filter((tile) => (
+    tile.gameId === game.id
+    && Number.isInteger(tile.spotX)
+    && Number.isInteger(tile.spotY)
+    && !tile.userId
+  ))
   return tilesInGrid
 }
 

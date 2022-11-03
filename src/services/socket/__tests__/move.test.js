@@ -77,7 +77,7 @@ it('confirms a valid play', async function(done) {
   const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
   await secondClient.emit('game:join', { data: { gameCode: game.code } })
 
-  await firstClient.emit('game:play', { room: `room:${game.code}` })
+  await firstClient.emit('game:play', { room: `room:${game.code}`, data: [] })
 
   expect(firstServer.emit).toHaveBeenCalledWith('game:turn')
   done()
@@ -96,7 +96,7 @@ it('pass the turn', async function(done) {
   const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
   await secondClient.emit('game:join', { data: { gameCode: game.code } })
 
-  await firstClient.emit('game:pass', { room: `room:${game.code}` })
+  await firstClient.emit('game:pass', { room: `room:${game.code}`, data: { x: 0, y: 0 }})
 
   expect(firstServer.emit).toHaveBeenCalledWith('game:pass:ok', expect.any(Object))
   expect(secondServer.emit).toHaveBeenCalledWith('game:turn')
@@ -115,8 +115,8 @@ it('returns the turn to the first user when the las user plays', async function(
   const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
   await secondClient.emit('game:join', { data: { gameCode: game.code } })
 
-  await firstClient.emit('game:play', { room: `room:${game.code}` })
-  await secondClient.emit('game:play', { room: `room:${game.code}` })
+  await firstClient.emit('game:play', { room: `room:${game.code}`, data: [] })
+  await secondClient.emit('game:play', { room: `room:${game.code}`, data: [] })
 
   expect(firstServer.emit).toHaveBeenCalledWith('game:turn')
   done()

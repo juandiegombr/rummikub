@@ -1,0 +1,26 @@
+.grid-zone {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(14, 1fr);
+}
+
+.player-zone {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(10, 1fr);
+}
+
+.player-zone .button-pass {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 80px;
+  height: 110px;
+  border-radius: 8px;
+  cursor: pointer;
+  transform: translateX(calc(100% + 32px));
+  background-color: antiquewhite;
+  font-weight: bold;
+  color: #575757
+}

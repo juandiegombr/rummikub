@@ -136,16 +136,15 @@ function initializeSocketService(io) {
       nextPlayerSocket.emit('game:turn')
     })
 
-    socket.on('game:pass', async ({ room }) => {
+    socket.on('game:pass', async ({ room, data: spot  }) => {
       const gameCode = Room.getGameCode(room)
       const game = DB.Game.getByCode(gameCode)
       const nextPlayer = DB.nextTurn(gameCode)
       const userId = Socket.getId(socket)
       const unassignedTile = DB.Tile.getUnassigned(game.id)
-      const tile = DB.Tile.update(unassignedTile.id, { userId })
+      const tile = DB.Tile.update(unassignedTile.id, { userId, spotX: spot.x, spotY: spot.y })
 
       socket.emit('game:pass:ok', tile)
-      /* eslint-disable */ console.log('nextPlayer', nextPlayer)
       const nextPlayerSocket = Socket.getById(io, nextPlayer.socketId)
       nextPlayerSocket.emit('game:turn')
     })

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 
 import './Tile.css'
 
-const Tile = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onClick, disabled }) => {
+const Tile = ({ tile, spot, selected, onDrag, onMove, onDrop, onClick, disabled }) => {
   const tileRef = useRef()
   const staticActive = useRef(false)
   const originalPosition = useRef({})
@@ -33,7 +33,7 @@ const Tile = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onClick, dis
   useEffect(() => {
     if(!spot) return
 
-    const spotElement = document.getElementById(`${area}-${spot.x}-${spot.y}`)
+    const spotElement = document.getElementById(`${spot.x}-${spot.y}`)
     if(!spotElement) {
       return
     }
