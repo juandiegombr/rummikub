@@ -27,13 +27,29 @@ export default function App() {
 
   const performTileMove = (spot) => {
     if (!selectedTile) return
-    const move = {
-      tile: selectedTile,
-      spot,
+    const movedTile = {
+      ...selectedTile,
+      spotX: spot.x,
+      spotY: spot.y,
     }
-    Socket.emit('game:move', move)
+
+    const isFromGrid = Number.isInteger(selectedTile.spotX) && Number.isInteger(selectedTile.spotY)
+    if (isFromGrid) {
+      const newGrid = grid.map((tile) => {
+        if (tile.id === selectedTile.id) {
+          return movedTile
+        }
+        return tile
+      })
+      setGrid(newGrid)
+      setSelectedTile(null)
+      return
+    }
+
     const newPlayingTiles = playingTiles.filter((tile) => tile.id !== selectedTile.id)
     setTiles(newPlayingTiles)
+    const newGrid = [...grid, movedTile]
+    setGrid(newGrid)
     setSelectedTile(null)
   }
 
@@ -51,16 +67,16 @@ export default function App() {
       />
       {users.map((user) => {
         return (
-          <div>{user.name}</div>
+          <div key={user.id}>{user.name}</div>
         )
       })}
       <Grid onSelectSpot={performTileMove}/>
-      {turn && <Buttons setTurn={setTurn}/>}
+      {turn && <Buttons grid={grid}/>}
       <div className="player-zone">
         {playingTiles.map((tile, key) => {
           return (
             <Tile
-              key={key + '-' + tile.value}
+              key={tile.id}
               tile={tile}
               spot={grid[tile.id]}
               selected={selectedTile?.id === tile.id}
@@ -77,7 +93,7 @@ export default function App() {
         {grid.map((tile, key) => {
           return (
             <Tile
-              key={key + '-' + tile.value}
+              key={tile.id}
               tile={tile}
               spot={{ x: tile.spotX, y: tile.spotY }}
               selected={selectedTile?.id === tile.id}

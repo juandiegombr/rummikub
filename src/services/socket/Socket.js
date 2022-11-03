@@ -72,6 +72,8 @@ function initializeSocketService(io) {
   async function reJoinRoom(gameCode, socket) {
     const roomName = `room:${gameCode}`
     socket.join(roomName)
+    const userId = Socket.getId(socket)
+    DB.User.update(userId, { socketId: socket.id })
     Logger.send(`Websocket: User rejoined to the game ${gameCode}`)
   }
 
@@ -115,16 +117,21 @@ function initializeSocketService(io) {
       })
     })
 
-    socket.on('game:play', async ({ room }) => {
+    socket.on('game:play', async ({ room, data: grid }) => {
       const gameCode = Room.getGameCode(room)
       const nextPlayer = DB.nextTurn(gameCode)
 
-      if (!Brain.validate(DB.getGrid(gameCode))) {
+      if (!Brain.validate(grid)) {
         socket.emit('game:play:ko')
         return
       }
 
+      DB.Tile.updateGrid(grid)
       socket.emit('game:play:ok')
+      const players = await Room.getPlayers(io, gameCode)
+      players.forEach(player => {
+        Socket.sendGrid(player, gameCode)
+      })
       const nextPlayerSocket = Socket.getById(io, nextPlayer.socketId)
       nextPlayerSocket.emit('game:turn')
     })

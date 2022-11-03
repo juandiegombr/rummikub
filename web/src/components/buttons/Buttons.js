@@ -4,9 +4,9 @@ import { Socket } from 'services/socket'
 
 import './Buttons.css'
 
-const Buttons = ({ setTurn }) => {
+const Buttons = ({ grid }) => {
   const play = () => {
-    Socket.emit('game:play')
+    Socket.emit('game:play', grid)
   }
 
   const pass = () => {

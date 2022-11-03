@@ -27,6 +27,15 @@ const Tile = {
     TILES[tileId] = {...TILES[tileId], ...payload}
     return TILES[tileId]
   },
+  updateGrid: (grid) => {
+    grid.forEach((tile) => {
+      TILES[tile.id] = {
+        ...TILES[tile.id],
+        ...tile,
+        userId: null,
+      }
+    })
+  },
   getUnassigned: (gameId) => {
     return Object.values(TILES).find((tile) => !tile.userId && tile.gameId === gameId && !tile.spotX && !tile.spotY)
   }
