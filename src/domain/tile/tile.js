@@ -10,11 +10,13 @@ const generateTile = (value, color) => {
 }
 
 const generateTiles = () => {
+  const bonusTiles = [generateTile(null, null), generateTile(null, null)]
   const tiles = COLORS.map((color) => {
     return Array
       .from({ length: TILES_FOR_BRAND })
       .map((_, index) => generateTile(index + 1, color))
   })
+  tiles.push(bonusTiles)
   return tiles.reduce((acc, colorTiles) => acc.concat(colorTiles), [])
 }
 

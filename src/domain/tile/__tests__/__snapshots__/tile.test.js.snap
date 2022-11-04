@@ -262,5 +262,15 @@ Array [
     "color": "black",
     "value": 13,
   },
+  Object {
+    "code": "id_null_null",
+    "color": null,
+    "value": null,
+  },
+  Object {
+    "code": "id_null_null",
+    "color": null,
+    "value": null,
+  },
 ]
 `;
