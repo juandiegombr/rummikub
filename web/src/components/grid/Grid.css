@@ -11,16 +11,11 @@
   grid-template-columns: repeat(10, 1fr);
 }
 
-.player-zone .button-pass {
+.player-zone .tile--back {
   position: absolute;
+  top: unset;
+  left: unset;
   bottom: 0;
   right: 0;
-  width: 80px;
-  height: 110px;
-  border-radius: 8px;
-  cursor: pointer;
   transform: translateX(calc(100% + 32px));
-  background-color: antiquewhite;
-  font-weight: bold;
-  color: #575757
 }

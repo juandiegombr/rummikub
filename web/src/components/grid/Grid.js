@@ -1,4 +1,5 @@
 import { TileSpot } from 'components/tile-spot'
+import { TileBack } from 'components/tile/TileBack'
 import { Socket } from 'services/socket'
 
 import './Grid.css'
@@ -46,9 +47,7 @@ const Grid = ({ onSelectSpot }) => {
             />
           )
         })}
-        <button id="player-10-1" className="tile-spot button-pass" onClick={pass}>
-          Get tile
-        </button>
+        <TileBack id="player-10-1" onClick={pass}/>
       </div>
     </>
   )

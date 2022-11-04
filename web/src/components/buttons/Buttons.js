@@ -9,7 +9,6 @@ const Buttons = ({ grid }) => {
 
   return (
     <div className='buttons-container'>
-      <button className='ui-button--secondary'>Undo</button>
       <button className='ui-button--secondary' onClick={play}>Play</button>
     </div>
   )

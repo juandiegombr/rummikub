@@ -16,7 +16,7 @@ const NameStep = ({ confirm }) => {
     createPortal(
       <div className="initialize-dialog__overlay">
         <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
-          <h2 id="initialize-title" className="initialize-dialog__title">Join game 🎯</h2>
+          <h2 id="initialize-title" className="initialize-dialog__title">Welcome! 👋</h2>
           <form className="initialize-dialog__form" onSubmit={confirm}>
             <div className="ui-input">
               <label htmlFor="name-field" className="ui-input__label">Name:</label>
@@ -36,7 +36,7 @@ const FirstStep = ({ create, join }) => {
     createPortal(
       <div className="initialize-dialog__overlay">
         <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
-          <h2 id="initialize-title" className="initialize-dialog__title">Welcome! 👋</h2>
+          <h2 id="initialize-title" className="initialize-dialog__title">Hello {localStorage.userName}</h2>
           <p className="initialize-dialog__description">What do you want to do?</p>
           <div className="initialize-dialog__actions">
             <button className="ui-button" onClick={create}>Create game</button>
