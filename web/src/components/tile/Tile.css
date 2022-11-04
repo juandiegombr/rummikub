@@ -107,3 +107,23 @@
   font-weight: bold;
   color: rgba(0, 0, 0, 0.1);
 }
+
+.tile__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  width: 80px;
+  height: 110px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.tile__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

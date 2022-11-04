@@ -11,11 +11,19 @@
   grid-template-columns: repeat(10, 1fr);
 }
 
-.player-zone .tile--back {
+.player-zone .tile__back {
   position: absolute;
   top: unset;
   left: unset;
   bottom: 0;
+  right: 0;
+  transform: translateX(calc(100% + 32px));
+}
+
+.player-zone .tile__button {
+  position: absolute;
+  top: 0;
+  left: unset;
   right: 0;
   transform: translateX(calc(100% + 32px));
 }

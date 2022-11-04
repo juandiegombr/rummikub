@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Socket } from 'services/socket'
 import { Http } from 'services/http'
 
+import { Error } from './Error'
 import { NameStep } from './NameStep'
 import { FirstStep } from './FirstStep'
 import { JoinStep } from './JoinStep'
@@ -14,6 +15,7 @@ const STATUS = {
   INIT: 'init',
   CREATE: 'create',
   JOIN: 'join',
+  ERROR: 'error',
 }
 
 const Initialize = ({ setTiles, setSelectedTile, setUsers, setGrid, setTurn }) => {
@@ -37,7 +39,7 @@ const Initialize = ({ setTiles, setSelectedTile, setUsers, setGrid, setTurn }) =
       setTurn(false)
     })
     Socket.on('game:play:ko', () => {
-      setTurn(true)
+      setStatus(STATUS.ERROR)
     })
     Socket.on('game:pass:ok', ({ tiles, tile, grid }) => {
       setTiles(tiles)
@@ -46,7 +48,6 @@ const Initialize = ({ setTiles, setSelectedTile, setUsers, setGrid, setTurn }) =
       setTurn(false)
     })
     Socket.on('game:pass:ko', () => {
-      setTurn(true)
     })
     Socket.on('game:turn', () => {
       setTurn(true)
@@ -73,6 +74,17 @@ const Initialize = ({ setTiles, setSelectedTile, setUsers, setGrid, setTurn }) =
 
     setStatus(STATUS.NAME)
     localStorage.clear()
+  }
+
+  if (status === STATUS.ERROR) {
+    return <Error
+      onRetry={() => setStatus(null)}
+      onPass={() => {
+        const spot = { x: 10, y: 1 }
+        Socket.emit('game:pass', spot)
+        setStatus(null)
+      }}
+    />
   }
 
   if (status === STATUS.NAME) {

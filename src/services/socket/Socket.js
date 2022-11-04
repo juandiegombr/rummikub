@@ -123,15 +123,17 @@ function initializeSocketService(io) {
       })
     })
 
-    socket.on('game:play', async ({ room, data: grid }) => {
+    socket.on('game:play', async ({ room, data: newGrid }) => {
       const gameCode = Room.getGameCode(room)
+      const userId = Socket.getId(socket)
+      const tiles = DB.getPlayerTiles(gameCode, userId)
 
-      if (!Brain.validate(grid)) {
+      if (!Brain.validate(newGrid, tiles)) {
         socket.emit('game:play:ko')
         return
       }
 
-      DB.Tile.updateGrid(grid)
+      DB.Tile.updateGrid(newGrid)
       socket.emit('game:play:ok')
       const players = await Room.getPlayers(io, gameCode)
       players.forEach(player => {

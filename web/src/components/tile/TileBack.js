@@ -1,11 +1,9 @@
-import './Tile.css'
-
 const TileBack = ({ id, onClick }) => {
   return (
     <button
       id={id}
       aria-label="Get tile"
-      className="tile tile--back"
+      className="tile tile__back"
       onClick={onClick}
     >
       <div className="tile__brand">

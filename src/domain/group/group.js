@@ -2,7 +2,11 @@ const { Tile } = require("../tile")
 
 const areTilesConsecutive = (group) => {
   const areTilesConsecutive = group.reduce(({previousValue}, tile) => {
-    const isConsecutive = previousValue && previousValue + 1 === tile.value || Tile.isBonus(tile)
+    if (Tile.isBonus(tile) || previousValue === 0) {
+      return { previousValue: tile.value, result: true }
+    }
+
+    const isConsecutive = Number.isInteger(previousValue) && previousValue + 1 === tile.value
     if (isConsecutive) {
       return { previousValue: tile.value, result: true }
     }

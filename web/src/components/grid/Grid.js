@@ -1,5 +1,6 @@
 import { TileSpot } from 'components/tile-spot'
 import { TileBack } from 'components/tile/TileBack'
+import { TileButton } from 'components/tile/TileButton'
 import { Socket } from 'services/socket'
 
 import './Grid.css'
@@ -116,7 +117,13 @@ const Grid = ({
     }
   }
 
+  const play = () => {
+    if (!turn) return
+    Socket.emit('game:play', grid)
+  }
+
   const pass = () => {
+    if (!turn) return
     const spot = { x: 10, y: 1 }
     Socket.emit('game:pass', spot)
   }
@@ -146,6 +153,7 @@ const Grid = ({
             />
           )
         })}
+        <TileButton onClick={play} disabled={!turn}/>
         <TileBack id="player-10-1" onClick={pass}/>
       </div>
     </>

@@ -3,7 +3,6 @@ import { useState, useEffect } from "react"
 import { Tile } from "components/tile"
 import { Initialize } from "components/initialize"
 import { Grid } from "components/grid"
-import { Buttons } from "components/buttons"
 
 import { Socket } from 'services/socket'
 
@@ -38,7 +37,6 @@ export default function App() {
         selectedTile={selectedTile}
         setSelectedTile={setSelectedTile}
       />
-      {turn && <Buttons grid={grid}/>}
       {tiles.map((tile) => {
         return (
           <Tile

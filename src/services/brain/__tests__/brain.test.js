@@ -10,6 +10,8 @@ it('invalidates a group less than three tiles', () => {
   const isValid = Brain.validate([
     { color: 'orange', value: 1, spotY: 1, spotX: 1 },
     { color: 'red', value: 1, spotY: 1, spotX: 2 },
+  ], [
+    { color: 'orange', value: 1, spotY: 1, spotX: 1 },
   ])
 
   expect(isValid).toBeFalsy()
@@ -21,6 +23,8 @@ it('validates a value group with unique colors', () => {
     { color: 'red', value: 1, spotY: 1, spotX: 2 },
     { color: 'black', value: 1, spotY: 1, spotX: 3 },
     { color: 'blue', value: 1, spotY: 1, spotX: 4 },
+  ], [
+    { color: 'orange', value: 1, spotY: 1, spotX: 1 },
   ])
 
   expect(isValid).toBeTruthy()
@@ -32,6 +36,8 @@ it('validates a value group with unique colors and bonus tile', () => {
     { color: 'red', value: 1, spotY: 1, spotX: 2 },
     { color: 'orange', value: 1, spotY: 1, spotX: 3 },
     { color: 'blue', value: 1, spotY: 1, spotX: 4 },
+  ], [
+    { color: 'bonus', value: 0, spotY: 1, spotX: 1 },
   ])
 
   expect(isValid).toBeTruthy()
@@ -43,6 +49,8 @@ it('invalidates a value group with duplicated colors', () => {
     { color: 'red', value: 1, spotY: 1, spotX: 2 },
     { color: 'black', value: 1, spotY: 1, spotX: 3 },
     { color: 'blue', value: 1, spotY: 1, spotX: 4 },
+  ], [
+    { color: 'red', value: 1, spotY: 1, spotX: 1 },
   ])
 
   expect(isValid).toBeFalsy()
@@ -54,6 +62,8 @@ it('validates a stair group with unique colors', () => {
     { color: 'red', value: 2, spotY: 1, spotX: 2 },
     { color: 'red', value: 3, spotY: 1, spotX: 3 },
     { color: 'red', value: 4, spotY: 1, spotX: 4 },
+  ], [
+    { color: 'red', value: 1, spotY: 1, spotX: 1 },
   ])
 
   expect(isValid).toBeTruthy()
@@ -65,6 +75,21 @@ it('validates a stair group with unique colors and bonus tile', () => {
     { color: 'red', value: 1, spotY: 1, spotX: 2 },
     { color: 'red', value: 3, spotY: 1, spotX: 3 },
     { color: 'red', value: 4, spotY: 1, spotX: 4 },
+  ], [
+    { color: 'red', value: 1, spotY: 1, spotX: 1 },
+  ])
+
+  expect(isValid).toBeTruthy()
+})
+
+it('validates a group with bonus tile in the middle', () => {
+  const isValid = Brain.validate([
+    { color: 'red', value: 1, spotY: 1, spotX: 1 },
+    { color: 'red', value: 2, spotY: 1, spotX: 2 },
+    { color: 'bonus', value: 0, spotY: 1, spotX: 3 },
+    { color: 'red', value: 4, spotY: 1, spotX: 4 },
+  ], [
+    { color: 'red', value: 1, spotY: 1, spotX: 1 },
   ])
 
   expect(isValid).toBeTruthy()
@@ -76,6 +101,20 @@ it('invalidate a stair group with different colors', () => {
     { color: 'black', value: 2, spotY: 1, spotX: 2 },
     { color: 'red', value: 3, spotY: 1, spotX: 3 },
     { color: 'red', value: 4, spotY: 1, spotX: 4 },
+  ], [
+    { color: 'red', value: 1, spotY: 1, spotX: 1 },
+  ])
+
+  expect(isValid).toBeFalsy()
+})
+
+it('invalidate the grid without player tiles', () => {
+  const isValid = Brain.validate([
+    { id: 1, color: 'orange', value: 1, spotY: 1, spotX: 1 },
+    { id: 2, color: 'red', value: 1, spotY: 1, spotX: 2 },
+    { id: 3, color: 'black', value: 1, spotY: 1, spotX: 3 },
+  ], [
+    { id: 4, color: 'blue', value: 1, spotY: 1, spotX: 4 },
   ])
 
   expect(isValid).toBeFalsy()
