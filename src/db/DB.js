@@ -1,6 +1,6 @@
 const { v4 } = require('uuid')
 
-const TileService = require('../domain/tile')
+const { TileService } = require('../domain/tile')
 const { generateGameCode } = require('../helpers')
 const { Logger } = require('../services/logger')
 

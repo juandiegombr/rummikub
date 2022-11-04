@@ -1,3 +1,3 @@
-const Brain = require('./brain')
+const { Brain } = require('./brain')
 
-module.exports = Brain
+module.exports = { Brain }

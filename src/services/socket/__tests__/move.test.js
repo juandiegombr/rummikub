@@ -1,6 +1,6 @@
 const { initializeSocketService } = require('..')
 const DB = require('../../../db')
-const Brain = require('../../brain')
+const { Brain } = require('../../brain')
 const SocketServerMock = require('./SocketServerMock')
 
 jest.mock('../../../services/logger')

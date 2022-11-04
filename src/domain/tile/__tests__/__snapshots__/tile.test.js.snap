@@ -263,14 +263,14 @@ Array [
     "value": 13,
   },
   Object {
-    "code": "id_null_null",
-    "color": null,
-    "value": null,
+    "code": "id_bonus_0",
+    "color": "bonus",
+    "value": 0,
   },
   Object {
-    "code": "id_null_null",
-    "color": null,
-    "value": null,
+    "code": "id_bonus_0",
+    "color": "bonus",
+    "value": 0,
   },
 ]
 `;

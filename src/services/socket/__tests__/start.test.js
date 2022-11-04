@@ -84,7 +84,6 @@ it('rejoins to a game the user with turn', async function(done) {
   firstServer.emit.mockClear()
   await firstClient.emit('game:rejoin', { room: `room${game.code}`, data: { gameCode: game.code } })
 
-  /* eslint-disable */ console.log('', firstServer.emit.mock.calls)
   expect(firstServer.emit).toHaveBeenCalledWith('game:start', { tiles: expect.any(Array), users: expect.any(Array) })
   expect(firstServer.emit).toHaveBeenCalledWith('game:move', [])
   expect(firstServer.emit).toHaveBeenCalledWith('game:turn')

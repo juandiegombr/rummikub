@@ -1,6 +1,6 @@
 const { Logger } = require('../../services/logger')
 const DB = require('../../db')
-const Brain = require('../brain')
+const { Brain } = require('../brain')
 
 function initializeSocketService(io) {
   const Socket = {

@@ -1,4 +1,4 @@
-const TileService = require('../../../domain/tile')
+const { TileService } = require('../../../domain/tile')
 
 it('generates all the tiles', async () => {
   const tiles =  TileService.generateTiles()
