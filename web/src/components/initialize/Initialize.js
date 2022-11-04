@@ -1,94 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { useEffect, useState } from 'react'
 import { Socket } from 'services/socket'
 import { Http } from 'services/http'
 
+import { NameStep } from './NameStep'
+import { FirstStep } from './FirstStep'
+import { JoinStep } from './JoinStep'
+import { WaitingStep } from './WaitingStep'
+
 import './Initialize.css'
-
-const NameStep = ({ confirm }) => {
-  const inputRef = useRef()
-
-  useEffect(() => {
-    inputRef.current.focus()
-  }, [])
-
-  return (
-    createPortal(
-      <div className="initialize-dialog__overlay">
-        <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
-          <h2 id="initialize-title" className="initialize-dialog__title">Welcome! 👋</h2>
-          <form className="initialize-dialog__form" onSubmit={confirm}>
-            <div className="ui-input">
-              <label htmlFor="name-field" className="ui-input__label">Name:</label>
-              <input id="name-field" ref={inputRef} className="ui-input__input" type="text" name="name" placeholder="Write your name here"/>
-            </div>
-            <button className="ui-button" type="submit">Confirm</button>
-          </form>
-        </div>
-      </div>,
-      document.getElementById('dialog'),
-    )
-  )
-}
-
-const FirstStep = ({ create, join }) => {
-  return (
-    createPortal(
-      <div className="initialize-dialog__overlay">
-        <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
-          <h2 id="initialize-title" className="initialize-dialog__title">Hello {localStorage.userName}</h2>
-          <p className="initialize-dialog__description">What do you want to do?</p>
-          <div className="initialize-dialog__actions">
-            <button className="ui-button" onClick={create}>Create game</button>
-            <button className="ui-button" onClick={join}>Join game</button>
-          </div>
-        </div>
-      </div>,
-      document.getElementById('dialog'),
-    )
-  )
-}
-
-const Waiting = ({ gameCode }) => {
-  return (
-    createPortal(
-      <div className="initialize-dialog__overlay">
-        <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
-          <h2 id="initialize-title" className="initialize-dialog__title">⏳ Waiting for a player</h2>
-          <p className="initialize-dialog__description">Share the game code to start playing</p>
-          <div className="initialize-dialog__code">{gameCode}</div>
-        </div>
-      </div>,
-      document.getElementById('dialog'),
-    )
-  )
-}
-
-const Join = ({ confirm }) => {
-  const inputRef = useRef()
-
-  useEffect(() => {
-    inputRef.current.focus()
-  }, [])
-
-  return (
-    createPortal(
-      <div className="initialize-dialog__overlay">
-        <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
-          <h2 id="initialize-title" className="initialize-dialog__title">Join game 🎯</h2>
-          <form className="initialize-dialog__form" onSubmit={confirm}>
-            <div className="ui-input">
-              <label htmlFor="code-field" className="ui-input__label">Code:</label>
-              <input id="code-field" ref={inputRef} className="ui-input__input" type="text" name="code" placeholder="Write your code here"/>
-            </div>
-            <button className="ui-button" type="submit">Confirm</button>
-          </form>
-        </div>
-      </div>,
-      document.getElementById('dialog'),
-    )
-  )
-}
 
 const STATUS = {
   NAME: 'name',
@@ -97,39 +16,22 @@ const STATUS = {
   JOIN: 'join',
 }
 
-const Initialize = ({ setTiles, setSelectedTile, setUsers, setGrid, setTurn, onMove }) => {
+const Initialize = ({ setTiles, setSelectedTile, setUsers, setGrid, setTurn }) => {
   const [status, setStatus] = useState(null)
 
   useEffect(() => {
-    const userId = localStorage.userId
-    const gameCode = localStorage.gameCode
-
-    if (userId && gameCode) {
-      return reJoinToGame(gameCode)
-    }
-
-    setStatus(STATUS.NAME)
-    localStorage.clear()
+    Socket.init()
+    reJoinToGame()
   }, [])
 
-  const createUser = async (event) => {
-    event.preventDefault()
-    const formData = new FormData(event.target)
-    const name = formData.get('name')
-    const user = await Http.get(`/user/${name}`).then(response => response.json())
-    localStorage.setItem('userId', user.id)
-    localStorage.setItem('userName', user.name)
-    setStatus(STATUS.INIT)
-  }
-
-  const listenToGameEvents = () => {
+  const initSocketGame = () => {
     Socket.on('game:start', ({ tiles, users }) => {
       setStatus(null)
       setTiles(tiles)
       setUsers(users)
     })
     Socket.on('game:move', (grid) => {
-      onMove(grid)
+      setGrid(grid)
     })
     Socket.on('game:play:ok', () => {
       setTurn(false)
@@ -151,68 +53,51 @@ const Initialize = ({ setTiles, setSelectedTile, setUsers, setGrid, setTurn, onM
     })
   }
 
-  const createGame = async () => {
-    const { gameCode } = await Http.get('/game/create').then(response => response.json())
-    localStorage.setItem('gameCode', gameCode)
-    setStatus(STATUS.CREATE)
-    Socket.reconnect()
-    Socket.emit('game:join', { gameCode })
-    listenToGameEvents()
-  }
+  const reJoinToGame = async () => {
+    const userId = localStorage.userId
+    const gameCode = localStorage.gameCode
 
-  const joinGame = async () => {
-    setStatus(STATUS.JOIN)
-  }
-
-  const joinToGame = async (gameCodeInput) => {
-    const response = await Http
-      .get(`/game/join/${gameCodeInput}`)
-    if (response.status === 404) {
+    if (userId && gameCode) {
+      try {
+        const response = await Http.get(`/game/rejoin/${gameCode}`)
+        if (response.status === 404) throw new Error()
+        if (response.status === 403) throw new Error()
+        Socket.emit('game:rejoin', { gameCode })
+        initSocketGame()
+      } catch (error) {
+        setStatus(STATUS.NAME)
+        localStorage.clear()
+      }
       return
     }
-    const { gameCode } = await response.json()
-    localStorage.setItem('gameCode', gameCode)
-    Socket.reconnect()
-    Socket.emit('game:join', { gameCode })
-    listenToGameEvents()
-    setStatus(null)
-  }
 
-  const reJoinToGame = async (gameCode) => {
-    try {
-      const response = await Http.get(`/game/rejoin/${gameCode}`)
-      if (response.status === 404) throw new Error()
-      if (response.status === 403) throw new Error()
-      Socket.emit('game:rejoin', { gameCode })
-      listenToGameEvents()
-    } catch (error) {
-      setStatus(STATUS.NAME)
-      localStorage.clear()
-    }
-  }
-
-  const confirmJoin = async (event) => {
-    event.preventDefault()
-    const formData = new FormData(event.target)
-    const gameCode = formData.get('code')
-
-    return joinToGame(gameCode)
+    setStatus(STATUS.NAME)
+    localStorage.clear()
   }
 
   if (status === STATUS.NAME) {
-    return <NameStep confirm={createUser} />
+    return <NameStep onConfirm={() => setStatus(STATUS.INIT)} />
   }
 
   if (status === STATUS.INIT) {
-    return <FirstStep create={createGame} join={joinGame} />
+    return <FirstStep
+      onCreate={() => {
+        initSocketGame()
+        setStatus(STATUS.CREATE)
+      }}
+      onJoin={() => setStatus(STATUS.JOIN)}
+    />
   }
 
   if (status === STATUS.JOIN) {
-    return <Join confirm={confirmJoin} />
+    return <JoinStep onConfirm={() => {
+      initSocketGame()
+      setStatus(null)
+    }} />
   }
 
   if (status === STATUS.CREATE) {
-    return <Waiting gameCode={localStorage.gameCode}/>
+    return <WaitingStep />
   }
 
   return null

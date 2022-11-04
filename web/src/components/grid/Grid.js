@@ -16,7 +16,106 @@ const PLAYER_SPOTS = Array.from({ length: 2 }).map((_, row) => {
   })
 }).reduce((acc, row) => [...acc, ...row], [])
 
-const Grid = ({ onSelectSpot }) => {
+const Grid = ({
+  turn,
+  grid,
+  setGrid,
+  tiles,
+  setTiles,
+  selectedTile,
+  setSelectedTile,
+}) => {
+
+  const moveFromGridToGrid = (spot) => {
+    const movedTile = {
+      ...selectedTile,
+      spotX: spot.x,
+      spotY: spot.y,
+    }
+
+    const updatedGrid = grid.map((tile) => {
+      if (tile.id === selectedTile.id) {
+        return movedTile
+      }
+      return tile
+    })
+    setGrid(updatedGrid)
+    setSelectedTile(null)
+  }
+
+  const moveFromPlayerToGrid = (spot) => {
+    const movedTile = {
+      ...selectedTile,
+      userId: null,
+      spotX: spot.x,
+      spotY: spot.y,
+    }
+    const updatedTiles = tiles.filter((tile) => tile.id !== movedTile.id)
+    setTiles(updatedTiles)
+    const updatedGrid = [...grid,
+      movedTile]
+    setGrid(updatedGrid)
+    setSelectedTile(null)
+  }
+
+  const moveFromPlayerToPlayer = (spot) => {
+    const movedTile = {
+      ...selectedTile,
+      spotX: spot.x,
+      spotY: spot.y,
+    }
+    const updatedTiles = tiles.map((tile) => {
+      if (tile.id === movedTile.id) {
+        return movedTile
+      }
+      return tile
+    })
+    setTiles(updatedTiles)
+    setSelectedTile(null)
+    Socket.emit('game:move:self', updatedTiles)
+  }
+
+  const moveFromGridToPlayer = (spot) => {
+    const movedTile = {
+      ...selectedTile,
+      userId: localStorage.userId,
+      spotX: spot.x,
+      spotY: spot.y,
+    }
+    const updatedTiles = [...tiles, movedTile]
+    setTiles(updatedTiles)
+    const updatedGrid = grid.filter((tile) => tile.id !== movedTile.id)
+    setGrid(updatedGrid)
+    setSelectedTile(null)
+  }
+
+  const moveTile = (spot) => {
+    if (!selectedTile) return
+
+    const isFromPlayer = !!selectedTile.userId
+    const isFromGrid = !isFromPlayer
+    const isToGrid = spot.area === 'grid'
+    const isToPlayer = spot.area === 'player'
+
+    if (!turn && (isFromGrid || isToGrid)) return
+
+    if (isFromPlayer && isToPlayer) {
+      return moveFromPlayerToPlayer(spot)
+    }
+
+    if (isFromPlayer && isToGrid) {
+      return moveFromPlayerToGrid(spot)
+    }
+
+    if (isFromGrid && isToGrid) {
+      return moveFromGridToGrid(spot)
+    }
+
+    if (isFromGrid && isToPlayer) {
+      return moveFromGridToPlayer(spot)
+    }
+  }
+
   const pass = () => {
     const spot = { x: 10, y: 1 }
     Socket.emit('game:pass', spot)
@@ -31,7 +130,7 @@ const Grid = ({ onSelectSpot }) => {
               key={'spot-' + index}
               area="grid"
               position={spot}
-              onClick={() => onSelectSpot(spot)}
+              onClick={() => moveTile(spot)}
             />
           )
         })}
@@ -43,7 +142,7 @@ const Grid = ({ onSelectSpot }) => {
               key={'spot-' + index}
               area="player"
               position={spot}
-              onClick={() => onSelectSpot(spot)}
+              onClick={() => moveTile(spot)}
             />
           )
         })}
