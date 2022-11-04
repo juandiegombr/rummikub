@@ -69,6 +69,7 @@ export default function App() {
     })
     setTiles(updatedTiles)
     setSelectedTile(null)
+    Socket.emit('game:move:self', updatedTiles)
   }
 
   const moveFromGridToPlayer = (spot) => {
@@ -122,6 +123,7 @@ export default function App() {
         setUsers={setUsers}
         setTiles={setTiles}
         setSelectedTile={setSelectedTile}
+        setGrid={setGrid}
         setTurn={setTurn}
         onMove={handleMove}
       />

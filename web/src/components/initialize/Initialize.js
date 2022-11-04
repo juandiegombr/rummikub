@@ -97,7 +97,7 @@ const STATUS = {
   JOIN: 'join',
 }
 
-const Initialize = ({ setTiles, setSelectedTile, setUsers, setTurn, onMove }) => {
+const Initialize = ({ setTiles, setSelectedTile, setUsers, setGrid, setTurn, onMove }) => {
   const [status, setStatus] = useState(null)
 
   useEffect(() => {
@@ -137,11 +137,10 @@ const Initialize = ({ setTiles, setSelectedTile, setUsers, setTurn, onMove }) =>
     Socket.on('game:play:ko', () => {
       setTurn(true)
     })
-    Socket.on('game:pass:ok', (tile) => {
-      setTiles((tiles) => {
-        return [...tiles, tile]
-      })
+    Socket.on('game:pass:ok', ({ tiles, tile, grid }) => {
+      setTiles(tiles)
       setSelectedTile(tile)
+      setGrid(grid)
       setTurn(false)
     })
     Socket.on('game:pass:ko', () => {

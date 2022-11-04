@@ -117,9 +117,14 @@ function initializeSocketService(io) {
       })
     })
 
+    socket.on('game:move:self', async ({ room, data: tiles }) => {
+      tiles.forEach((tile) => {
+        DB.Tile.update(tile.id, tile)
+      })
+    })
+
     socket.on('game:play', async ({ room, data: grid }) => {
       const gameCode = Room.getGameCode(room)
-      const nextPlayer = DB.nextTurn(gameCode)
 
       if (!Brain.validate(grid)) {
         socket.emit('game:play:ko')
@@ -132,6 +137,7 @@ function initializeSocketService(io) {
       players.forEach(player => {
         Socket.sendGrid(player, gameCode)
       })
+      const nextPlayer = DB.nextTurn(gameCode)
       const nextPlayerSocket = Socket.getById(io, nextPlayer.socketId)
       nextPlayerSocket.emit('game:turn')
     })
@@ -143,8 +149,10 @@ function initializeSocketService(io) {
       const userId = Socket.getId(socket)
       const unassignedTile = DB.Tile.getUnassigned(game.id)
       const tile = DB.Tile.update(unassignedTile.id, { userId, spotX: spot.x, spotY: spot.y })
+      const tiles = DB.getPlayerTiles(gameCode, userId)
+      const grid = DB.getGrid(gameCode)
 
-      socket.emit('game:pass:ok', tile)
+      socket.emit('game:pass:ok', { tiles, tile, grid })
       const nextPlayerSocket = Socket.getById(io, nextPlayer.socketId)
       nextPlayerSocket.emit('game:turn')
     })
