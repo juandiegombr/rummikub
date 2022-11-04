@@ -107,6 +107,8 @@ const Tile = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onClick, dis
     return translate
   }
 
+  const isBonus = tile.value === 0 && tile.color === 'bonus'
+
   return (
     <div
       ref={tileRef}
@@ -121,7 +123,10 @@ const Tile = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onClick, dis
       }}
       style={{ transform: getTransformValue(), zIndex: active ? 99 : 0 }}
     >
-      <div className="tile__number">{tile.value}</div>
+      {isBonus
+        ? <div className="tile__bonus"></div>
+        : <div className="tile__number">{tile.value}</div>
+      }
       <div className="tile__brand">
         <div className="tile__brand-letter">Rummikub</div>
       </div>
