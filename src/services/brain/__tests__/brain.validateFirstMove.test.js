@@ -2,7 +2,7 @@ const { Brain } = require('../brain')
 
 it('validates first move with more than 30', () => {
   const isValid = Brain.validate({
-    commonTiles: [
+    newCommonTiles: [
       { id: 1, color: 'orange', value: 10, spotY: 1, spotX: 1 },
       { id: 2, color: 'red', value: 10, spotY: 1, spotX: 2 },
       { id: 3, color: 'black', value: 10, spotY: 1, spotX: 3 },
@@ -20,7 +20,7 @@ it('validates first move with more than 30', () => {
 
 it('validates first move with more than 30 and bonus tile', () => {
   const isValid = Brain.validate({
-    commonTiles: [
+    newCommonTiles: [
       { id: 1, color: 'orange', value: 10, spotY: 1, spotX: 1 },
       { id: 2, color: 'bonus', value: 0, spotY: 1, spotX: 2 },
       { id: 3, color: 'black', value: 10, spotY: 1, spotX: 3 },
@@ -38,7 +38,7 @@ it('validates first move with more than 30 and bonus tile', () => {
 
 it('validates first move with more than 30 and bonus tile in the middle', () => {
   const isValid = Brain.validate({
-    commonTiles: [
+    newCommonTiles: [
       { id: '1', value: 10, color: 'blue', spotX: 3, spotY: 3 },
       { id: '2', value: 0, color: 'bonus', spotX: 4, spotY: 3 },
       { id: '3', value: 10, color: 'red', spotX: 5, spotY: 3 },
@@ -56,7 +56,7 @@ it('validates first move with more than 30 and bonus tile in the middle', () => 
 
 it('validates first move with more than 30 and bonus tile in the middle', () => {
   const isValid = Brain.validate({
-    commonTiles: [
+    newCommonTiles: [
       { id: 1, color: 'orange', value: 10, spotY: 1, spotX: 1 },
       { id: 2, color: 'bonus', value: 0, spotY: 1, spotX: 2 },
       { id: 3, color: 'orange', value: 12, spotY: 1, spotX: 3 },
@@ -74,7 +74,7 @@ it('validates first move with more than 30 and bonus tile in the middle', () => 
 
 it('invalidates first move with more than 30 but not user tiles', () => {
   const isValid = Brain.validate({
-    commonTiles: [
+    newCommonTiles: [
       { id: 1, color: 'orange', value: 10, spotY: 1, spotX: 1 },
       { id: 2, color: 'red', value: 10, spotY: 1, spotX: 2 },
       { id: 3, color: 'black', value: 10, spotY: 1, spotX: 3 },
@@ -88,7 +88,7 @@ it('invalidates first move with more than 30 but not user tiles', () => {
 
 it('invalidates first move with less than 30', () => {
   const isValid = Brain.validate({
-    commonTiles: [
+    newCommonTiles: [
       { id: 1, color: 'orange', value: 1, spotY: 1, spotX: 1 },
       { id: 2, color: 'red', value: 1, spotY: 1, spotX: 2 },
       { id: 3, color: 'black', value: 1, spotY: 1, spotX: 3 },
@@ -106,7 +106,7 @@ it('invalidates first move with less than 30', () => {
 
 it('invalidates first move with more than 30 and without player tiles', () => {
   const isValid = Brain.validate({
-    commonTiles: [
+    newCommonTiles: [
       { id: 1, color: 'orange', value: 10, spotY: 1, spotX: 1 },
       { id: 2, color: 'red', value: 10, spotY: 1, spotX: 2 },
       { id: 3, color: 'black', value: 10, spotY: 1, spotX: 3 },

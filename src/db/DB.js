@@ -16,6 +16,7 @@ const Tile = {
       value,
       color,
       gameId: game.id,
+      area: null,
       userId: null,
       spotX: null,
       spotY: null,
@@ -33,6 +34,7 @@ const Tile = {
         ...TILES[tile.id],
         ...tile,
         userId: null,
+        area: 'grid'
       }
     })
   },
@@ -129,6 +131,7 @@ function assignInitialTiles(game, user) {
     { x: 3, y: 1 },
   ]
   tilesToAssign.forEach((tile, index) => {
+    tile.area = 'player'
     tile.userId = user.id
     const spot = userSpots[index]
     tile.spotX = spot.x

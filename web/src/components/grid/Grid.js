@@ -30,6 +30,7 @@ const Grid = ({
   const moveFromGridToGrid = (spot) => {
     const movedTile = {
       ...selectedTile,
+      area: 'grid',
       spotX: spot.x,
       spotY: spot.y,
     }
@@ -47,7 +48,7 @@ const Grid = ({
   const moveFromPlayerToGrid = (spot) => {
     const movedTile = {
       ...selectedTile,
-      userId: null,
+      area: 'grid',
       spotX: spot.x,
       spotY: spot.y,
     }
@@ -62,6 +63,7 @@ const Grid = ({
   const moveFromPlayerToPlayer = (spot) => {
     const movedTile = {
       ...selectedTile,
+      area: 'player',
       spotX: spot.x,
       spotY: spot.y,
     }
@@ -79,7 +81,7 @@ const Grid = ({
   const moveFromGridToPlayer = (spot) => {
     const movedTile = {
       ...selectedTile,
-      userId: localStorage.userId,
+      area: 'player',
       spotX: spot.x,
       spotY: spot.y,
     }
@@ -88,13 +90,17 @@ const Grid = ({
     const updatedGrid = grid.filter((tile) => tile.id !== movedTile.id)
     setGrid(updatedGrid)
     setSelectedTile(null)
+
+    if (selectedTile.userId) {
+      Socket.emit('game:move:self', updatedTiles)
+    }
   }
 
   const moveTile = (spot) => {
     if (!selectedTile) return
 
-    const isFromPlayer = !!selectedTile.userId
-    const isFromGrid = !isFromPlayer
+    const isFromPlayer = selectedTile.area === 'player'
+    const isFromGrid = selectedTile.area === 'grid'
     const isToGrid = spot.area === 'grid'
     const isToPlayer = spot.area === 'player'
 

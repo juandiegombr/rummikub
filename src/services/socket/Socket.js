@@ -125,8 +125,16 @@ function initializeSocketService(io) {
       const userId = Socket.getId(socket)
       const user = DB.User.get({ id: userId })
       const userTiles = DB.getPlayerTiles(game, userId)
+      const commonTiles = DB.getGrid(gameCode)
 
-      if (!Brain.validate({ commonTiles: newCommonTiles, userTiles, isFirstMove: user.isFirstMove })) {
+      const isValid = Brain.validate({
+        newCommonTiles,
+        commonTiles,
+        userTiles,
+        isFirstMove: user.isFirstMove,
+      })
+
+      if (!isValid) {
         socket.emit('game:play:ko')
         return
       }
@@ -148,7 +156,7 @@ function initializeSocketService(io) {
       const game = DB.Game.getByCode(gameCode)
       const userId = Socket.getId(socket)
       const unassignedTile = DB.Tile.getUnassigned(game.id)
-      const tile = DB.Tile.update(unassignedTile.id, { userId, spotX: spot.x, spotY: spot.y })
+      const tile = DB.Tile.update(unassignedTile.id, { area: 'player', userId, spotX: spot.x, spotY: spot.y })
       const tiles = DB.getPlayerTiles(game, userId)
       const grid = DB.getGrid(gameCode)
 
