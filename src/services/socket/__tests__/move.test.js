@@ -45,8 +45,7 @@ it('makes a move', async function(done) {
   done()
 })
 
-fit('confirms a valid play', async function(done) {
-  Brain.validateFirstMove = jest.fn(() => true)
+it('confirms a valid play', async function(done) {
   Brain.validate = jest.fn(() => true)
   const firstUser = DB.User.create({ name: 'Ramon' })
   const secondUser = DB.User.create({ name: 'Ramon' })
@@ -66,6 +65,7 @@ fit('confirms a valid play', async function(done) {
 })
 
 it('rejects an invalid play', async function(done) {
+  Brain.validate = jest.fn(() => false)
   const firstUser = DB.User.create({ name: 'Ramon' })
   const secondUser = DB.User.create({ name: 'Pepe' })
   const game = DB.createGame(firstUser)
