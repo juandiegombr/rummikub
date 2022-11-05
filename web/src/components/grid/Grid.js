@@ -5,13 +5,13 @@ import { Socket } from 'services/socket'
 
 import './Grid.css'
 
-const GRID_SPOTS = Array.from({ length: 4 }).map((_, row) => {
-  return Array.from({ length: 14 }).map((_, column) => {
+const GRID_SPOTS = Array.from({ length: 5 }).map((_, row) => {
+  return Array.from({ length: 20 }).map((_, column) => {
     return { area: 'grid', x: column, y: row }
   })
 }).reduce((acc, row) => [...acc, ...row], [])
 
-const PLAYER_SPOTS = Array.from({ length: 2 }).map((_, row) => {
+const PLAYER_SPOTS = Array.from({ length: 3 }).map((_, row) => {
   return Array.from({ length: 10 }).map((_, column) => {
     return { area: 'player', x: column, y: row }
   })

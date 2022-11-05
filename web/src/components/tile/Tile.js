@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 
+import { Tile } from "domain/tile"
+
 import './Tile.css'
 
-const Tile = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onClick, disabled }) => {
+const TileComponent = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onClick, disabled }) => {
   const tileRef = useRef()
   const staticActive = useRef(false)
   const originalPosition = useRef({})
@@ -107,8 +109,6 @@ const Tile = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onClick, dis
     return translate
   }
 
-  const isBonus = tile.value === 0 && tile.color === 'bonus'
-
   return (
     <div
       ref={tileRef}
@@ -117,13 +117,14 @@ const Tile = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onClick, dis
       className={`tile tile--${tile.color} ${selected ? 'tile--selected' : ''}`}
       // onMouseDown={take}
       // onTouchStart={take}
+      data-area={area}
       onClick={() => {
         if (disabled) return
         onClick(tile)
       }}
       style={{ transform: getTransformValue(), zIndex: active ? 99 : 0 }}
     >
-      {isBonus
+      {Tile.isBonus(tile)
         ? <div className="tile__bonus"></div>
         : <div className="tile__number">{tile.value}</div>
       }
@@ -134,4 +135,4 @@ const Tile = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onClick, dis
   )
 }
 
-export { Tile }
+export { TileComponent as Tile }
