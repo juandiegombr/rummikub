@@ -126,11 +126,6 @@ function initializeSocketService(io) {
       const user = DB.User.get({ id: userId })
       const userTiles = DB.getPlayerTiles(game, userId)
 
-      if (user.isFirstMove && !Brain.validateFirstMove(newCommonTiles, userTiles)) {
-        socket.emit('game:play:ko')
-        return
-      }
-
       if (!Brain.validate({ commonTiles: newCommonTiles, userTiles, isFirstMove: user.isFirstMove })) {
         socket.emit('game:play:ko')
         return
