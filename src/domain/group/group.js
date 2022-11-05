@@ -16,27 +16,57 @@ const areTilesConsecutive = (group) => {
   return areTilesConsecutive.result
 }
 
+function allTilesHaveDifferentColors(group) {
+  const uniqueColors = new Set(group.map((tile) => tile.color))
+  return uniqueColors.size === group.length
+}
+
+function getGroupValue(group) {
+  return group.find((tile) => tile.value !== 0).value
+}
+
+function isSameValue(group) {
+  const groupValue = getGroupValue(group)
+  return group.every((tile) => tile.value === groupValue || Tile.isBonus(tile))
+}
+
+function isSameColor(group) {
+  const groupColor = group.find((tile) => tile.color !== 'bonus').color
+  return group.every((tile) => tile.color === groupColor || Tile.isBonus(tile))
+}
+
 function isValid(group) {
   if (group.length < 3) {
     return false
   }
-  const groupValue = group.find((tile) => tile.value !== 0).value
-  const haveSameValue = group.every((tile) => tile.value === groupValue || Tile.isBonus(tile))
-  const uniqueColors = new Set(group.map((tile) => tile.color))
-  const allTilesHaveDifferentColors = uniqueColors.size === group.length
-  if (haveSameValue && allTilesHaveDifferentColors) {
+  if (isSameValue(group) && allTilesHaveDifferentColors(group)) {
     return true
   }
-  const groupColor = group.find((tile) => tile.color !== 'bonus').color
-  const haveSameColor = group.every((tile) => tile.color === groupColor || Tile.isBonus(tile))
-  if (haveSameColor && areTilesConsecutive(group)) {
+  if (isSameColor(group) && areTilesConsecutive(group)) {
     return true
   }
   return false
 }
 
+function value(group) {
+  return group.reduce((total, tile, index) => {
+    if (Tile.isBonus(tile) && isSameValue(group)) {
+      const groupValue = getGroupValue(group)
+      return total + groupValue
+    }
+    if (Tile.isBonus(tile) && isSameColor(group)) {
+      if (index === 0) {
+        return total + group[index + 1].value
+      }
+      return total + group[index - 1].value
+    }
+    return total + tile.value
+  }, 0)
+}
+
 const Group = {
   isValid,
+  value,
 }
 
 module.exports = { Group }

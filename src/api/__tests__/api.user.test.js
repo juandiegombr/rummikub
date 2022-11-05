@@ -18,7 +18,14 @@ it('creates a user', (done) => {
     .get('/api/user/ramon')
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
-      expect(res.body).toEqual({ id: 'uuid', name: 'ramon', socketId: null })
+      expect(res.body).toEqual({
+        id: 'uuid',
+        name: 'ramon',
+        isFirstMove: true,
+        gameId: null,
+        order: null,
+        socketId: null,
+      })
     })
     .end(done)
 })

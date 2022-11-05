@@ -17,11 +17,11 @@ const SocketServerMock = () => {
       }
     },
     on,
-    in: (roomId) => {
+    in: (room) => {
       return {
         allSockets: () => {
           const socketsInRoom =  Object.values(SOCKETS).filter((socket) => {
-            return socket.roomId === roomId
+            return socket.room === room
           })
           return Promise.resolve(socketsInRoom.map(socket => socket.id))
         }
@@ -32,7 +32,7 @@ const SocketServerMock = () => {
       EVENTS['game:start'] = jest.fn()
       const socketClient =  {
         id: socketId,
-        roomId: null,
+        room: null,
         emit: jest.fn(async (event, payload) => {
           const triggeredEvent = EVENTS[event]
           await triggeredEvent(payload)
@@ -40,19 +40,19 @@ const SocketServerMock = () => {
       }
       const socketServer =  {
         id: socketId,
-        roomId: null,
+        room: null,
         on: jest.fn((event, callback) => {
           EVENTS[event] = callback
         }),
-        to: (roomId) => {
-          SOCKETS[socketId].roomId = roomId
+        to: (room) => {
+          SOCKETS[socketId].room = room
           return {
             emit: jest.fn()
           }
         },
         emit: jest.fn(),
-        join: (roomId) => {
-          SOCKETS[socketId].roomId = roomId
+        join: (room) => {
+          SOCKETS[socketId].room = room
         },
         broadcast: {
           emit: jest.fn()

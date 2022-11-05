@@ -42,22 +42,38 @@ const Tile = {
 }
 
 const User = {
-  create: (userName) => {
+  create: ({ name, order = null, gameId = null }) => {
     const user = {
       id: v4(),
-      name: userName,
+      name,
       socketId: null,
+      isFirstMove: true,
+      gameId,
+      order,
     }
     USERS[user.id] = user
     return user
   },
-  get: (userId) => {
-    return USERS[userId]
+  get: (query) => {
+    return Object.values(USERS).find((user) => {
+      const queryParams = Object.entries(query)
+      return queryParams.every(([key, value]) => {
+          return user[key] === value
+      })
+    })
   },
   getByGameCode: (gameCode) => {
     const game = Game.getByCode(gameCode)
     const userIds = game.users
     return userIds.map((userId) => USERS[userId])
+  },
+  filter: (query) => {
+    return Object.values(USERS).filter((user) => {
+      const queryParams = Object.entries(query)
+      return queryParams.every(([key, value]) => {
+          return user[key] === value
+      })
+    })
   },
   update: (userId, payload) => {
     USERS[userId] = {...USERS[userId], ...payload}
@@ -66,12 +82,11 @@ const User = {
 }
 
 const Game = {
-  create: (user) => {
+  create: () => {
     const game = {
       id: v4(),
       code: generateGameCode(),
-      users: [user.id],
-      turn: user.id
+      turn: 0
     }
     GAMES[game.id] = game
     return game
@@ -81,7 +96,11 @@ const Game = {
   },
   getByCode: (gameCode) => {
     return Object.values(GAMES).find((game) => game.code === gameCode)
-  }
+  },
+  update: (game, payload) => {
+    GAMES[game.id] = {...GAMES[game.id], ...payload}
+    return GAMES[game.id]
+  },
 }
 
 function createTiles(game) {
@@ -120,18 +139,18 @@ function assignInitialTiles(game, user) {
 function createGame(user) {
   const game = Game.create(user)
   createTiles(game)
-  assignInitialTiles(game, user)
   return game
 }
 
 function joinGame(game, user) {
-  game.users.push(user.id)
+  const usersInGame = User.filter({ gameId: game.id })
+  const order = usersInGame.length
+  User.update(user.id, { gameId: game.id, order })
   assignInitialTiles(game, user)
   return game
 }
 
-function getPlayerTiles(gameCode, userId) {
-  const game = Game.getByCode(gameCode)
+function getPlayerTiles(game, userId) {
   const userTiles = Object.values(TILES).filter((tile) => tile.gameId === game.id && tile.userId === userId)
   return userTiles
 }
@@ -162,28 +181,26 @@ function move(gameCode, move) {
   })
 }
 
-function nextTurn(gameCode) {
-  const game = Game.getByCode(gameCode)
-  const currentUserId = game.turn
-  const currentUserIdPosition = game.users.findIndex((userId) => userId === currentUserId)
-  const isLast = game.users.length === currentUserIdPosition + 1
+function nextTurn(game) {
+  const usersInGame = User.filter({ gameId: game.id })
+  const currentUser = User.get({ gameId: game.id, order: game.turn })
+  const isLast = usersInGame.length === currentUser.order + 1
   if (isLast) {
-    const nextUserIdPosition = 0
-    const nextUserId = game.users[nextUserIdPosition]
-    game.turn = nextUserId
-    return USERS[nextUserId]
+    const nextUserPosition = 0
+    const nextUser = User.get({ gameId: game.id, order: nextUserPosition })
+    game.turn = nextUserPosition
+    return USERS[nextUser.id]
   }
-  const nextUserIdPosition = currentUserIdPosition + 1
-  const nextUserId = game.users[nextUserIdPosition]
-  game.turn = nextUserId
-  return USERS[nextUserId]
+  const nextUserPosition = currentUser.order + 1
+  const nextUser = User.get({ gameId: game.id, order: nextUserPosition })
+  game.turn = nextUserPosition
+  return USERS[nextUser.id]
 }
 
 function debug() {
   console.log({
     GAMES,
     USERS,
-    TILES,
   })
 }
 

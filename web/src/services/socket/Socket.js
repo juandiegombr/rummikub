@@ -6,7 +6,7 @@ let config = {}
 const getConfig = () => {
   return {
     ...config,
-    room: `room:${localStorage.gameCode}`,
+    gameCode: localStorage.gameCode,
   }
 }
 
@@ -36,8 +36,11 @@ const on = (...args) => {
 
 const emit = (event, data) => {
   const config = getConfig()
-  if (config.room) {
-    return getInstance().emit(event, { room: config.room, data })
+  if (config.gameCode) {
+    return getInstance().emit(
+      event,
+      { gameCode: config.gameCode, data },
+    )
   }
   return getInstance().emit(event, { data })
 }
