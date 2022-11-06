@@ -1,11 +1,12 @@
 const { initializeSocketService } = require('..')
 const DB = require('../../../db')
+const { User } = require('../../../models')
 const SocketServerMock = require('./SocketServerMock')
 
 jest.mock('../../../services/logger')
 
 it('disconnects from the socket server', async function(done) {
-  const firstUser = DB.User.create({ name: 'Ramon' })
+  const firstUser = User.create({ name: 'Ramon' })
   const io = SocketServerMock()
   initializeSocketService(io)
 
@@ -17,7 +18,7 @@ it('disconnects from the socket server', async function(done) {
 })
 
 it('joins to a game', async function(done) {
-  const user = DB.User.create({ name: 'Ramon' })
+  const user = User.create({ name: 'Ramon' })
   const game = DB.createGame(user)
   const io = SocketServerMock()
   initializeSocketService(io)
@@ -25,7 +26,7 @@ it('joins to a game', async function(done) {
   const [ client, server ] = io.client('1', { userId: user.id })
   await client.emit('game:join', { data: { gameCode: game.code } })
 
-  const updatedUser = DB.User.get({ id: user.id })
+  const updatedUser = User.get({ id: user.id })
   expect(updatedUser.socketId).toBe('1')
   expect(server.room).toBe(game.code)
   expect(server.emit).not.toHaveBeenCalledWith('game:start', expect.any(Array))
@@ -33,8 +34,8 @@ it('joins to a game', async function(done) {
 })
 
 it('joins two players to a game', async function(done) {
-  const firstUser = DB.User.create({ name: 'Ramon' })
-  const secondUser = DB.User.create({ name: 'Pepe' })
+  const firstUser = User.create({ name: 'Ramon' })
+  const secondUser = User.create({ name: 'Pepe' })
   const game = DB.createGame(firstUser)
   const io = SocketServerMock()
   initializeSocketService(io)
@@ -50,8 +51,8 @@ it('joins two players to a game', async function(done) {
 })
 
 it('rejoins to a game', async function(done) {
-  const firstUser = DB.User.create({ name: 'Ramon' })
-  const secondUser = DB.User.create({ name: 'Ramon' })
+  const firstUser = User.create({ name: 'Ramon' })
+  const secondUser = User.create({ name: 'Ramon' })
   const game = DB.createGame(firstUser)
   const io = SocketServerMock()
   initializeSocketService(io)
@@ -70,8 +71,8 @@ it('rejoins to a game', async function(done) {
 })
 
 it('rejoins to a game the user with turn', async function(done) {
-  const firstUser = DB.User.create({ name: 'Ramon' })
-  const secondUser = DB.User.create({ name: 'Ramon' })
+  const firstUser = User.create({ name: 'Ramon' })
+  const secondUser = User.create({ name: 'Ramon' })
   const game = DB.createGame(firstUser)
   const io = SocketServerMock()
   initializeSocketService(io)

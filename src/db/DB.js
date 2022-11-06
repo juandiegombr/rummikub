@@ -1,108 +1,10 @@
-const { v4 } = require('uuid')
-
+const { Game, Tile, User } = require('../models')
 const { TileService } = require('../domain/tile')
-const { generateGameCode } = require('../helpers')
-const { Logger } = require('../services/logger')
 
-let GAMES = {}
-let USERS = {}
-let TILES = {}
-
-const Tile = {
-  create: ({ code, value, color }, game) => {
-    const tile = {
-      id: v4(),
-      code,
-      value,
-      color,
-      gameId: game.id,
-      area: null,
-      userId: null,
-      spotX: null,
-      spotY: null,
-    }
-    TILES[tile.id] = tile
-    return tile
-  },
-  update: (tileId, payload) => {
-    TILES[tileId] = {...TILES[tileId], ...payload}
-    return TILES[tileId]
-  },
-  updateGrid: (grid) => {
-    grid.forEach((tile) => {
-      TILES[tile.id] = {
-        ...TILES[tile.id],
-        ...tile,
-        userId: null,
-        area: 'grid'
-      }
-    })
-  },
-  getUnassigned: (gameId) => {
-    return Object.values(TILES).find((tile) => !tile.userId && tile.gameId === gameId && !tile.spotX && !tile.spotY)
-  }
-}
-
-const User = {
-  create: ({ name, order = null, gameId = null }) => {
-    const user = {
-      id: v4(),
-      name,
-      socketId: null,
-      isFirstMove: true,
-      gameId,
-      order,
-    }
-    USERS[user.id] = user
-    return user
-  },
-  get: (query) => {
-    return Object.values(USERS).find((user) => {
-      const queryParams = Object.entries(query)
-      return queryParams.every(([key, value]) => {
-          return user[key] === value
-      })
-    })
-  },
-  getByGameCode: (gameCode) => {
-    const game = Game.getByCode(gameCode)
-    const userIds = game.users
-    return userIds.map((userId) => USERS[userId])
-  },
-  filter: (query) => {
-    return Object.values(USERS).filter((user) => {
-      const queryParams = Object.entries(query)
-      return queryParams.every(([key, value]) => {
-          return user[key] === value
-      })
-    })
-  },
-  update: (userId, payload) => {
-    USERS[userId] = {...USERS[userId], ...payload}
-    return USERS[userId]
-  }
-}
-
-const Game = {
-  create: () => {
-    const game = {
-      id: v4(),
-      code: generateGameCode(),
-      turn: 0
-    }
-    GAMES[game.id] = game
-    return game
-  },
-  get: (gameId) => {
-    GAMES[gameId]
-  },
-  getByCode: (gameCode) => {
-    return Object.values(GAMES).find((game) => game.code === gameCode)
-  },
-  update: (game, payload) => {
-    GAMES[game.id] = {...GAMES[game.id], ...payload}
-    return GAMES[game.id]
-  },
+function createGame(user) {
+  const game = Game.create(user)
+  createTiles(game)
+  return game
 }
 
 function createTiles(game) {
@@ -112,7 +14,7 @@ function createTiles(game) {
 }
 
 function assignInitialTiles(game, user) {
-  const unassignedTiles = Object.values(TILES).filter((tile) => tile.gameId === game.id && tile.userId === null)
+  const unassignedTiles = Tile.filter({ gameId: game.id, userId: null })
   const tilesToAssign = unassignedTiles.splice(0, 14)
   const userSpots = [
     { x: 0, y: 0 },
@@ -131,18 +33,14 @@ function assignInitialTiles(game, user) {
     { x: 3, y: 1 },
   ]
   tilesToAssign.forEach((tile, index) => {
-    tile.area = 'player'
-    tile.userId = user.id
     const spot = userSpots[index]
-    tile.spotX = spot.x
-    tile.spotY = spot.y
+    Tile.update(tile.id, {
+      area: 'player',
+      userId: user.id,
+      spotX: spot.x,
+      spotY: spot.y,
+    })
   })
-}
-
-function createGame(user) {
-  const game = Game.create(user)
-  createTiles(game)
-  return game
 }
 
 function joinGame(game, user) {
@@ -153,30 +51,13 @@ function joinGame(game, user) {
   return game
 }
 
-function getPlayerTiles(game, userId) {
-  const userTiles = Object.values(TILES).filter((tile) => tile.gameId === game.id && tile.userId === userId)
-  return userTiles
-}
-
 function getGrid(gameCode) {
   const game = Game.getByCode(gameCode)
-  const tilesInGrid = Object.values(TILES).filter((tile) => (
-    tile.gameId === game.id
-    && Number.isInteger(tile.spotX)
-    && Number.isInteger(tile.spotY)
-    && !tile.userId
-  ))
-  return tilesInGrid
+  return Tile.filter({ gameId: game.id, area: 'grid' })
 }
 
 function move(gameCode, move) {
-  const game = Game.getByCode(gameCode)
   const tileId = move.tile.id
-  const tile = TILES[tileId]
-  if (tile.gameId !== game.id) {
-    Logger.send('Tile is not from game:', { tile, gameCode})
-    return
-  }
   Tile.update(tileId, {
     spotX: move.spot.x,
     spotY: move.spot.y,
@@ -191,30 +72,38 @@ function nextTurn(game) {
   if (isLast) {
     const nextUserPosition = 0
     const nextUser = User.get({ gameId: game.id, order: nextUserPosition })
-    game.turn = nextUserPosition
-    return USERS[nextUser.id]
+    Game.update(game, { turn: nextUserPosition })
+    return User.get({ id: nextUser.id })
   }
   const nextUserPosition = currentUser.order + 1
   const nextUser = User.get({ gameId: game.id, order: nextUserPosition })
-  game.turn = nextUserPosition
-  return USERS[nextUser.id]
+  Game.update(game, { turn: nextUserPosition })
+  return User.get({ id: nextUser.id })
 }
 
 function debug() {
-  console.log({
-    GAMES,
-    USERS,
-  })
+  Game.debug()
+  User.debug()
 }
 
 function reset() {
   const env = process.env.NODE_ENV
   if (env !== 'test') return
 
-  GAMES = {}
-  USERS = {}
-  TILES = {}
+  Game.reset()
+  Tile.reset()
+  User.reset()
 }
+
+function createDebugGame() {
+  const env = process.env.NODE_ENV
+  if (env === 'test') return
+  const game = Game.create()
+  game.code = 'AAAA'
+  TileService.generateTiles().reverse().map((tile) => Tile.create(tile, game))
+}
+
+createDebugGame()
 
 module.exports = {
   User,
@@ -223,7 +112,6 @@ module.exports = {
   createGame,
   joinGame,
   getGrid,
-  getPlayerTiles,
   move,
   nextTurn,
   debug,

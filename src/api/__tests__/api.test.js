@@ -2,6 +2,7 @@ const request = require('supertest')
 
 const { app } = require('../../server')
 const DB = require('../../db')
+const { Game, User } = require('../../models')
 
 jest.mock('../../helpers', () => {
   return {
@@ -14,7 +15,7 @@ afterEach(() => {
 })
 
 it('creates a new game', (done) => {
-  const user = DB.User.create({ name: 'Ramon' })
+  const user = User.create({ name: 'Ramon' })
 
   request(app)
     .get('/api/game/create/')
@@ -22,7 +23,7 @@ it('creates a new game', (done) => {
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
       expect(res.body).toEqual({ userId: user.id, gameCode: 'ABCD' })
-      expect(DB.Game.getByCode('ABCD')).toEqual(
+      expect(Game.getByCode('ABCD')).toEqual(
         { code: 'ABCD', id: expect.any(String), turn: 0 }
       )
     })
@@ -30,8 +31,8 @@ it('creates a new game', (done) => {
 })
 
 it('joins a created game', (done) => {
-  const user = DB.User.create({ name: 'Ramon' })
-  const game = DB.Game.create(user)
+  const user = User.create({ name: 'Ramon' })
+  const game = Game.create(user)
 
   request(app)
     .get(`/api/game/join/${game.code}`)
@@ -44,8 +45,8 @@ it('joins a created game', (done) => {
 })
 
 it('tries to joins a not found game', (done) => {
-  const user = DB.User.create({ name: 'Ramon' })
-  DB.Game.create(user)
+  const user = User.create({ name: 'Ramon' })
+  Game.create(user)
 
   request(app)
     .get('/api/game/join/BBBB')
@@ -54,9 +55,9 @@ it('tries to joins a not found game', (done) => {
 })
 
 it('re-joins a created game', (done) => {
-  const user = DB.User.create({ name: 'Ramon' })
-  const game = DB.Game.create(user)
-  DB.User.update(user.id, { gameId: game.id, order: 0 })
+  const user = User.create({ name: 'Ramon' })
+  const game = Game.create(user)
+  User.update(user.id, { gameId: game.id, order: 0 })
 
   request(app)
     .get(`/api/game/rejoin/${game.code}`)
@@ -69,10 +70,10 @@ it('re-joins a created game', (done) => {
 })
 
 it('tries to re-joins to a not allowed game', (done) => {
-  const user = DB.User.create({ name: 'Ramon' })
-  const otherUser = DB.User.create({ name: 'Pepe' })
-  const game = DB.Game.create(user)
-  DB.User.update(user.id, { gameId: game.id, order: 0 })
+  const user = User.create({ name: 'Ramon' })
+  const otherUser = User.create({ name: 'Pepe' })
+  const game = Game.create(user)
+  User.update(user.id, { gameId: game.id, order: 0 })
 
   request(app)
     .get('/api/game/rejoin/ABCD')

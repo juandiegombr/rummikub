@@ -1,5 +1,6 @@
 const { initializeSocketService } = require('..')
 const DB = require('../../../db')
+const { User, Tile } = require('../../../models')
 const { Brain } = require('../../brain')
 const SocketServerMock = require('./SocketServerMock')
 
@@ -10,8 +11,8 @@ afterEach(() => {
 })
 
 it('receives the turn when the game starts', async function(done) {
-  const firstUser = DB.User.create({ name: 'Ramon' })
-  const secondUser = DB.User.create({ name: 'Pepe' })
+  const firstUser = User.create({ name: 'Ramon' })
+  const secondUser = User.create({ name: 'Pepe' })
   const game = DB.createGame(firstUser)
   const io = SocketServerMock()
   initializeSocketService(io)
@@ -26,8 +27,8 @@ it('receives the turn when the game starts', async function(done) {
 })
 
 it('makes a move', async function(done) {
-  const firstUser = DB.User.create({ name: 'Ramon' })
-  const secondUser = DB.User.create({ name: 'Pepe' })
+  const firstUser = User.create({ name: 'Ramon' })
+  const secondUser = User.create({ name: 'Pepe' })
   const game = DB.createGame(firstUser)
   const io = SocketServerMock()
   initializeSocketService(io)
@@ -37,7 +38,7 @@ it('makes a move', async function(done) {
   const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
   await secondClient.emit('game:join', { data: { gameCode: game.code } })
 
-  const tile = DB.getPlayerTiles(game, firstUser.id)[0]
+  const tile = Tile.getUserTiles(game, firstUser.id)[0]
   await firstClient.emit('game:move', { gameCode: game.code, data: { tile, spot: { x: 0, y: 0 } } })
 
   expect(firstServer.emit).toHaveBeenCalledWith('game:move', expect.any(Array))
@@ -47,8 +48,8 @@ it('makes a move', async function(done) {
 
 it('confirms a valid play', async function(done) {
   Brain.validate = jest.fn(() => true)
-  const firstUser = DB.User.create({ name: 'Ramon' })
-  const secondUser = DB.User.create({ name: 'Ramon' })
+  const firstUser = User.create({ name: 'Ramon' })
+  const secondUser = User.create({ name: 'Ramon' })
   const game = DB.createGame(firstUser)
   const io = SocketServerMock()
   initializeSocketService(io)
@@ -66,8 +67,8 @@ it('confirms a valid play', async function(done) {
 
 it('rejects an invalid play', async function(done) {
   Brain.validate = jest.fn(() => false)
-  const firstUser = DB.User.create({ name: 'Ramon' })
-  const secondUser = DB.User.create({ name: 'Pepe' })
+  const firstUser = User.create({ name: 'Ramon' })
+  const secondUser = User.create({ name: 'Pepe' })
   const game = DB.createGame(firstUser)
   const io = SocketServerMock()
   initializeSocketService(io)
@@ -84,8 +85,8 @@ it('rejects an invalid play', async function(done) {
 })
 
 it('pass the turn', async function(done) {
-  const firstUser = DB.User.create({ name: 'Ramon' })
-  const secondUser = DB.User.create({ name: 'Pepe' })
+  const firstUser = User.create({ name: 'Ramon' })
+  const secondUser = User.create({ name: 'Pepe' })
   const game = DB.createGame(firstUser)
   const io = SocketServerMock()
   initializeSocketService(io)
@@ -107,8 +108,8 @@ it('pass the turn', async function(done) {
 })
 
 it('returns the turn to the first user when the last user plays', async function(done) {
-  const firstUser = DB.User.create({ name: 'Ramon' })
-  const secondUser = DB.User.create({ name: 'Pepe' })
+  const firstUser = User.create({ name: 'Ramon' })
+  const secondUser = User.create({ name: 'Pepe' })
   const game = DB.createGame(firstUser)
   const io = SocketServerMock()
   initializeSocketService(io)
@@ -125,8 +126,8 @@ it('returns the turn to the first user when the last user plays', async function
 })
 
 it('updates the player grid', async function(done) {
-  const firstUser = DB.User.create({ name: 'Ramon' })
-  const secondUser = DB.User.create({ name: 'Pepe' })
+  const firstUser = User.create({ name: 'Ramon' })
+  const secondUser = User.create({ name: 'Pepe' })
   const game = DB.createGame(firstUser)
   const io = SocketServerMock()
   initializeSocketService(io)
@@ -135,11 +136,11 @@ it('updates the player grid', async function(done) {
   const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
   await secondClient.emit('game:join', { data: { gameCode: game.code } })
 
-  const tiles = JSON.parse(JSON.stringify(DB.getPlayerTiles(game, firstUser.id)))
+  const tiles = JSON.parse(JSON.stringify(Tile.getUserTiles(game, firstUser.id)))
   tiles[0].spotX = 9
   tiles[0].spotY = 1
   await firstClient.emit('game:move:self', { gameCode: game.code, data: tiles })
 
-  expect(DB.getPlayerTiles(game, firstUser.id)).toEqual(tiles)
+  expect(Tile.getUserTiles(game, firstUser.id)).toEqual(tiles)
   done()
 })
