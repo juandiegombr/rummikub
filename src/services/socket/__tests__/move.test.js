@@ -38,7 +38,7 @@ it('makes a move', async function(done) {
   const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
   await secondClient.emit('game:join', { data: { gameCode: game.code } })
 
-  const tile = Tile.getUserTiles(game, firstUser.id)[0]
+  const tile = Tile.getUserTiles(game, firstUser)[0]
   await firstClient.emit('game:move', { gameCode: game.code, data: { tile, spot: { x: 0, y: 0 } } })
 
   expect(firstServer.emit).toHaveBeenCalledWith('game:move', expect.any(Array))
@@ -136,11 +136,11 @@ it('updates the player grid', async function(done) {
   const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
   await secondClient.emit('game:join', { data: { gameCode: game.code } })
 
-  const tiles = JSON.parse(JSON.stringify(Tile.getUserTiles(game, firstUser.id)))
+  const tiles = JSON.parse(JSON.stringify(Tile.getUserTiles(game, firstUser)))
   tiles[0].spotX = 9
   tiles[0].spotY = 1
   await firstClient.emit('game:move:self', { gameCode: game.code, data: tiles })
 
-  expect(Tile.getUserTiles(game, firstUser.id)).toEqual(tiles)
+  expect(Tile.getUserTiles(game, firstUser)).toEqual(tiles)
   done()
 })

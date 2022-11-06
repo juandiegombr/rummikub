@@ -4,26 +4,39 @@ const { generateGameCode } = require('../helpers')
 
 let GAMES = {}
 
+function create() {
+  const game = {
+    id: v4(),
+    code: generateGameCode(),
+    turn: 0
+  }
+  GAMES[game.id] = game
+  return GAMES[game.id]
+}
+
+function get(query) {
+  return Object.values(GAMES).find((user) => {
+    const queryParams = Object.entries(query)
+    return queryParams.every(([key, value]) => {
+        return user[key] === value
+    })
+  })
+}
+
+function getByCode(gameCode) {
+  return get({ code: gameCode })
+}
+
+function update(game, payload) {
+  GAMES[game.id] = {...GAMES[game.id], ...payload}
+  return GAMES[game.id]
+}
+
 const Game = {
-  create: () => {
-    const game = {
-      id: v4(),
-      code: generateGameCode(),
-      turn: 0
-    }
-    GAMES[game.id] = game
-    return GAMES[game.id]
-  },
-  get: (gameId) => {
-    GAMES[gameId]
-  },
-  getByCode: (gameCode) => {
-    return Object.values(GAMES).find((game) => game.code === gameCode)
-  },
-  update: (game, payload) => {
-    GAMES[game.id] = {...GAMES[game.id], ...payload}
-    return GAMES[game.id]
-  },
+  create,
+  get,
+  getByCode,
+  update,
   debug: () => {
     console.log('GAMES', GAMES)
   },

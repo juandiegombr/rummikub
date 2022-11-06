@@ -57,7 +57,7 @@ it('tries to joins a not found game', (done) => {
 it('re-joins a created game', (done) => {
   const user = User.create({ name: 'Ramon' })
   const game = Game.create(user)
-  User.update(user.id, { gameId: game.id, order: 0 })
+  User.update(user, { gameId: game.id, order: 0 })
 
   request(app)
     .get(`/api/game/rejoin/${game.code}`)
@@ -73,7 +73,7 @@ it('tries to re-joins to a not allowed game', (done) => {
   const user = User.create({ name: 'Ramon' })
   const otherUser = User.create({ name: 'Pepe' })
   const game = Game.create(user)
-  User.update(user.id, { gameId: game.id, order: 0 })
+  User.update(user, { gameId: game.id, order: 0 })
 
   request(app)
     .get('/api/game/rejoin/ABCD')

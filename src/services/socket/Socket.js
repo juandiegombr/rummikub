@@ -11,10 +11,11 @@ function initializeSocketService(io) {
     getId: (socket) => socket.handshake.auth.token,
     startGame: (socket, gameCode) => {
       const userId = socket.handshake.auth.token
+      const user = User.get({ id: userId })
       const game = Game.getByCode(gameCode)
-      const playerTiles = Tile.getUserTiles(game, userId)
+      const userTiles = Tile.getUserTiles(game, user)
       const users = User.filter({ gameId: game.id })
-      socket.emit('game:start', { tiles: playerTiles, users })
+      socket.emit('game:start', { tiles: userTiles, users })
     },
     startTurn: (gameCode) => {
       const game = Game.getByCode(gameCode)
@@ -28,12 +29,12 @@ function initializeSocketService(io) {
     },
     reJoinGame: (socket, gameCode) => {
       const userId = socket.handshake.auth.token
-      const game = Game.getByCode(gameCode)
-      const playerTiles = Tile.getUserTiles(game, userId)
-      const grid = DB.getGrid(gameCode)
       const user = User.get({ id: userId })
+      const game = Game.getByCode(gameCode)
+      const userTiles = Tile.getUserTiles(game, user)
+      const grid = DB.getGrid(gameCode)
       const users = User.filter({ gameId: game.id })
-      socket.emit('game:start', { tiles: playerTiles, users })
+      socket.emit('game:start', { tiles: userTiles, users })
       socket.emit('game:move', grid)
       const hasTurn = game.turn === user.order
       if (hasTurn) {
@@ -69,7 +70,8 @@ function initializeSocketService(io) {
     const room = gameCode
     socket.join(room)
     const userId = Socket.getId(socket)
-    User.update(userId, { socketId: socket.id })
+    const user = User.get({ id: userId })
+    User.update(user, { socketId: socket.id })
     Logger.send(`Websocket: User rejoined to the game ${gameCode}`)
   }
 
@@ -77,9 +79,9 @@ function initializeSocketService(io) {
     const room = gameCode
     socket.join(gameCode)
     const userId = Socket.getId(socket)
-    const user = User.get({ id: userId})
+    const user = User.get({ id: userId })
     const game = Game.getByCode(gameCode)
-    User.update(userId, { socketId: socket.id })
+    User.update(user, { socketId: socket.id })
     DB.joinGame(game, user)
     const playersInRoom = await Room.count(io, room)
     Logger.send(`Websocket: ${playersInRoom} user joined to the game ${gameCode}`)
@@ -115,9 +117,10 @@ function initializeSocketService(io) {
       })
     })
 
-    socket.on('game:move:self', async ({ data: tiles }) => {
-      tiles.forEach((tile) => {
-        Tile.update(tile.id, tile)
+    socket.on('game:move:self', async ({ data: updatedTiles }) => {
+      updatedTiles.forEach((updatedTile) => {
+        const tile = Tile.get({ id: updatedTile.id })
+        Tile.update(tile, updatedTile)
       })
     })
 
@@ -125,7 +128,7 @@ function initializeSocketService(io) {
       const game = Game.getByCode(gameCode)
       const userId = Socket.getId(socket)
       const user = User.get({ id: userId })
-      const userTiles = Tile.getUserTiles(game, userId)
+      const userTiles = Tile.getUserTiles(game, user)
       const commonTiles = DB.getGrid(gameCode)
 
       const isValid = Brain.validate({
@@ -141,7 +144,7 @@ function initializeSocketService(io) {
       }
 
       Tile.updateGrid(newCommonTiles)
-      User.update(user.id, { isFirstMove: false })
+      User.update(user, { isFirstMove: false })
       socket.emit('game:play:ok')
       const players = await Room.getPlayers(io, gameCode)
       players.forEach(player => {
@@ -154,11 +157,12 @@ function initializeSocketService(io) {
     })
 
     socket.on('game:pass', async ({ gameCode, data: spot  }) => {
-      const game = Game.getByCode(gameCode)
       const userId = Socket.getId(socket)
-      const unassignedTile = Tile.getUnassigned(game.id)
-      const tile = Tile.update(unassignedTile.id, { area: 'player', userId, spotX: spot.x, spotY: spot.y })
-      const tiles = Tile.getUserTiles(game, userId)
+      const user = User.get({ id: userId })
+      const game = Game.getByCode(gameCode)
+      const unassignedTile = Tile.getFirstUnassigned(game)
+      const tile = Tile.update(unassignedTile, { area: 'player', userId, spotX: spot.x, spotY: spot.y })
+      const tiles = Tile.getUserTiles(game, user)
       const grid = DB.getGrid(gameCode)
 
       socket.emit('game:pass:ok', { tiles, tile, grid })

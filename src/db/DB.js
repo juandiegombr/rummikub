@@ -34,7 +34,7 @@ function assignInitialTiles(game, user) {
   ]
   tilesToAssign.forEach((tile, index) => {
     const spot = userSpots[index]
-    Tile.update(tile.id, {
+    Tile.update(tile, {
       area: 'player',
       userId: user.id,
       spotX: spot.x,
@@ -46,7 +46,7 @@ function assignInitialTiles(game, user) {
 function joinGame(game, user) {
   const usersInGame = User.filter({ gameId: game.id })
   const order = usersInGame.length
-  User.update(user.id, { gameId: game.id, order })
+  User.update(user, { gameId: game.id, order })
   assignInitialTiles(game, user)
   return game
 }
@@ -58,7 +58,8 @@ function getGrid(gameCode) {
 
 function move(gameCode, move) {
   const tileId = move.tile.id
-  Tile.update(tileId, {
+  const tile = Tile.get({ id: tileId })
+  Tile.update(tile, {
     spotX: move.spot.x,
     spotY: move.spot.y,
     userId: null,
