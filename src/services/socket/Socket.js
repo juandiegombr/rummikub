@@ -144,7 +144,28 @@ function initializeSocketService(io) {
       }
 
       Tile.updateGrid(newCommonTiles)
+      const hasFinished = Tile.getUserTiles(game, user).length === 0
       User.update(user, { isFirstMove: false })
+      if (hasFinished) {
+        const players = await Room.getPlayers(io, gameCode)
+        const usersInGame = User.filter({ gameId: game.id })
+        const rounds = [
+          {
+            total: usersInGame.map((user) => {
+              const userTiles = Tile.getUserTiles(game, user)
+              return {
+                [user.name]: userTiles.reduce((total, tile) => total + tile.value, 0)
+              }
+            })
+          }
+        ]
+        players.forEach(player => {
+          player.emit('game:finish', rounds)
+        })
+        socket.emit('game:win')
+        return
+      }
+
       socket.emit('game:play:ok')
       const players = await Room.getPlayers(io, gameCode)
       players.forEach(player => {
