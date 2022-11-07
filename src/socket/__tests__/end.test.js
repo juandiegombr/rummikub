@@ -23,12 +23,10 @@ it('confirms a valid play', async function(done) {
 
   const secondUserTiles = Tile.getUserTiles(game, secondUser)
   const rounds = [
-    {
-      total: [
-        { [firstUser.name]: 0 },
-        { [secondUser.name]: secondUserTiles.reduce((total, tile) => total + tile.value, 0) },
-      ],
-    }
+    [
+      { [firstUser.name]: 0 },
+      { [secondUser.name]: secondUserTiles.reduce((total, tile) => total + tile.value, 0) },
+    ],
   ]
   expect(firstServer.emit).toHaveBeenCalledWith('game:win')
   expect(firstServer.emit).toHaveBeenCalledWith('game:finish', rounds)

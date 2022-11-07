@@ -1,5 +1,6 @@
 const DB = require('../db')
 const { Game, User, Tile } = require("../models")
+const { Round } = require('../models/Round')
 const { Brain } = require('../services/brain')
 const { Socket } = require('../services/socket')
 
@@ -46,18 +47,9 @@ function invalidPlay({ socket }) {
 
 async function finishRound({ socket, gameCode }) {
   const game = Game.getByCode(gameCode)
-  const usersInGame = User.filter({ gameId: game.id })
-  const rounds = [
-    {
-      total: usersInGame.map((user) => {
-        const userTiles = Tile.getUserTiles(game, user)
-        return {
-          [user.name]: userTiles.reduce((total, tile) => total + tile.value, 0)
-        }
-      })
-    }
-  ]
-
+  Round.createForGame(game)
+  const rounds = Round.getForGame(game)
+  Game.update(game, { rounds: game.rounds + 1})
   const clients = await Socket.getClientsFromRoom(gameCode)
   clients.forEach(client => {
     client.emit('game:finish', rounds)

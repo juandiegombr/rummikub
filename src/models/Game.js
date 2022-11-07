@@ -8,7 +8,8 @@ function create() {
   const game = {
     id: v4(),
     code: generateGameCode(),
-    turn: 0
+    turn: 0,
+    rounds: 1,
   }
   GAMES[game.id] = game
   return GAMES[game.id]

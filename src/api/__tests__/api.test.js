@@ -24,7 +24,12 @@ it('creates a new game', (done) => {
       expect(res.statusCode).toEqual(200)
       expect(res.body).toEqual({ userId: user.id, gameCode: 'ABCD' })
       expect(Game.getByCode('ABCD')).toEqual(
-        { code: 'ABCD', id: expect.any(String), turn: 0 }
+        {
+          code: 'ABCD',
+          id: expect.any(String),
+          rounds: 1,
+          turn: 0,
+        }
       )
     })
     .end(done)

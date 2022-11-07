@@ -1,3 +1,5 @@
+const { Tile } = require("./tile")
+
 const COLORS = ['red', 'blue', 'orange', 'black']
 const TILES_FOR_BRAND = 13
 
@@ -30,9 +32,19 @@ const shuffle = (tiles) => {
   return shuffledTiles
 }
 
+const getScore = (tiles) => {
+  return tiles.reduce((total, tile) => {
+    if (Tile.isBonus(tile)) {
+      return total + 30
+    }
+    return total + tile.value
+  }, 0)
+}
+
 const TileService = {
   generateTiles,
   shuffle,
+  getScore,
 }
 
 module.exports = { TileService }
