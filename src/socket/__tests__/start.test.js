@@ -1,9 +1,9 @@
-const { initializeSocketService } = require('..')
-const DB = require('../../../db')
-const { User } = require('../../../models')
+const { initializeSocketService } = require('../../socket')
+const DB = require('../../db')
+const { User } = require('../../models')
 const SocketServerMock = require('./SocketServerMock')
 
-jest.mock('../../../services/logger')
+jest.mock('../../services/logger')
 
 it('disconnects from the socket server', async function(done) {
   const firstUser = User.create({ name: 'Ramon' })

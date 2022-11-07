@@ -3,6 +3,16 @@
 exports[`generates all the tiles 1`] = `
 Array [
   Object {
+    "code": "id_bonus_0",
+    "color": "bonus",
+    "value": 0,
+  },
+  Object {
+    "code": "id_bonus_0",
+    "color": "bonus",
+    "value": 0,
+  },
+  Object {
     "code": "id_red_1",
     "color": "red",
     "value": 1,
@@ -261,16 +271,6 @@ Array [
     "code": "id_black_13",
     "color": "black",
     "value": 13,
-  },
-  Object {
-    "code": "id_bonus_0",
-    "color": "bonus",
-    "value": 0,
-  },
-  Object {
-    "code": "id_bonus_0",
-    "color": "bonus",
-    "value": 0,
   },
 ]
 `;

@@ -1,10 +1,10 @@
-const { initializeSocketService } = require('..')
-const DB = require('../../../db')
-const { User, Tile } = require('../../../models')
-const { Brain } = require('../../brain')
+const { initializeSocketService } = require('../../socket')
+const DB = require('../../db')
+const { User, Tile } = require('../../models')
+const { Brain } = require('../../services/brain')
 const SocketServerMock = require('./SocketServerMock')
 
-jest.mock('../../../services/logger')
+jest.mock('../../services/logger')
 
 afterEach(() => {
   DB.reset()

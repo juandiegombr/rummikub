@@ -16,8 +16,7 @@ const generateTiles = () => {
       .from({ length: TILES_FOR_BRAND })
       .map((_, index) => generateTile(index + 1, color))
   })
-  tiles.push(bonusTiles)
-  return tiles.reduce((acc, colorTiles) => acc.concat(colorTiles), [])
+  return [...bonusTiles, ...tiles ].reduce((acc, colorTiles) => acc.concat(colorTiles), [])
 }
 
 const shuffle = (tiles) => {

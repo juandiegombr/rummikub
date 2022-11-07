@@ -1,203 +1,74 @@
-const { Logger } = require('../../services/logger')
 const DB = require('../../db')
 const { Game, Tile, User } = require('../../models')
-const { Brain } = require('../brain')
 
-function initializeSocketService(io) {
-  const Socket = {
-    getById: (io, socketId) => {
-      return io.sockets.sockets.get(socketId)
-    },
-    getId: (socket) => socket.handshake.auth.token,
-    startGame: (socket, gameCode) => {
-      const userId = socket.handshake.auth.token
-      const user = User.get({ id: userId })
-      const game = Game.getByCode(gameCode)
-      const userTiles = Tile.getUserTiles(game, user)
-      const users = User.filter({ gameId: game.id })
-      socket.emit('game:start', { tiles: userTiles, users })
-    },
-    startTurn: (gameCode) => {
-      const game = Game.getByCode(gameCode)
-      const firstPlayer = User.get({ gameId: game.id, order: game.turn })
-      const firstPlayerSocket = io.sockets.sockets.get(firstPlayer.socketId)
-      firstPlayerSocket.emit('game:turn')
-    },
-    sendGrid: (socket, gameCode) => {
-      const grid = DB.getGrid(gameCode)
-      socket.emit('game:move', grid)
-    },
-    reJoinGame: (socket, gameCode) => {
-      const userId = socket.handshake.auth.token
-      const user = User.get({ id: userId })
-      const game = Game.getByCode(gameCode)
-      const userTiles = Tile.getUserTiles(game, user)
-      const grid = DB.getGrid(gameCode)
-      const users = User.filter({ gameId: game.id })
-      socket.emit('game:start', { tiles: userTiles, users })
-      socket.emit('game:move', grid)
-      const hasTurn = game.turn === user.order
-      if (hasTurn) {
-        socket.emit('game:turn')
-      }
-    },
-    move: (socket, gameCode) => {
-      const grid = DB.getGrid(gameCode)
-      socket.emit('game:move', grid)
-    },
-  }
+let io = null
 
-  const Room = {
-    getSockets: async (io, room) => {
-      const ids = await io.in(room).allSockets()
-      return [...ids].map((id) => {
-        return Socket.getById(io, id)
-      })
-    },
-    getPlayers: async (io, room) => {
-      const ids = await io.in(room).allSockets()
-      return [...ids].map((id) => {
-        return Socket.getById(io, id)
-      })
-    },
-    count: async (io, room) => {
-      const ids = await io.in(room).allSockets()
-      return ids.size
-    },
-  }
+function init(instance) {
+  return io = instance
+}
 
-  async function reJoinGame(gameCode, socket) {
-    const room = gameCode
-    socket.join(room)
-    const userId = Socket.getId(socket)
-    const user = User.get({ id: userId })
-    User.update(user, { socketId: socket.id })
-    Logger.send(`Websocket: User rejoined to the game ${gameCode}`)
-  }
+function getById(socketId) {
+  return io.sockets.sockets.get(socketId)
+}
 
-  async function joinGame(gameCode, socket) {
-    const room = gameCode
-    socket.join(gameCode)
-    const userId = Socket.getId(socket)
-    const user = User.get({ id: userId })
-    const game = Game.getByCode(gameCode)
-    User.update(user, { socketId: socket.id })
-    DB.joinGame(game, user)
-    const playersInRoom = await Room.count(io, room)
-    Logger.send(`Websocket: ${playersInRoom} user joined to the game ${gameCode}`)
-  }
+function getId(socket) {
+  return socket.handshake.auth.token
+}
 
-  io.on('connection', (socket) => {
-    Logger.send('Websocket: User connected')
-
-    socket.on('game:join', async ({ data: { gameCode } }) => {
-      await joinGame(gameCode, socket)
-      const players = await Room.getPlayers(io, gameCode)
-
-      if (players.length === 2) {
-        players.forEach((player) => {
-          Socket.startGame(player, gameCode)
-        })
-        Socket.startTurn(gameCode)
-      }
-    })
-
-    socket.on('game:rejoin', async ({ data: { gameCode } }) => {
-      await reJoinGame(gameCode, socket)
-      const player = socket
-      Socket.reJoinGame(player, gameCode)
-    })
-
-    socket.on('game:move', async ({ gameCode, data: move }) => {
-      DB.move(gameCode, move)
-
-      const players = await Room.getPlayers(io, gameCode)
-      players.forEach(player => {
-        Socket.sendGrid(player, gameCode)
-      })
-    })
-
-    socket.on('game:move:self', async ({ data: updatedTiles }) => {
-      updatedTiles.forEach((updatedTile) => {
-        const tile = Tile.get({ id: updatedTile.id })
-        Tile.update(tile, updatedTile)
-      })
-    })
-
-    socket.on('game:play', async ({ gameCode, data: newCommonTiles }) => {
-      const game = Game.getByCode(gameCode)
-      const userId = Socket.getId(socket)
-      const user = User.get({ id: userId })
-      const userTiles = Tile.getUserTiles(game, user)
-      const commonTiles = DB.getGrid(gameCode)
-
-      const isValid = Brain.validate({
-        newCommonTiles,
-        commonTiles,
-        userTiles,
-        isFirstMove: user.isFirstMove,
-      })
-
-      if (!isValid) {
-        socket.emit('game:play:ko')
-        return
-      }
-
-      Tile.updateGrid(newCommonTiles)
-      const hasFinished = Tile.getUserTiles(game, user).length === 0
-      User.update(user, { isFirstMove: false })
-      if (hasFinished) {
-        const players = await Room.getPlayers(io, gameCode)
-        const usersInGame = User.filter({ gameId: game.id })
-        const rounds = [
-          {
-            total: usersInGame.map((user) => {
-              const userTiles = Tile.getUserTiles(game, user)
-              return {
-                [user.name]: userTiles.reduce((total, tile) => total + tile.value, 0)
-              }
-            })
-          }
-        ]
-        players.forEach(player => {
-          player.emit('game:finish', rounds)
-        })
-        socket.emit('game:win')
-        return
-      }
-
-      socket.emit('game:play:ok')
-      const players = await Room.getPlayers(io, gameCode)
-      players.forEach(player => {
-        Socket.sendGrid(player, gameCode)
-      })
-
-      const nextPlayer = DB.nextTurn(game)
-      const nextPlayerSocket = Socket.getById(io, nextPlayer.socketId)
-      nextPlayerSocket.emit('game:turn')
-    })
-
-    socket.on('game:pass', async ({ gameCode, data: spot  }) => {
-      const userId = Socket.getId(socket)
-      const user = User.get({ id: userId })
-      const game = Game.getByCode(gameCode)
-      const unassignedTile = Tile.getFirstUnassigned(game)
-      const tile = Tile.update(unassignedTile, { area: 'player', userId, spotX: spot.x, spotY: spot.y })
-      const tiles = Tile.getUserTiles(game, user)
-      const grid = DB.getGrid(gameCode)
-
-      socket.emit('game:pass:ok', { tiles, tile, grid })
-
-      const nextPlayer = DB.nextTurn(game)
-      const nextPlayerSocket = Socket.getById(io, nextPlayer.socketId)
-      nextPlayerSocket.emit('game:turn')
-    })
-
-    socket.on('disconnect', () => {
-      socket.broadcast.emit('LEAVED')
-      Logger.send('Websocket: User disconnected')
-    });
+async function getClientsFromRoom(room) {
+  const ids = await io.in(room).allSockets()
+  return [...ids].map((id) => {
+    return Socket.getById(id)
   })
 }
 
-module.exports = { initializeSocketService }
+async function countClients(room) {
+  const ids = await io.in(room).allSockets()
+  return ids.size
+}
+
+const Socket = {
+  init,
+  getById,
+  getId,
+  getClientsFromRoom,
+  countClients,
+  startGame: (socket, gameCode) => {
+    const userId = socket.handshake.auth.token
+    const user = User.get({ id: userId })
+    const game = Game.getByCode(gameCode)
+    const userTiles = Tile.getUserTiles(game, user)
+    const users = User.filter({ gameId: game.id })
+    socket.emit('game:start', { tiles: userTiles, users })
+  },
+  startTurn: (gameCode) => {
+    const game = Game.getByCode(gameCode)
+    const firstPlayer = User.get({ gameId: game.id, order: game.turn })
+    const firstPlayerSocket = getById(firstPlayer.socketId)
+    firstPlayerSocket.emit('game:turn')
+  },
+  sendGrid: (socket, gameCode) => {
+    const grid = DB.getGrid(gameCode)
+    socket.emit('game:move', grid)
+  },
+  reJoinGame: (socket, gameCode) => {
+    const userId = socket.handshake.auth.token
+    const user = User.get({ id: userId })
+    const game = Game.getByCode(gameCode)
+    const userTiles = Tile.getUserTiles(game, user)
+    const grid = DB.getGrid(gameCode)
+    const users = User.filter({ gameId: game.id })
+    socket.emit('game:start', { tiles: userTiles, users })
+    socket.emit('game:move', grid)
+    const hasTurn = game.turn === user.order
+    if (hasTurn) {
+      socket.emit('game:turn')
+    }
+  },
+  move: (socket, gameCode) => {
+    const grid = DB.getGrid(gameCode)
+    socket.emit('game:move', grid)
+  },
+}
+
+module.exports = { Socket }

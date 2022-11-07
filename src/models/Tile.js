@@ -42,7 +42,7 @@ function update(tile, payload) {
 }
 
 function getFirstUnassigned(game) {
-  return get({ gameId: game.id, userId: null })
+  return get({ gameId: game.id, area: null })
 }
 
 function getUserTiles(game, user) {

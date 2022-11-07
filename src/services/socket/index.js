@@ -1,3 +1,3 @@
-const { initializeSocketService } = require('./Socket')
+const { Socket } = require('./Socket')
 
-module.exports = { initializeSocketService }
+module.exports = { Socket }

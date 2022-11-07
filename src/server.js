@@ -6,7 +6,7 @@ const path = require('path')
 
 const DB = require('./db')
 const { Game,User } = require('./models')
-const { initializeSocketService } = require('./services/socket')
+const { initializeSocketService } = require('./socket')
 
 const app = express()
 app.use(cors())
