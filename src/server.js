@@ -1,5 +1,6 @@
 const cors = require('cors')
 const express = require('express')
+const bodyParser = require('body-parser')
 const http = require('http')
 const { Server } = require("socket.io")
 const path = require('path')
@@ -10,7 +11,9 @@ const { initializeSocketService } = require('./socket')
 
 const app = express()
 app.use(cors())
-app.use(express.static(path.join(__dirname.replace('/src', ''), 'web/build')));
+app.use(express.static(path.join(__dirname.replace('/src', ''), 'web/build')))
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 const server = http.createServer(app)
 const io = new Server(server)
