@@ -4,8 +4,7 @@
   "description": "This project was created just for fun. The goal was learning while playing with docker, docker compose, nginx, react and node.",
   "main": "index.js",
   "scripts": {
-    "prerender": "cd web && npm install && npm run build",
-    "render": "npm install",
+    "render": "npm install && cd web && npm install && npm run build",
     "start": "node index.js",
     "start:watch": "nodemon src/index.js",
     "heroku-postbuild": "cd web && npm install && npm run build",
