@@ -44,10 +44,10 @@ function initializeSocketService(io) {
 
     socket.on('game:move', async ({ gameCode, data: move }) => {
       DB.move(gameCode, move)
-
       const clients = await Socket.getClientsFromRoom(gameCode)
       clients.forEach(client => {
-        Socket.sendGrid(client, gameCode)
+        const grid = DB.getGrid(gameCode)
+        client.emit('game:move', grid)
       })
     })
 

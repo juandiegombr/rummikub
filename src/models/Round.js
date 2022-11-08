@@ -51,12 +51,15 @@ function createForGame(game) {
 
 function getForGame(game) {
   const usersInGame = User.filter({ gameId: game.id })
-  return Array.from({ length: game.rounds }).map((_, index) => {
-    const roundNumber = index + 1
-    return usersInGame.map((user) => {
-      const userRound = Round.get({ userId: user.id, gameId: game.id, number: roundNumber })
-      return { [user.name]: userRound.score}
-    })
+  return usersInGame.map((user) => {
+    const userRounds = Round.filter({ userId: user.id, gameId: game.id })
+    const scores = userRounds.map((userRound) => userRound.score)
+    const total = scores.reduce((total, score) => total + score, 0)
+    return {
+      userName: user.name,
+      scores,
+      total,
+    }
   })
 }
 

@@ -10,6 +10,7 @@ import "./App.css"
 
 export default function App() {
   const [users, setUsers] = useState([])
+  const [rounds, setRounds] = useState([])
   const [turn, setTurn] = useState(false)
   const [tiles, setTiles] = useState([])
   const [grid, setGrid] = useState([])
@@ -27,6 +28,7 @@ export default function App() {
         setTiles={setTiles}
         setGrid={setGrid}
         setSelectedTile={setSelectedTile}
+        setRounds={setRounds}
       />
       <Grid
         turn={turn}

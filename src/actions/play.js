@@ -19,7 +19,7 @@ async function execute({ socket, gameCode, data: newCommonTiles }) {
   })
 
   if (!isValid) {
-    return invalidPlay({ socket })
+    return sendInvalidPlay({ socket })
   }
 
   User.update(user, { isFirstMove: false })
@@ -30,10 +30,11 @@ async function execute({ socket, gameCode, data: newCommonTiles }) {
     return finishRound({ socket, gameCode })
   }
 
-  socket.emit('game:play:ok')
+  sendValidPlay({ socket })
   const clients = await Socket.getClientsFromRoom(gameCode)
+  const grid = DB.getGrid(gameCode)
   clients.forEach(client => {
-    Socket.sendGrid(client, gameCode)
+    client.emit('game:move', grid)
   })
 
   const nextPlayer = DB.nextTurn(game)
@@ -41,7 +42,11 @@ async function execute({ socket, gameCode, data: newCommonTiles }) {
   nextPlayerSocket.emit('game:turn')
 }
 
-function invalidPlay({ socket }) {
+function sendValidPlay({ socket }) {
+  socket.emit('game:play:ok')
+}
+
+function sendInvalidPlay({ socket }) {
   socket.emit('game:play:ko')
 }
 
@@ -51,7 +56,9 @@ async function finishRound({ socket, gameCode }) {
   const rounds = Round.getForGame(game)
   Game.update(game, { rounds: game.rounds + 1})
   const clients = await Socket.getClientsFromRoom(gameCode)
+  const grid = DB.getGrid(gameCode)
   clients.forEach(client => {
+    client.emit('game:move', grid)
     client.emit('game:finish', rounds)
   })
   socket.emit('game:win')

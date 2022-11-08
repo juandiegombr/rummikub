@@ -47,10 +47,6 @@ const Socket = {
     const firstPlayerSocket = getById(firstPlayer.socketId)
     firstPlayerSocket.emit('game:turn')
   },
-  sendGrid: (socket, gameCode) => {
-    const grid = DB.getGrid(gameCode)
-    socket.emit('game:move', grid)
-  },
   reJoinGame: (socket, gameCode) => {
     const userId = socket.handshake.auth.token
     const user = User.get({ id: userId })

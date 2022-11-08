@@ -18,7 +18,14 @@ const STATUS = {
   ERROR: 'error',
 }
 
-const Initialize = ({ setTiles, setSelectedTile, setUsers, setGrid, setTurn }) => {
+const Initialize = ({
+  setTiles,
+  setSelectedTile,
+  setUsers,
+  setGrid,
+  setRounds,
+  setTurn,
+}) => {
   const [status, setStatus] = useState(null)
 
   useEffect(() => {
@@ -51,6 +58,9 @@ const Initialize = ({ setTiles, setSelectedTile, setUsers, setGrid, setTurn }) =
     })
     Socket.on('game:turn', () => {
       setTurn(true)
+    })
+    Socket.on('game:finish', (rounds) => {
+      setRounds(rounds)
     })
   }
 
