@@ -1,6 +1,6 @@
 const { Tile } = require("./tile")
 
-const COLORS = ['red', 'blue', 'orange', 'black']
+const COLORS = ['red', 'blue', 'orange', 'black', 'red', 'blue', 'orange', 'black']
 const TILES_FOR_BRAND = 13
 
 const generateTile = (value, color) => {
