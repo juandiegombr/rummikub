@@ -45,8 +45,8 @@ it('joins two players to a game', async function(done) {
   const [ secondClient, secondServer ] = io.client('2', { userId: secondUser.id })
   await secondClient.emit('game:join', { data: { gameCode: game.code } })
 
-  expect(firstServer.emit).toHaveBeenCalledWith('game:start', { tiles: expect.any(Array), users: expect.any(Array) })
-  expect(secondServer.emit).toHaveBeenCalledWith('game:start', { tiles: expect.any(Array), users: expect.any(Array) })
+  expect(firstServer.emit).toHaveBeenCalledWith('game:start', expect.any(Array))
+  expect(secondServer.emit).toHaveBeenCalledWith('game:start', expect.any(Array))
   done()
 })
 
@@ -63,9 +63,9 @@ it('rejoins to a game', async function(done) {
   await secondClient.emit('game:join', { data: { gameCode: game.code } })
   await secondClient.emit('game:rejoin', { gameCode: game.code, data: { gameCode: game.code } })
 
-  expect(firstServer.emit).toHaveBeenCalledWith('game:start', { tiles: expect.any(Array), users: expect.any(Array) })
+  expect(firstServer.emit).toHaveBeenCalledWith('game:start', expect.any(Array))
   expect(firstServer.emit).not.toHaveBeenCalledWith('game:move', [])
-  expect(secondServer.emit).toHaveBeenCalledWith('game:start', { tiles: expect.any(Array), users: expect.any(Array) })
+  expect(secondServer.emit).toHaveBeenCalledWith('game:start', expect.any(Array))
   expect(secondServer.emit).toHaveBeenCalledWith('game:move', [])
   done()
 })
@@ -85,7 +85,7 @@ it('rejoins to a game the user with turn', async function(done) {
   firstServer.emit.mockClear()
   await firstClient.emit('game:rejoin', { gameCode: game.code, data: { gameCode: game.code } })
 
-  expect(firstServer.emit).toHaveBeenCalledWith('game:start', { tiles: expect.any(Array), users: expect.any(Array) })
+  expect(firstServer.emit).toHaveBeenCalledWith('game:start', expect.any(Array))
   expect(firstServer.emit).toHaveBeenCalledWith('game:move', [])
   expect(firstServer.emit).toHaveBeenCalledWith('game:turn')
   done()

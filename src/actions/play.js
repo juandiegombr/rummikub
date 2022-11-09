@@ -8,7 +8,7 @@ async function execute({ socket, gameCode, data: newCommonTiles }) {
   const game = Game.getByCode(gameCode)
   const userId = Socket.getId(socket)
   const user = User.get({ id: userId })
-  const userTiles = Tile.getUserTiles(game, user)
+  const userTiles = Tile.getUserTiles(user)
   const commonTiles = DB.getGrid(gameCode)
 
   const isValid = Brain.validate({
@@ -25,21 +25,24 @@ async function execute({ socket, gameCode, data: newCommonTiles }) {
   User.update(user, { isFirstMove: false })
   Tile.updateGrid(newCommonTiles)
 
-  const hasFinished = Tile.getUserTiles(game, user).length === 0
+  const hasFinished = Tile.getUserTiles(user).length === 0
   if (hasFinished) {
     return finishRound({ socket, gameCode })
   }
 
   sendValidPlay({ socket })
-  const clients = await Socket.getClientsFromRoom(gameCode)
-  const grid = DB.getGrid(gameCode)
-  clients.forEach(client => {
-    client.emit('game:move', grid)
-  })
 
   const nextPlayer = DB.nextTurn(game)
   const nextPlayerSocket = Socket.getById(nextPlayer.socketId)
   nextPlayerSocket.emit('game:turn')
+
+  const clients = await Socket.getClientsFromRoom(gameCode)
+  const grid = DB.getGrid(gameCode)
+  const users = User.filterForClient({ gameId: game.id })
+  clients.forEach(client => {
+    client.emit('game:move', grid)
+    client.emit('game:users', users)
+  })
 }
 
 function sendValidPlay({ socket }) {

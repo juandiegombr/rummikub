@@ -2,7 +2,7 @@ const TileButton = ({ disabled, onClick }) => {
   return (
     <button
       aria-label="Play"
-      className="tile__button"
+      className="tile tile__button"
       onClick={onClick}
       disabled={disabled}
     >

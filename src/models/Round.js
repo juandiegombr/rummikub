@@ -43,7 +43,7 @@ function update(game, payload) {
 function createForGame(game) {
   const usersInGame = User.filter({ gameId: game.id })
   usersInGame.forEach((user) => {
-    const userTiles = Tile.getUserTiles(game, user)
+    const userTiles = Tile.getUserTiles(user)
     const score = TileService.getScore(userTiles)
     Round.create({ game, user, score })
   })

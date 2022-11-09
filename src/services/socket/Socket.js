@@ -33,13 +33,11 @@ const Socket = {
   getId,
   getClientsFromRoom,
   countClients,
-  startGame: (socket, gameCode) => {
+  startGame: (socket) => {
     const userId = socket.handshake.auth.token
     const user = User.get({ id: userId })
-    const game = Game.getByCode(gameCode)
-    const userTiles = Tile.getUserTiles(game, user)
-    const users = User.filter({ gameId: game.id })
-    socket.emit('game:start', { tiles: userTiles, users })
+    const userTiles = Tile.getUserTiles(user)
+    socket.emit('game:start', userTiles)
   },
   startTurn: (gameCode) => {
     const game = Game.getByCode(gameCode)
@@ -51,10 +49,9 @@ const Socket = {
     const userId = socket.handshake.auth.token
     const user = User.get({ id: userId })
     const game = Game.getByCode(gameCode)
-    const userTiles = Tile.getUserTiles(game, user)
+    const userTiles = Tile.getUserTiles(user)
     const grid = DB.getGrid(gameCode)
-    const users = User.filter({ gameId: game.id })
-    socket.emit('game:start', { tiles: userTiles, users })
+    socket.emit('game:start', userTiles)
     socket.emit('game:move', grid)
     const hasTurn = game.turn === user.order
     if (hasTurn) {

@@ -2,6 +2,9 @@
   --tile-weight: 1px 1px 0px rgb(240, 225, 206), 2px 2px 0px rgb(240, 225, 206);
   --tile-shadow: 8px 8px 8px rgba(0, 0, 0, 0.1);
   --tile-shadow--big: 8px 8px 8px rgba(0, 0, 0, 0.1);
+  --tile-width: 60px;
+  --tile-height: 82.5px;
+  --tile-border-radius: 6px;
   box-sizing: border-box;
   position: absolute;
   top: 0;
@@ -11,10 +14,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  width: 60px;
-  height: 82.5px;
+  width: var(--tile-width);
+  height: var(--tile-height);
+  border-radius: var(--tile-border-radius);
   background-color: antiquewhite;
-  border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: var(--tile-weight), var(--tile-shadow);
   cursor: pointer;
@@ -108,19 +111,30 @@
   color: rgba(0, 0, 0, 0.1);
 }
 
+.tile__back {
+  width: var(--tile-width);
+  height: var(--tile-height);
+  border-radius: var(--tile-border-radius);
+}
 .tile__button {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 10px;
-  width: 80px;
-  height: 110px;
-  border-radius: 8px;
+  width: var(--tile-width);
+  height: var(--tile-height);
+  border-radius: var(--tile-border-radius);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: white;
   background-color: rgba(255, 255, 255, 0.2);
   box-shadow: none;
   cursor: pointer;
+  box-shadow: none;
+}
+
+.tile__button:hover {
+  box-shadow: none;
+  animation: none;
 }
 
 .tile__button:disabled {

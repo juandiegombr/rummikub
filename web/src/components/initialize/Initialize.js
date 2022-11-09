@@ -21,7 +21,7 @@ const STATUS = {
 const Initialize = ({
   setTiles,
   setSelectedTile,
-  setUsers,
+  setPlayers,
   setGrid,
   setRounds,
   setTurn,
@@ -34,10 +34,12 @@ const Initialize = ({
   }, [])
 
   const initSocketGame = () => {
-    Socket.on('game:start', ({ tiles, users }) => {
+    Socket.on('game:start', (tiles) => {
       setStatus(null)
       setTiles(tiles)
-      setUsers(users)
+    })
+    Socket.on('game:users', (users) => {
+      setPlayers(users)
     })
     Socket.on('game:move', (grid) => {
       setGrid(grid)

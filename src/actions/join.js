@@ -16,9 +16,11 @@ async function execute({ socket, gameCode }) {
   Logger.send(`Websocket: ${playersInRoom} user joined to the game ${gameCode}`)
 
   const clients = await Socket.getClientsFromRoom(gameCode)
+  const users = User.filterForClient({ gameId: game.id })
   if (clients.length === 2) {
     clients.forEach((client) => {
       Socket.startGame(client, gameCode)
+      client.emit('game:users', users)
     })
     Socket.startTurn(gameCode)
   }

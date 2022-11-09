@@ -17,18 +17,6 @@ function initializeSocketService(io) {
     Logger.send(`Websocket: User rejoined to the game ${gameCode}`)
   }
 
-  async function joinGame(gameCode, socket) {
-    const room = gameCode
-    socket.join(gameCode)
-    const userId = Socket.getId(socket)
-    const user = User.get({ id: userId })
-    const game = Game.getByCode(gameCode)
-    User.update(user, { socketId: socket.id })
-    DB.joinGame(game, user)
-    const playersInRoom = await Socket.countClients(room)
-    Logger.send(`Websocket: ${playersInRoom} user joined to the game ${gameCode}`)
-  }
-
   io.on('connection', (socket) => {
     Logger.send('Websocket: User connected')
 
@@ -68,7 +56,7 @@ function initializeSocketService(io) {
       const game = Game.getByCode(gameCode)
       const unassignedTile = Tile.getFirstUnassigned(game)
       const tile = Tile.update(unassignedTile, { area: 'player', userId, spotX: spot.x, spotY: spot.y })
-      const tiles = Tile.getUserTiles(game, user)
+      const tiles = Tile.getUserTiles(user)
       const grid = DB.getGrid(gameCode)
 
       socket.emit('game:pass:ok', { tiles, tile, grid })
@@ -76,6 +64,11 @@ function initializeSocketService(io) {
       const nextPlayer = DB.nextTurn(game)
       const nextPlayerSocket = Socket.getById(nextPlayer.socketId)
       nextPlayerSocket.emit('game:turn')
+      const users = User.filterForClient({ gameId: game.id })
+      const clients = await Socket.getClientsFromRoom(gameCode)
+      clients.forEach(client => {
+        client.emit('game:users', users)
+      })
     })
 
     socket.on('disconnect', () => {

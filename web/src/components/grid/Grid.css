@@ -18,14 +18,7 @@
   left: unset;
   bottom: 0;
   right: 0;
-  width: 80px;
-  height: 110px;
-  border-radius: 8px;
   transform: translateX(calc(100% + 32px));
-}
-
-.player-zone .tile__back .tile__brand-letter {
-  font-size: 11px;
 }
 
 .player-zone .tile__button {

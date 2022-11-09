@@ -3,13 +3,14 @@ import { useState, useEffect } from "react"
 import { Tile } from "components/tile"
 import { Initialize } from "components/initialize"
 import { Grid } from "components/grid"
+import { PlayersContainer } from "components/player"
 
 import { Socket } from 'services/socket'
 
 import "./App.css"
 
 export default function App() {
-  const [users, setUsers] = useState([])
+  const [players, setPlayers] = useState([])
   const [rounds, setRounds] = useState([])
   const [turn, setTurn] = useState(false)
   const [tiles, setTiles] = useState([])
@@ -23,13 +24,14 @@ export default function App() {
   return (
     <div className="app">
       <Initialize
-        setUsers={setUsers}
+        setPlayers={setPlayers}
         setTurn={setTurn}
         setTiles={setTiles}
         setGrid={setGrid}
         setSelectedTile={setSelectedTile}
         setRounds={setRounds}
       />
+      <PlayersContainer players={players}/>
       <Grid
         turn={turn}
         grid={grid}

@@ -45,8 +45,8 @@ function getFirstUnassigned(game) {
   return get({ gameId: game.id, area: null })
 }
 
-function getUserTiles(game, user) {
-  return filter({ gameId: game.id, userId: user.id })
+function getUserTiles(user) {
+  return filter({ gameId: user.gameId, userId: user.id })
 }
 
 function updateGrid(updatedTiles) {
