@@ -19,6 +19,7 @@ export default function App() {
 
   useEffect(() => {
     Socket.init()
+    /* eslint-disable */ console.log('rounds', rounds)
   }, [])
 
   return (

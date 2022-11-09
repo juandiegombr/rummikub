@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "render": "npm install && cd web && npm install && npm run build",
+    "build-web": "cd web && npm install && npm run build",
     "start": "node index.js",
     "start:watch": "nodemon src/index.js",
     "heroku-postbuild": "cd web && npm install && npm run build",
