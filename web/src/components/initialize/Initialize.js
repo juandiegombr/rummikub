@@ -13,7 +13,7 @@ import './Initialize.css'
 const STATUS = {
   NAME: 'name',
   INIT: 'init',
-  CREATE: 'create',
+  WAITING: 'waiting',
   JOIN: 'join',
   ERROR: 'error',
 }
@@ -107,7 +107,7 @@ const Initialize = ({
     return <FirstStep
       onCreate={() => {
         initSocketGame()
-        setStatus(STATUS.CREATE)
+        setStatus(STATUS.WAITING)
       }}
       onJoin={() => setStatus(STATUS.JOIN)}
     />
@@ -116,11 +116,11 @@ const Initialize = ({
   if (status === STATUS.JOIN) {
     return <JoinStep onConfirm={() => {
       initSocketGame()
-      setStatus(null)
+      setStatus(STATUS.WAITING)
     }} />
   }
 
-  if (status === STATUS.CREATE) {
+  if (status === STATUS.WAITING) {
     return <WaitingStep />
   }
 

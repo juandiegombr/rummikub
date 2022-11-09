@@ -3,6 +3,8 @@ const { Game, User } = require("../models")
 const { Logger } = require('../services/logger')
 const { Socket } = require('../services/socket')
 
+const PLAYERS = 2
+
 async function execute({ socket, gameCode }) {
   const room = gameCode
   socket.join(gameCode)
@@ -16,7 +18,7 @@ async function execute({ socket, gameCode }) {
   Logger.send(`Websocket: ${playersInRoom} user joined to the game ${gameCode}`)
 
   const clients = await Socket.getClientsFromRoom(gameCode)
-  if (clients.length === 2) {
+  if (clients.length === PLAYERS) {
     Socket.startGame(game)
     Socket.updateGameStatus(game)
     Socket.startTurn(gameCode)
