@@ -23,8 +23,16 @@
 
 .player-zone .tile__button {
   position: absolute;
-  top: 0;
+  top: unset;
   left: unset;
+  bottom: 0;
   right: 0;
-  transform: translateX(calc(100% + 32px));
+  transform: translateX(calc(200% + 32px + 16px));
+}
+
+.player-zone .player--self {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transform: translateX(calc(-100% - 32px));
 }

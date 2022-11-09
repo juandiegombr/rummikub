@@ -1,3 +1,4 @@
+import { Player } from 'components/player'
 import { TileSpot } from 'components/tile-spot'
 import { TileBack } from 'components/tile/TileBack'
 import { TileButton } from 'components/tile/TileButton'
@@ -18,6 +19,7 @@ const PLAYER_SPOTS = Array.from({ length: 3 }).map((_, row) => {
 }).reduce((acc, row) => [...acc, ...row], [])
 
 const Grid = ({
+  player,
   turn,
   grid,
   setGrid,
@@ -160,7 +162,8 @@ const Grid = ({
           )
         })}
         <TileButton onClick={play} disabled={!turn}/>
-        <TileBack id="player-10-1" onClick={pass}/>
+        <TileBack id="player-10-1" onClick={pass} disabled={!turn}/>
+        {player && <Player player={player} self/>}
       </div>
     </>
   )

@@ -116,6 +116,12 @@
   height: var(--tile-height);
   border-radius: var(--tile-border-radius);
 }
+
+.tile__back:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .tile__button {
   display: flex;
   align-items: center;

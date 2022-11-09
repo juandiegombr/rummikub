@@ -1,9 +1,14 @@
-const Player = ({ player }) => {
+const Player = ({ player, self }) => {
+
   const className = () => {
+    let className = 'player'
     if (player.turn) {
-      return 'player player--turn'
+      className =  className + ' player--turn'
     }
-    return 'player'
+    if (self) {
+      className =  className + ' player--self'
+    }
+    return className
   }
 
   return (

@@ -22,6 +22,8 @@ export default function App() {
     /* eslint-disable */ console.log('rounds', rounds)
   }, [])
 
+  const player = players.find((player) => player.id === localStorage.userId)
+
   return (
     <div className="app">
       <Initialize
@@ -34,6 +36,7 @@ export default function App() {
       />
       <PlayersContainer players={players}/>
       <Grid
+        player={player}
         turn={turn}
         grid={grid}
         setGrid={setGrid}
