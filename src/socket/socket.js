@@ -64,11 +64,7 @@ function initializeSocketService(io) {
       const nextPlayer = DB.nextTurn(game)
       const nextPlayerSocket = Socket.getById(nextPlayer.socketId)
       nextPlayerSocket.emit('game:turn')
-      const users = User.filterForClient({ gameId: game.id })
-      const clients = await Socket.getClientsFromRoom(gameCode)
-      clients.forEach(client => {
-        client.emit('game:users', users)
-      })
+      Socket.updateGameStatus(game)
     })
 
     socket.on('disconnect', () => {

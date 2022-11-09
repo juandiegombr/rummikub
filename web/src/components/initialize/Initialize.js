@@ -38,7 +38,7 @@ const Initialize = ({
       setStatus(null)
       setTiles(tiles)
     })
-    Socket.on('game:users', (users) => {
+    Socket.on('game:summary', ({ users, remainingTiles }) => {
       setPlayers(users)
     })
     Socket.on('game:move', (grid) => {

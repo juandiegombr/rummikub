@@ -38,11 +38,10 @@ async function execute({ socket, gameCode, data: newCommonTiles }) {
 
   const clients = await Socket.getClientsFromRoom(gameCode)
   const grid = DB.getGrid(gameCode)
-  const users = User.filterForClient({ gameId: game.id })
   clients.forEach(client => {
     client.emit('game:move', grid)
-    client.emit('game:users', users)
   })
+  Socket.updateGameStatus(game)
 }
 
 function sendValidPlay({ socket }) {

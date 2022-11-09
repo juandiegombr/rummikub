@@ -45,6 +45,10 @@ function getFirstUnassigned(game) {
   return get({ gameId: game.id, area: null })
 }
 
+function filterUnassigned(game) {
+  return filter({ gameId: game.id, area: null })
+}
+
 function getUserTiles(user) {
   return filter({ gameId: user.gameId, userId: user.id })
 }
@@ -67,6 +71,7 @@ const Tile = {
   update,
   updateGrid,
   getFirstUnassigned,
+  filterUnassigned,
   getUserTiles,
   debug: () => {
     console.log('TILES', TILES)
