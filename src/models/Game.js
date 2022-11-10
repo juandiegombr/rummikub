@@ -4,10 +4,10 @@ const { generateGameCode } = require('../helpers')
 
 let GAMES = {}
 
-function create() {
+function create({ gameCode } = {}) {
   const game = {
     id: v4(),
-    code: generateGameCode(),
+    code: gameCode || generateGameCode(),
     turn: 0,
     rounds: 1,
   }

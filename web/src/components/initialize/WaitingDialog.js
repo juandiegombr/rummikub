@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom'
 
-const WaitingStep = () => {
+const WaitingDialog = () => {
   return (
     createPortal(
       <div className="initialize-dialog__overlay">
@@ -15,4 +15,4 @@ const WaitingStep = () => {
   )
 }
 
-export { WaitingStep }
+export { WaitingDialog }

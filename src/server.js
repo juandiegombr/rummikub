@@ -20,33 +20,40 @@ const io = new Server(server)
 
 initializeSocketService(io)
 
-app.get('/api/user/:userName', (req, res) => {
-  const name = req.params.userName
+app.post('/api/user/create/', (req, res) => {
+  const name = req.body.name
   const user = User.create({ name })
   res.json(user)
 })
 
-app.get('/api/game/create/', (req, res) => {
-  const userId = req.get('x-user-id')
-  const user = User.get({ id: userId })
-  const game = DB.createGame(user)
-  res.json({ userId: user.id, gameCode: game.code })
-})
-
-app.get('/api/game/join/:gameCode', (req, res) => {
+app.get('/api/game/:gameCode/', (req, res) => {
   const gameCode = req.params.gameCode
-  const userId = req.get('x-user-id')
-  const user = User.get({ id: userId })
-  const game = Game.getByCode(gameCode)
+  const game = Game.get({ code: gameCode })
   if (game) {
-    res.json({ userId: user.id, gameCode: game.code })
+    res.json({ game })
     return
   }
   res.sendStatus(404)
 })
 
-app.get('/api/game/rejoin/:gameCode', (req, res) => {
-  const gameCode = req.params.gameCode
+app.post('/api/game/create/', (req, res) => {
+  const gameCode = req.body.gameCode
+  const game = DB.createGame({ gameCode })
+  res.json({ game })
+})
+
+app.post('/api/game/join/', (req, res) => {
+  const gameCode = req.body.gameCode
+  const game = Game.get({ code: gameCode })
+  if (game) {
+    res.json({ game })
+    return
+  }
+  res.sendStatus(404)
+})
+
+app.post('/api/game/rejoin/', (req, res) => {
+  const gameCode = req.body.gameCode
   const userId = req.get('x-user-id')
   const game = Game.getByCode(gameCode)
   const user = User.get({ id: userId })
@@ -58,7 +65,7 @@ app.get('/api/game/rejoin/:gameCode', (req, res) => {
     res.sendStatus(403)
     return
   }
-  res.json({ userId, gameCode })
+  res.json({ game })
 })
 
 app.get('*', (req, res) => {

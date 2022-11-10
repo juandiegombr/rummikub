@@ -2,19 +2,15 @@ import { useEffect, useState } from 'react'
 import { Socket } from 'services/socket'
 import { Http } from 'services/http'
 
+import { InitDialog } from './InitDialog'
+import { WaitingDialog } from './WaitingDialog'
 import { Error } from './Error'
-import { NameStep } from './NameStep'
-import { FirstStep } from './FirstStep'
-import { JoinStep } from './JoinStep'
-import { WaitingStep } from './WaitingStep'
 
 import './Initialize.css'
 
 const STATUS = {
-  NAME: 'name',
   INIT: 'init',
   WAITING: 'waiting',
-  JOIN: 'join',
   ERROR: 'error',
 }
 
@@ -29,7 +25,6 @@ const Initialize = ({
   const [status, setStatus] = useState(null)
 
   useEffect(() => {
-    Socket.init()
     reJoinToGame()
   }, [])
 
@@ -72,19 +67,20 @@ const Initialize = ({
 
     if (userId && gameCode) {
       try {
-        const response = await Http.get(`/game/rejoin/${gameCode}`)
+        const response = await Http.post(`/game/${gameCode}/rejoin/`)
         if (response.status === 404) throw new Error()
         if (response.status === 403) throw new Error()
+        Socket.init()
         Socket.emit('game:rejoin', { gameCode })
         initSocketGame()
       } catch (error) {
-        setStatus(STATUS.NAME)
+        setStatus(STATUS.INIT)
         localStorage.clear()
       }
       return
     }
 
-    setStatus(STATUS.NAME)
+    setStatus(STATUS.INIT)
     localStorage.clear()
   }
 
@@ -99,29 +95,19 @@ const Initialize = ({
     />
   }
 
-  if (status === STATUS.NAME) {
-    return <NameStep onConfirm={() => setStatus(STATUS.INIT)} />
-  }
-
   if (status === STATUS.INIT) {
-    return <FirstStep
-      onCreate={() => {
-        initSocketGame()
-        setStatus(STATUS.WAITING)
-      }}
-      onJoin={() => setStatus(STATUS.JOIN)}
-    />
-  }
-
-  if (status === STATUS.JOIN) {
-    return <JoinStep onConfirm={() => {
-      initSocketGame()
-      setStatus(STATUS.WAITING)
-    }} />
+    return (
+      <InitDialog
+        onConfirm={() => {
+          initSocketGame()
+          setStatus(STATUS.WAITING)
+        }}
+      />
+    )
   }
 
   if (status === STATUS.WAITING) {
-    return <WaitingStep />
+    return <WaitingDialog />
   }
 
   return null
