@@ -35,6 +35,7 @@ const Initialize = ({
     Socket.on('game:start', (tiles) => {
       setStatus(null)
       setTiles(tiles)
+      setGrid([])
     })
     Socket.on('game:summary', ({ users, remainingTiles }) => {
       setPlayers(users)
@@ -88,6 +89,15 @@ const Initialize = ({
     localStorage.clear()
   }
 
+  const confirmRound = () => {
+    setShowRounds(false)
+    Socket.emit('game:round:confirm')
+  }
+
+  if (showRounds) {
+    return <GameSummary rounds={rounds} onConfirm={confirmRound}/>
+  }
+
   if (status === STATUS.ERROR) {
     return <Error
       onRetry={() => setStatus(null)}
@@ -112,10 +122,6 @@ const Initialize = ({
 
   if (status === STATUS.WAITING) {
     return <WaitingDialog />
-  }
-
-  if (showRounds) {
-    return <GameSummary rounds={rounds} onConfirm={() => setShowRounds(false)}/>
   }
 
   return null

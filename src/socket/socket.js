@@ -4,6 +4,7 @@ const { Game, Tile, User } = require('../models')
 const { Socket } = require('../services/socket')
 const { play } = require('../actions/play')
 const { join } = require('../actions/join')
+const { roundStart } = require('../actions/roundStart')
 
 function initializeSocketService(io) {
   Socket.init(io)
@@ -22,6 +23,10 @@ function initializeSocketService(io) {
 
     socket.on('game:join', async ({ data: { gameCode } }) => {
       await join.execute({ socket, gameCode })
+    })
+
+    socket.on('game:round:confirm', async ({ gameCode }) => {
+      await roundStart.execute({ socket, gameCode })
     })
 
     socket.on('game:rejoin', async ({ data: { gameCode } }) => {

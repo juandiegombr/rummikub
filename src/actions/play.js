@@ -61,6 +61,9 @@ async function finishRound({ socket, gameCode }) {
   const grid = DB.getGrid(gameCode)
   clients.forEach(client => {
     client.emit('game:move', grid)
+  })
+  DB.createTiles(game)
+  clients.forEach(client => {
     client.emit('game:finish', rounds)
   })
   socket.emit('game:win')

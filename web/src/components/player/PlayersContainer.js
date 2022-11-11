@@ -14,7 +14,7 @@ const PlayersContainer = ({ players }) => {
   return (
     <div className='players-container'>
       {getOrderedPlayers(players).map((player) => {
-        return <Player player={player} />
+        return <Player key={player.name} player={player} />
       })}
     </div>
   )

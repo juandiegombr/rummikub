@@ -18,6 +18,10 @@ function create(params, game) {
   return tile
 }
 
+function remove(tile) {
+  delete TILES[tile.id]
+}
+
 function get(query) {
   return Object.values(TILES).find((user) => {
     const queryParams = Object.entries(query)
@@ -66,6 +70,7 @@ function updateGrid(updatedTiles) {
 
 const Tile = {
   create,
+  remove,
   get,
   filter,
   update,
