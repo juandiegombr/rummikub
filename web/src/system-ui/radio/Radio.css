@@ -1,0 +1,25 @@
+.ui-radio {
+  position: relative;
+}
+
+.ui-radio input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+}
+
+.ui-radio__label {
+  padding: 6px;
+  border: 1px dashed currentColor;
+  border-radius: 4px;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.ui-radio input:checked + .ui-radio__label {
+  border-style: solid;
+  opacity: 1;
+}

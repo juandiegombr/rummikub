@@ -1,8 +1,8 @@
 const { Game, Tile, User } = require('../models')
 const { TileService } = require('../domain/tile')
 
-function createGame({ gameCode } = {}) {
-  const game = Game.create({ gameCode })
+function createGame(gameSettings) {
+  const game = Game.create(gameSettings)
   createTiles(game)
   return game
 }

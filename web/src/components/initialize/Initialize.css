@@ -51,6 +51,39 @@
   gap: 16px;
 }
 
+.initialize-dialog__config-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: rgba(0,0,0,0.6);
+  height: 40px;
+}
+
+.initialize-dialog__config-content {
+  border-radius: 8px;
+  background-color: rgba(0,0,0,0.05);
+  padding: 4px 16px;
+}
+
+.initialize-dialog__config-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 48px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.initialize-dialog__config-item:last-child {
+  border-bottom: none;
+}
+
+.initialize-dialog__config-item-selector {
+  display: flex;
+  gap: 8px;
+}
+
 .ui-input {
   position: relative;
 }
@@ -78,63 +111,8 @@
   box-shadow: white 0px 0px 0px 2px, rgb(34 34 34) 0px 0px 0px 4px;
 }
 
-.ui-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 48px;
-  width: 100%;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
-  background: linear-gradient(to right, #E61E4D 0%, #E31C5F 50%, #D70466 100%);
-  cursor: pointer;
-}
-
-.ui-button:focus-visible {
-  outline: none;
-  box-shadow: white 0px 0px 0px 2px, rgb(34 34 34) 0px 0px 0px 4px;
-}
-
-.ui-button--secondary {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100px;
-  width: 60px;
-  border: none;
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 1rem;
-  font-weight: bold;
-  background-color: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  transition: all .2s ease-in;
-}
-
-.ui-button--secondary:hover {
-  outline: none;
-  color: rgba(255, 255, 255, 1);
-  background-color: rgba(255, 255, 255, 0.4);
-  box-shadow: cadetblue 0px 0px 0px 2px, rgb(255 255 255) 0px 0px 0px 4px;
-}
-
-.ui-button--secondary:focus-visible {
-  outline: none;
-  box-shadow: cadetblue 0px 0px 0px 2px, rgb(34 34 34) 0px 0px 0px 4px;
-}
-
-.code-button {
+.initialize-dialog .code-button {
   position: absolute;
-  right: 8px;
-  bottom: 8px;
-}
-
-.ui-button--icon {
-  height: 32px;
-  width: 32px;
-  border-radius: 100%;
+  right: 10px;
+  bottom: 10px;
 }

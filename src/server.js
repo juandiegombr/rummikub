@@ -37,8 +37,8 @@ app.get('/api/game/:gameCode/', (req, res) => {
 })
 
 app.post('/api/game/create/', (req, res) => {
-  const gameCode = req.body.gameCode
-  const game = DB.createGame({ gameCode })
+  const gameSettings = req.body
+  const game = DB.createGame(gameSettings)
   res.json({ game })
 })
 

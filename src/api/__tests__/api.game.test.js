@@ -8,7 +8,7 @@ afterEach(() => {
   DB.reset()
 })
 
-it('creates a new game', (done) => {
+it('creates a default new game', (done) => {
   const gameCode = 'AAAA'
 
   request(app)
@@ -22,7 +22,9 @@ it('creates a new game', (done) => {
             code: gameCode,
             id: expect.any(String),
             rounds: 1,
-            turn: 0
+            turn: 0,
+            players: 2,
+            points: 50,
           }
         }
       )
@@ -32,6 +34,42 @@ it('creates a new game', (done) => {
           id: expect.any(String),
           rounds: 1,
           turn: 0,
+          players: 2,
+          points: 50,
+        }
+      )
+    })
+    .end(done)
+})
+
+it('creates a new game', (done) => {
+  const gameCode = 'AAAA'
+
+  request(app)
+    .post('/api/game/create/')
+    .send({ gameCode, players: '3', points: '100' })
+    .expect((res) => {
+      expect(res.statusCode).toEqual(200)
+      expect(res.body).toEqual(
+        {
+          game: {
+            code: gameCode,
+            id: expect.any(String),
+            rounds: 1,
+            turn: 0,
+            players: 3,
+            points: 100,
+          }
+        }
+      )
+      expect(Game.get({ code: gameCode })).toEqual(
+        {
+          code: gameCode,
+          id: expect.any(String),
+          rounds: 1,
+          turn: 0,
+          players: 3,
+          points: 100,
         }
       )
     })
@@ -53,7 +91,9 @@ it('joins a created game', (done) => {
             code: gameCode,
             id: expect.any(String),
             rounds: 1,
-            turn: 0
+            turn: 0,
+            players: 2,
+            points: 50,
           }
         }
       )
@@ -90,7 +130,9 @@ it('re-joins a created game', (done) => {
             code: gameCode,
             id: expect.any(String),
             rounds: 1,
-            turn: 0
+            turn: 0,
+            players: 2,
+            points: 50,
           }
         }
       )

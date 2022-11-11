@@ -1,0 +1,39 @@
+.ui-button {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 48px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #FF385C;
+  cursor: pointer;
+}
+
+.ui-button:focus-visible {
+  outline: none;
+  box-shadow: white 0px 0px 0px 2px, rgb(34 34 34) 0px 0px 0px 4px;
+}
+
+.ui-button-icon {
+  height: 28px;
+  width: 28px;
+  border-radius: 100%;
+  padding: 4px;
+}
+
+.ui-button-icon--ghost {
+  height: 24px;
+  width: 24px;
+  border-radius: 100%;
+  background-color: transparent;
+  color: currentColor;
+}
+
+.ui-button-icon--ghost:hover {
+  background-color: rgba(0,0,0,0.1);
+}

@@ -4,12 +4,23 @@ const { generateGameCode } = require('../helpers')
 
 let GAMES = {}
 
-function create({ gameCode } = {}) {
+const getDefaultGameSettings = () => {
+  return {
+    gameCode: generateGameCode(),
+    players: 2,
+    points: 50,
+  }
+}
+
+function create(payload) {
+  const gameSettings = {...getDefaultGameSettings(), ...payload}
   const game = {
     id: v4(),
-    code: gameCode || generateGameCode(),
+    code: gameSettings.gameCode,
     turn: 0,
     rounds: 1,
+    players: Number(gameSettings.players),
+    points: Number(gameSettings.points),
   }
   GAMES[game.id] = game
   return GAMES[game.id]
