@@ -19,7 +19,6 @@ export default function App() {
 
   useEffect(() => {
     Socket.init()
-    /* eslint-disable */ console.log('rounds', rounds)
   }, [])
 
   const player = players.find((player) => player.id === localStorage.userId)
@@ -32,6 +31,7 @@ export default function App() {
         setTiles={setTiles}
         setGrid={setGrid}
         setSelectedTile={setSelectedTile}
+        rounds={rounds}
         setRounds={setRounds}
       />
       <PlayersContainer players={players}/>

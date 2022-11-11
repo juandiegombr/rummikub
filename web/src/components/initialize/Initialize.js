@@ -5,6 +5,7 @@ import { Http } from 'services/http'
 import { InitDialog } from './InitDialog'
 import { WaitingDialog } from './WaitingDialog'
 import { Error } from './Error'
+import { GameSummary } from 'components/game-summary'
 
 import './Initialize.css'
 
@@ -19,9 +20,11 @@ const Initialize = ({
   setSelectedTile,
   setPlayers,
   setGrid,
+  rounds,
   setRounds,
   setTurn,
 }) => {
+  const [showRounds, setShowRounds] = useState(false)
   const [status, setStatus] = useState(null)
 
   useEffect(() => {
@@ -58,6 +61,7 @@ const Initialize = ({
     })
     Socket.on('game:finish', (rounds) => {
       setRounds(rounds)
+      setShowRounds(true)
     })
   }
 
@@ -108,6 +112,10 @@ const Initialize = ({
 
   if (status === STATUS.WAITING) {
     return <WaitingDialog />
+  }
+
+  if (showRounds) {
+    return <GameSummary rounds={rounds} onConfirm={() => setShowRounds(false)}/>
   }
 
   return null
