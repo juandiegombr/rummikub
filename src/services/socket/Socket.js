@@ -1,5 +1,6 @@
 const DB = require('../../db')
 const { Game, Tile, User } = require('../../models')
+const { Serializer } = require('../../serializer')
 
 let io = null
 
@@ -43,11 +44,13 @@ const Socket = {
     })
   },
   updateGameStatus: async (game) => {
-    const users = User.filterForClient({ gameId: game.id })
     const remainingTiles = Tile.filterUnassigned(game)
     const clients = await Socket.getClientsFromRoom(game.code)
     clients.forEach(client => {
-      client.emit('game:summary', { users, remainingTiles: remainingTiles.length })
+      client.emit('game:summary', {
+        users: game.users.map(Serializer.userSummary),
+        remainingTiles: remainingTiles.length,
+      })
     })
   },
   startTurn: (gameCode) => {
@@ -62,10 +65,12 @@ const Socket = {
     const game = Game.getByCode(gameCode)
     const userTiles = Tile.getUserTiles(user)
     const grid = DB.getGrid(gameCode)
-    const users = User.filterForClient({ gameId: game.id })
     const remainingTiles = Tile.filterUnassigned(game)
     socket.emit('game:start', userTiles)
-    socket.emit('game:summary', { users, remainingTiles: remainingTiles.length })
+    socket.emit('game:summary', {
+      users: game.users.map(Serializer.userSummary),
+      remainingTiles: remainingTiles.length,
+    })
     socket.emit('game:move', grid)
     const hasTurn = game.turn === user.order
     if (hasTurn) {

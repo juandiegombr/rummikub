@@ -1,8 +1,42 @@
 const { v4 } = require('uuid')
 const { Game } = require('./Game')
-const { Tile } = require('./Tile')
 
 let USERS = {}
+
+Game.modelRelations.push({
+  name: 'users',
+  func: (game) => filter({ gameId: game.id })
+})
+
+function UserModel(data) {
+  const user = JSON.parse(JSON.stringify(data))
+  Object.defineProperty(user,
+    'game',
+    {
+      enumerable: true,
+      configurable: true,
+      get() {
+        const freshUser = USERS[this.id]
+        if (freshUser.gameId) {
+          return Game.get({ id: freshUser.gameId })
+        }
+      },
+    }
+  )
+  modelRelations.forEach((relation) => {
+    Object.defineProperty(user,
+      relation.name,
+      {
+        enumerable: true,
+        configurable: true,
+        get() {
+          return relation.func(this)
+        },
+      }
+    )
+  })
+  return user
+}
 
 function create(params) {
   const user = {
@@ -14,58 +48,42 @@ function create(params) {
     order: null,
   }
   USERS[user.id] = user
-  return user
+  return UserModel(user)
 }
 
 function get(query) {
-  return Object.values(USERS).find((user) => {
+  const user = Object.values(USERS).find((user) => {
     const queryParams = Object.entries(query)
     return queryParams.every(([key, value]) => {
         return user[key] === value
     })
   })
+  return UserModel(user)
 }
 
-function filterForClient(query) {
+function filter(query) {
   const users = Object.values(USERS).filter((user) => {
     const queryParams = Object.entries(query)
     return queryParams.every(([key, value]) => {
         return user[key] === value
     })
   })
-  const game = Game.get({ id: query.gameId })
-  return users.map((user) => {
-    const userTiles = Tile.getUserTiles(user)
-    return {
-      id: user.id,
-      name: user.name,
-      tiles: userTiles.length,
-      turn: game.turn === user.order
-    }
-  })
-}
-
-function filter(query) {
-  return Object.values(USERS).filter((user) => {
-    const queryParams = Object.entries(query)
-    return queryParams.every(([key, value]) => {
-        return user[key] === value
-    })
-  })
+  return users.map(UserModel)
 }
 
 function update(user, payload) {
   USERS[user.id] = {...USERS[user.id], ...payload}
-  return USERS[user.id]
+  return UserModel(USERS[user.id] )
 }
 
+const modelRelations = []
 
 const User = {
   create,
   get,
-  filterForClient,
   filter,
   update,
+  modelRelations,
   debug: () => {
     console.log('USERS', USERS)
   },

@@ -8,8 +8,7 @@ const { initializeSocketService } = require("../../socket")
 async function initGame({ gameCode }) {
   const firstUser = User.create({ name: 'Ramon' })
   const secondUser = User.create({ name: 'Pepe' })
-  const game = Game.create()
-  game.code = gameCode
+  const game = Game.create({ gameCode })
   TileService.generateTiles().reverse().map((tile) => Tile.create(tile, game))
   const io = SocketServerMock()
   initializeSocketService(io)

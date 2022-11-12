@@ -52,21 +52,27 @@ function sendInvalidPlay({ socket }) {
   socket.emit('game:play:ko')
 }
 
+function prepareNewRound(game) {
+  DB.createTiles(game)
+  Game.update(game, { rounds: game.rounds + 1})
+  const users = User.filter({ gameId: game.id })
+  users.forEach(user => {
+    User.update(user, { isFirstMove: true })
+  })
+}
+
 async function finishRound({ socket, gameCode }) {
   const game = Game.getByCode(gameCode)
   Round.createForGame(game)
-  const rounds = Round.getForGame(game)
-  Game.update(game, { rounds: game.rounds + 1})
   const clients = await Socket.getClientsFromRoom(gameCode)
   const grid = DB.getGrid(gameCode)
+  const rounds = Round.getForGame(game)
   clients.forEach(client => {
     client.emit('game:move', grid)
-  })
-  DB.createTiles(game)
-  clients.forEach(client => {
     client.emit('game:finish', rounds)
   })
   socket.emit('game:win')
+  prepareNewRound(game)
 }
 
 const play = {

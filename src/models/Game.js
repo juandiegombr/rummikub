@@ -4,6 +4,25 @@ const { generateGameCode } = require('../helpers')
 
 let GAMES = {}
 
+function GameModel(data) {
+  if (!data) return
+
+  const game = JSON.parse(JSON.stringify(data))
+  modelRelations.forEach((relation) => {
+    Object.defineProperty(game,
+      relation.name,
+      {
+        enumerable: true,
+        configurable: true,
+        get() {
+          return relation.func(this)
+        },
+      }
+    )
+  })
+  return game
+}
+
 const getDefaultGameSettings = () => {
   return {
     gameCode: generateGameCode(),
@@ -23,16 +42,17 @@ function create(payload) {
     points: Number(gameSettings.points),
   }
   GAMES[game.id] = game
-  return GAMES[game.id]
+  return GameModel(game)
 }
 
 function get(query) {
-  return Object.values(GAMES).find((user) => {
+  const game = Object.values(GAMES).find((user) => {
     const queryParams = Object.entries(query)
     return queryParams.every(([key, value]) => {
         return user[key] === value
     })
   })
+  return GameModel(game)
 }
 
 function getByCode(gameCode) {
@@ -41,14 +61,17 @@ function getByCode(gameCode) {
 
 function update(game, payload) {
   GAMES[game.id] = {...GAMES[game.id], ...payload}
-  return GAMES[game.id]
+  return GameModel(GAMES[game.id])
 }
+
+const modelRelations = []
 
 const Game = {
   create,
   get,
   getByCode,
   update,
+  modelRelations,
   debug: () => {
     console.log('GAMES', GAMES)
   },

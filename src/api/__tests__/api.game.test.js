@@ -36,6 +36,8 @@ it('creates a default new game', (done) => {
           turn: 0,
           players: 2,
           points: 50,
+          users: expect.any(Array),
+          tiles: expect.any(Array),
         }
       )
     })
@@ -70,6 +72,8 @@ it('creates a new game', (done) => {
           turn: 0,
           players: 3,
           points: 100,
+          users: expect.any(Array),
+          tiles: expect.any(Array),
         }
       )
     })

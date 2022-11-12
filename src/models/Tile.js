@@ -1,6 +1,50 @@
 const { v4 } = require('uuid')
 
+const { Game } = require('./Game')
+const { User } = require('./User')
+
 let TILES = {}
+
+Game.modelRelations.push({
+  name: 'tiles',
+  func: (game) => filter({ gameId: game.id })
+})
+
+User.modelRelations.push({
+  name: 'tiles',
+  func: (user) => filter({ userId: user.id })
+})
+
+function TileModel(data) {
+  const tile = JSON.parse(JSON.stringify(data))
+  Object.defineProperty(tile,
+    'user',
+    {
+      enumerable: true,
+      configurable: true,
+      get() {
+        const freshTile = TILES[this.id]
+        if (freshTile.userId) {
+          return User.get({ id: freshTile.userId })
+        }
+      },
+    }
+  )
+  Object.defineProperty(tile,
+    'game',
+    {
+      enumerable: true,
+      configurable: true,
+      get() {
+        const freshTile = TILES[this.id]
+        if (freshTile.gameId) {
+          return Game.get({ id: freshTile.gameId })
+        }
+      },
+    }
+  )
+  return tile
+}
 
 function create(params, game) {
   const tile = {
@@ -15,7 +59,7 @@ function create(params, game) {
     spotY: null,
   }
   TILES[tile.id] = tile
-  return tile
+  return TileModel(tile)
 }
 
 function remove(tile) {

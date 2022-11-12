@@ -1,4 +1,5 @@
 const { Game, User, Tile } = require("../models")
+const { Serializer } = require('../serializer')
 const { Socket } = require('../services/socket')
 
 function assignTiles(game, user) {
@@ -39,8 +40,10 @@ async function execute({ socket, gameCode }) {
   const userTiles = Tile.getUserTiles(user)
   socket.emit('game:start', userTiles)
   const remainingTiles = Tile.filterUnassigned(game)
-  const users = User.filterForClient({ gameId: game.id })
-  socket.emit('game:summary', { users, remainingTiles: remainingTiles.length })
+  socket.emit('game:summary', {
+    users: game.users.map(Serializer.userSummary),
+    remainingTiles: remainingTiles.length,
+  })
 }
 
 const roundStart = {

@@ -20,6 +20,7 @@ it('creates a user', (done) => {
         gameId: null,
         order: null,
         socketId: null,
+        tiles: []
       })
     })
     .end(done)

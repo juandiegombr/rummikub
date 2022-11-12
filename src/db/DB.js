@@ -63,8 +63,7 @@ function reset() {
 function createDebugGame() {
   const env = process.env.NODE_ENV
   if (env === 'test') return
-  const game = Game.create()
-  game.code = 'AAAA'
+  const game = Game.create({ gameCode: 'AAAA' })
   TileService.generateTiles().reverse().map((tile) => Tile.create(tile, game))
 }
 

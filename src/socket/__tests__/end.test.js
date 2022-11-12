@@ -18,20 +18,18 @@ it('confirms a valid play', async function(done) {
     secondServer,
   } = await initGame({ gameCode: 'AAAA' })
 
-  const userTiles = Tile.getUserTiles(User.get({ id: firstUser.id }))
-  await firstClient.emit('game:play', { gameCode: game.code, data: userTiles })
+  await firstClient.emit('game:play', { gameCode: game.code, data: firstUser.tiles })
 
-  const secondUserTiles = Tile.getUserTiles(User.get({ id: secondUser.id }))
   const expectedRounds = [
     {
+      userName: firstUser.name,
       scores: [0],
       total: 0,
-      userName: firstUser.name,
     },
     {
-      scores: [secondUserTiles.reduce((total, tile) => total + tile.value, 0)],
-      total: secondUserTiles.reduce((total, tile) => total + tile.value, 0),
       userName: secondUser.name,
+      scores: [103],
+      total: 103,
     },
   ]
   expect(firstServer.emit).toHaveBeenCalledWith('game:win')

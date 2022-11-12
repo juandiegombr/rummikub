@@ -6,8 +6,9 @@ const { Server } = require("socket.io")
 const path = require('path')
 
 const DB = require('./db')
-const { Game,User } = require('./models')
+const { Game, User } = require('./models')
 const { initializeSocketService } = require('./socket')
+const { Serializer } = require('./serializer')
 
 const app = express()
 app.use(cors())
@@ -30,7 +31,7 @@ app.get('/api/game/:gameCode/', (req, res) => {
   const gameCode = req.params.gameCode
   const game = Game.get({ code: gameCode })
   if (game) {
-    res.json({ game })
+    res.json({ game: Serializer.game(game) })
     return
   }
   res.sendStatus(404)
@@ -39,14 +40,14 @@ app.get('/api/game/:gameCode/', (req, res) => {
 app.post('/api/game/create/', (req, res) => {
   const gameSettings = req.body
   const game = DB.createGame(gameSettings)
-  res.json({ game })
+  res.json({ game: Serializer.game(game) })
 })
 
 app.post('/api/game/join/', (req, res) => {
   const gameCode = req.body.gameCode
   const game = Game.get({ code: gameCode })
   if (game) {
-    res.json({ game })
+    res.json({ game: Serializer.game(game) })
     return
   }
   res.sendStatus(404)
@@ -65,7 +66,7 @@ app.post('/api/game/rejoin/', (req, res) => {
     res.sendStatus(403)
     return
   }
-  res.json({ game })
+  res.json({ game: Serializer.game(game) })
 })
 
 app.get('*', (req, res) => {
