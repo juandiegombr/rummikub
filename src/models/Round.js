@@ -5,12 +5,12 @@ const { User } = require('./User')
 
 let ROUNDS = {}
 
-function create({ game, user, score }) {
+function create({ number, score, game, user }) {
   const round = {
     id: v4(),
     gameId: game.id,
     userId: user.id,
-    number: game.rounds,
+    number,
     score,
   }
   ROUNDS[round.id] = round
@@ -45,7 +45,7 @@ function createForGame(game) {
   usersInGame.forEach((user) => {
     const userTiles = Tile.getUserTiles(user)
     const score = TileService.getScore(userTiles)
-    Round.create({ game, user, score })
+    Round.create({ score, number: game.round, game, user })
   })
 }
 

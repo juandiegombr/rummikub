@@ -1,6 +1,5 @@
 const DB = require('../db')
-const { Game, User, Tile } = require("../models")
-const { Round } = require('../models/Round')
+const { Game, User, Tile, Round } = require("../models")
 const { Brain } = require('../services/brain')
 const { Socket } = require('../services/socket')
 
