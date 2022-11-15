@@ -25,7 +25,7 @@ function GameModel(data) {
 
 const getDefaultGameSettings = () => {
   return {
-    gameCode: generateGameCode(),
+    code: generateGameCode(),
     players: 2,
     points: 50,
   }
@@ -35,7 +35,7 @@ function create(payload) {
   const gameSettings = {...getDefaultGameSettings(), ...payload}
   const game = {
     id: v4(),
-    code: gameSettings.gameCode,
+    code: gameSettings.code,
     turn: 0,
     rounds: 1,
     players: Number(gameSettings.players),

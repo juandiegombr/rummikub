@@ -1,5 +1,6 @@
 const DB = require('../db')
 const { Game, User, Tile, Round } = require("../models")
+const { Serializer } = require('../serializer')
 const { Brain } = require('../services/brain')
 const { Socket } = require('../services/socket')
 
@@ -7,13 +8,12 @@ async function execute({ socket, gameCode, data: newCommonTiles }) {
   const game = Game.getByCode(gameCode)
   const userId = Socket.getId(socket)
   const user = User.get({ id: userId })
-  const userTiles = Tile.getUserTiles(user)
   const commonTiles = DB.getGrid(gameCode)
 
   const isValid = Brain.validate({
     newCommonTiles,
     commonTiles,
-    userTiles,
+    userTiles: user.tiles,
     isFirstMove: user.isFirstMove,
   })
 
@@ -24,7 +24,7 @@ async function execute({ socket, gameCode, data: newCommonTiles }) {
   User.update(user, { isFirstMove: false })
   Tile.updateGrid(newCommonTiles)
 
-  const hasFinished = Tile.getUserTiles(user).length === 0
+  const hasFinished = user.tiles.length === 0
   if (hasFinished) {
     return finishRound({ socket, gameCode })
   }
@@ -38,7 +38,7 @@ async function execute({ socket, gameCode, data: newCommonTiles }) {
   const clients = await Socket.getClientsFromRoom(gameCode)
   const grid = DB.getGrid(gameCode)
   clients.forEach(client => {
-    client.emit('game:move', grid)
+    client.emit('game:move', grid.map(Serializer.tile))
   })
   Socket.updateGameStatus(game)
 }
@@ -67,7 +67,7 @@ async function finishRound({ socket, gameCode }) {
   const grid = DB.getGrid(gameCode)
   const rounds = Round.getForGame(game)
   clients.forEach(client => {
-    client.emit('game:move', grid)
+    client.emit('game:move', grid.map(Serializer.tile))
     client.emit('game:finish', rounds)
   })
   socket.emit('game:win')

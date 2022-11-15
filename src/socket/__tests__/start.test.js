@@ -19,7 +19,7 @@ it('disconnects from the socket server', async function(done) {
 
 it('joins to a game', async function(done) {
   const user = User.create({ name: 'Ramon' })
-  const game = DB.createGame(user)
+  const game = DB.createGame()
   const io = SocketServerMock()
   initializeSocketService(io)
 
@@ -36,7 +36,7 @@ it('joins to a game', async function(done) {
 it('joins two players to a game', async function(done) {
   const firstUser = User.create({ name: 'Ramon' })
   const secondUser = User.create({ name: 'Pepe' })
-  const game = DB.createGame(firstUser)
+  const game = DB.createGame()
   const io = SocketServerMock()
   initializeSocketService(io)
 
@@ -53,7 +53,7 @@ it('joins two players to a game', async function(done) {
 it('rejoins to a game', async function(done) {
   const firstUser = User.create({ name: 'Ramon' })
   const secondUser = User.create({ name: 'Ramon' })
-  const game = DB.createGame(firstUser)
+  const game = DB.createGame()
   const io = SocketServerMock()
   initializeSocketService(io)
 
@@ -73,7 +73,7 @@ it('rejoins to a game', async function(done) {
 it('rejoins to a game the user with turn', async function(done) {
   const firstUser = User.create({ name: 'Ramon' })
   const secondUser = User.create({ name: 'Ramon' })
-  const game = DB.createGame(firstUser)
+  const game = DB.createGame()
   const io = SocketServerMock()
   initializeSocketService(io)
 

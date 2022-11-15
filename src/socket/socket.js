@@ -5,6 +5,7 @@ const { Socket } = require('../services/socket')
 const { play } = require('../actions/play')
 const { join } = require('../actions/join')
 const { roundStart } = require('../actions/roundStart')
+const { Serializer } = require('../serializer')
 
 function initializeSocketService(io) {
   Socket.init(io)
@@ -40,7 +41,7 @@ function initializeSocketService(io) {
       const clients = await Socket.getClientsFromRoom(gameCode)
       clients.forEach(client => {
         const grid = DB.getGrid(gameCode)
-        client.emit('game:move', grid)
+        client.emit('game:move', grid.map(Serializer.tile))
       })
     })
 
@@ -59,12 +60,11 @@ function initializeSocketService(io) {
       const userId = Socket.getId(socket)
       const user = User.get({ id: userId })
       const game = Game.getByCode(gameCode)
-      const unassignedTile = Tile.getFirstUnassigned(game)
+      const unassignedTile = Tile.get({ gameId: game.id, area: null })
       const tile = Tile.update(unassignedTile, { area: 'player', userId, spotX: spot.x, spotY: spot.y })
-      const tiles = Tile.getUserTiles(user)
       const grid = DB.getGrid(gameCode)
 
-      socket.emit('game:pass:ok', { tiles, tile, grid })
+      socket.emit('game:pass:ok', { tiles: user.tiles, tile, grid })
 
       const nextPlayer = DB.nextTurn(game)
       const nextPlayerSocket = Socket.getById(nextPlayer.socketId)

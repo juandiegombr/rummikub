@@ -39,12 +39,11 @@ const Socket = {
     clients.forEach(client => {
       const userId = getId(client)
       const user = User.get({ id: userId })
-      const userTiles = Tile.getUserTiles(user)
-      client.emit('game:start', userTiles)
+      client.emit('game:start', user.tiles.map(Serializer.tile))
     })
   },
   updateGameStatus: async (game) => {
-    const remainingTiles = Tile.filterUnassigned(game)
+    const remainingTiles = Tile.filter({ gameId: game.id, area: null })
     const clients = await Socket.getClientsFromRoom(game.code)
     clients.forEach(client => {
       client.emit('game:summary', {
@@ -63,15 +62,14 @@ const Socket = {
     const userId = socket.handshake.auth.token
     const user = User.get({ id: userId })
     const game = Game.getByCode(gameCode)
-    const userTiles = Tile.getUserTiles(user)
     const grid = DB.getGrid(gameCode)
-    const remainingTiles = Tile.filterUnassigned(game)
-    socket.emit('game:start', userTiles)
+    const remainingTiles = Tile.filter({ gameId: game.id, area: null })
+    socket.emit('game:start', user.tiles.map(Serializer.tile))
     socket.emit('game:summary', {
       users: game.users.map(Serializer.userSummary),
       remainingTiles: remainingTiles.length,
     })
-    socket.emit('game:move', grid)
+    socket.emit('game:move', grid.map(Serializer.tile))
     const hasTurn = game.turn === user.order
     if (hasTurn) {
       socket.emit('game:turn')
@@ -79,7 +77,7 @@ const Socket = {
   },
   move: (socket, gameCode) => {
     const grid = DB.getGrid(gameCode)
-    socket.emit('game:move', grid)
+    socket.emit('game:move', grid.map(Serializer.tile))
   },
 }
 

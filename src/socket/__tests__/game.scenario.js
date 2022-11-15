@@ -8,8 +8,8 @@ const { initializeSocketService } = require("../../socket")
 async function initGame({ gameCode }) {
   const firstUser = User.create({ name: 'Ramon' })
   const secondUser = User.create({ name: 'Pepe' })
-  const game = Game.create({ gameCode })
-  TileService.generateTiles().reverse().map((tile) => Tile.create(tile, game))
+  const game = Game.create({ code: gameCode })
+  TileService.generateTiles().reverse().map((tile) => Tile.create({ ...tile, game }))
   const io = SocketServerMock()
   initializeSocketService(io)
 
@@ -35,7 +35,7 @@ async function setRound(scores) {
   const secondUser = User.create({ name: 'Pepe' })
   const game = Game.create()
   game.code = gameCode
-  TileService.generateTiles().reverse().map((tile) => Tile.create(tile, game))
+  TileService.generateTiles().reverse().map((tile) => Tile.create({ ...tile, game }))
   const io = SocketServerMock()
   initializeSocketService(io)
 

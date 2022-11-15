@@ -46,13 +46,13 @@ function TileModel(data) {
   return tile
 }
 
-function create(params, game) {
+function create(params) {
   const tile = {
     id: v4(),
     code: params.code,
     value: params.value,
     color: params.color,
-    gameId: game.id,
+    gameId: params.game ? params.game.id : null,
     area: null,
     userId: null,
     spotX: null,
@@ -89,18 +89,6 @@ function update(tile, payload) {
   return TILES[tile.id]
 }
 
-function getFirstUnassigned(game) {
-  return get({ gameId: game.id, area: null })
-}
-
-function filterUnassigned(game) {
-  return filter({ gameId: game.id, area: null })
-}
-
-function getUserTiles(user) {
-  return filter({ gameId: user.gameId, userId: user.id })
-}
-
 function updateGrid(updatedTiles) {
   updatedTiles.forEach((updatedTile) => {
     const tile = Tile.get({ id: updatedTile.id })
@@ -119,9 +107,6 @@ const Tile = {
   filter,
   update,
   updateGrid,
-  getFirstUnassigned,
-  filterUnassigned,
-  getUserTiles,
   debug: () => {
     console.log('TILES', TILES)
   },

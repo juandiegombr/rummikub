@@ -13,7 +13,7 @@ it('creates a default new game', (done) => {
 
   request(app)
     .post('/api/game/create/')
-    .send({ gameCode })
+    .send({ code: gameCode })
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
       expect(res.body).toEqual(
@@ -49,7 +49,7 @@ it('creates a new game', (done) => {
 
   request(app)
     .post('/api/game/create/')
-    .send({ gameCode, players: '3', points: '100' })
+    .send({ code: gameCode, players: '3', points: '100' })
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
       expect(res.body).toEqual(
@@ -82,7 +82,7 @@ it('creates a new game', (done) => {
 
 it('joins a created game', (done) => {
   const gameCode = 'AAAA'
-  Game.create({ gameCode })
+  Game.create({ code: gameCode })
 
   request(app)
     .post('/api/game/join/')
@@ -107,7 +107,7 @@ it('joins a created game', (done) => {
 
 it('tries to joins a not found game', (done) => {
   const gameCode = 'AAAA'
-  Game.create({ gameCode })
+  Game.create({ code: gameCode })
 
   request(app)
     .post('/api/game/join/')
@@ -119,7 +119,7 @@ it('tries to joins a not found game', (done) => {
 it('re-joins a created game', (done) => {
   const gameCode = 'AAAA'
   const user = User.create({ name: 'Ramon' })
-  const game = Game.create({ gameCode })
+  const game = Game.create({ code: gameCode })
   User.update(user, { gameId: game.id, order: 0 })
 
   request(app)
@@ -148,7 +148,7 @@ it('tries to re-joins to a not allowed game', (done) => {
   const gameCode = 'AAAA'
   const user = User.create({ name: 'Ramon' })
   const otherUser = User.create({ name: 'Pepe' })
-  const game = Game.create({ gameCode })
+  const game = Game.create({ code: gameCode })
   User.update(user, { gameId: game.id, order: 0 })
 
   request(app)

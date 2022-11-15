@@ -67,14 +67,14 @@ const InitDialog = ({ onConfirm }) => {
 
   const createGame = ({ gameCode, players, points }) => {
     const options = {
-      body: JSON.stringify({ gameCode, players, points }),
+      body: JSON.stringify({ code: gameCode, players, points }),
     }
     return Http.post('/game/create/', options).then(response => response.json())
   }
 
   const joinGame = ({ gameCode }) => {
     const options = {
-      body: JSON.stringify({ gameCode }),
+      body: JSON.stringify({ code: gameCode }),
     }
     return Http.post(`/game/join/`, options)
   }
