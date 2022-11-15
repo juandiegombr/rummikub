@@ -26,7 +26,9 @@ const Transition = ({ show, duration, children }) => {
   }
 
   return <div className={transitionClassName()}>
-    {children}
+    <div className='ui-transition__content'>
+      {children}
+    </div>
   </div>
 }
 

@@ -1,5 +1,6 @@
 .ui-transition {
-  transition-property: height;
+  position: relative;
+  transition-property: all;
   transition-timing-function: ease-in-out;
   transition-duration: 0.2s;
   overflow: hidden;
@@ -11,4 +12,10 @@
 
 .ui-transition--end {
   height: calc(8px + 48px * 2);
+}
+
+.ui-transition__content {
+  position: absolute;
+  top: 0;
+  width: 100%;
 }

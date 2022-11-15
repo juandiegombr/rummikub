@@ -117,7 +117,7 @@ const InitDialog = ({ onConfirm }) => {
                   onClick={toggleSettings}
                 />
               </div>
-              <Transition show={showSettings} duration={500}>
+              <Transition show={showSettings} duration={200}>
                 <div className="initialize-dialog__config-content">
                   <div className="initialize-dialog__config-item">
                     <span>Players</span>
