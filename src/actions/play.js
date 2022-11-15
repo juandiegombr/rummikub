@@ -5,7 +5,7 @@ const { Brain } = require('../services/brain')
 const { Socket } = require('../services/socket')
 
 async function execute({ socket, gameCode, data: newCommonTiles }) {
-  const game = Game.getByCode(gameCode)
+  const game = Game.get({ code: gameCode })
   const userId = Socket.getId(socket)
   const user = User.get({ id: userId })
   const commonTiles = DB.getGrid(gameCode)
@@ -53,7 +53,7 @@ function sendInvalidPlay({ socket }) {
 
 function prepareNewRound(game) {
   DB.createTiles(game)
-  Game.update(game, { rounds: game.rounds + 1})
+  Game.update(game, { round: game.round + 1})
   const users = User.filter({ gameId: game.id })
   users.forEach(user => {
     User.update(user, { isFirstMove: true })
@@ -61,7 +61,7 @@ function prepareNewRound(game) {
 }
 
 async function finishRound({ socket, gameCode }) {
-  const game = Game.getByCode(gameCode)
+  const game = Game.get({ code: gameCode })
   Round.createForGame(game)
   const clients = await Socket.getClientsFromRoom(gameCode)
   const grid = DB.getGrid(gameCode)

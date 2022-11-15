@@ -37,7 +37,7 @@ function create(payload) {
     id: v4(),
     code: gameSettings.code,
     turn: 0,
-    rounds: 1,
+    round: 1,
     players: Number(gameSettings.players),
     points: Number(gameSettings.points),
   }
@@ -55,10 +55,6 @@ function get(query) {
   return GameModel(game)
 }
 
-function getByCode(gameCode) {
-  return get({ code: gameCode })
-}
-
 function update(game, payload) {
   GAMES[game.id] = {...GAMES[game.id], ...payload}
   return GameModel(GAMES[game.id])
@@ -69,7 +65,6 @@ const modelRelations = []
 const Game = {
   create,
   get,
-  getByCode,
   update,
   modelRelations,
   debug: () => {

@@ -56,7 +56,7 @@ app.post('/api/game/join/', (req, res) => {
 app.post('/api/game/rejoin/', (req, res) => {
   const gameCode = req.body.gameCode
   const userId = req.get('x-user-id')
-  const game = Game.getByCode(gameCode)
+  const game = Game.get({ code: gameCode })
   const user = User.get({ id: userId })
   if (!game) {
     res.sendStatus(404)

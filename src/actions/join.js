@@ -37,9 +37,8 @@ async function execute({ socket, gameCode }) {
   socket.join(gameCode)
   const userId = Socket.getId(socket)
   const user = User.get({ id: userId })
-  const game = Game.getByCode(gameCode)
-  const usersInGame = User.filter({ gameId: game.id })
-  const order = usersInGame.length
+  const game = Game.get({ code: gameCode })
+  const order = game.users.length
   User.update(user, { gameId: game.id, order, socketId: socket.id })
   assignTiles(game, user)
   const playersInRoom = await Socket.countClients(room)

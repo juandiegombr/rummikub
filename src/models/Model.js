@@ -168,9 +168,28 @@ class RoundModel extends Model {
     return {
       number: { validator: Number },
       score: { validator: Number },
-      game: { isForeignKey: true, relatedName: 'tiles', model: Game },
-      user: { isForeignKey: true, relatedName: 'tiles', model: User },
+      game: { isForeignKey: true, relatedName: 'userRounds', model: Game },
+      user: { isForeignKey: true, relatedName: 'userRounds', model: User },
     }
+  }
+
+  createForGame(game) {
+    game.users.forEach((user) => {
+      const score = TileService.getScore(user.tiles)
+      this.create({ score, number: game.round, game, user })
+    })
+  }
+
+  getForGame(game) {
+    return game.users.map((user) => {
+      const scores = user.rounds.map((userRound) => userRound.score)
+      const total = scores.reduce((total, score) => total + score, 0)
+      return {
+        userName: user.name,
+        scores,
+        total,
+      }
+    })
   }
 }
 

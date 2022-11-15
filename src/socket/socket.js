@@ -59,7 +59,7 @@ function initializeSocketService(io) {
     socket.on('game:pass', async ({ gameCode, data: spot  }) => {
       const userId = Socket.getId(socket)
       const user = User.get({ id: userId })
-      const game = Game.getByCode(gameCode)
+      const game = Game.get({ code: gameCode })
       const unassignedTile = Tile.get({ gameId: game.id, area: null })
       const tile = Tile.update(unassignedTile, { area: 'player', userId, spotX: spot.x, spotY: spot.y })
       const grid = DB.getGrid(gameCode)

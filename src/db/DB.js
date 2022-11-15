@@ -16,7 +16,7 @@ function createTiles(game) {
 }
 
 function getGrid(gameCode) {
-  const game = Game.getByCode(gameCode)
+  const game = Game.get({ code: gameCode })
   return Tile.filter({ gameId: game.id, area: 'grid' })
 }
 
@@ -31,9 +31,8 @@ function move(gameCode, move) {
 }
 
 function nextTurn(game) {
-  const usersInGame = User.filter({ gameId: game.id })
   const currentUser = User.get({ gameId: game.id, order: game.turn })
-  const isLast = usersInGame.length === currentUser.order + 1
+  const isLast = game.users.length === currentUser.order + 1
   if (isLast) {
     const nextUserPosition = 0
     const nextUser = User.get({ gameId: game.id, order: nextUserPosition })

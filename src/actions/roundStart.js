@@ -35,7 +35,7 @@ function assignTiles(game, user) {
 async function execute({ socket, gameCode }) {
   const userId = Socket.getId(socket)
   const user = User.get({ id: userId })
-  const game = Game.getByCode(gameCode)
+  const game = Game.get({ code: gameCode })
   assignTiles(game, user)
   socket.emit('game:start', user.tiles.map(Serializer.tile))
   const remainingTiles = Tile.filter({ gameId: game.id, area: null })

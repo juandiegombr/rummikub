@@ -21,7 +21,7 @@ it('creates a default new game', (done) => {
           game: {
             code: gameCode,
             id: expect.any(String),
-            rounds: 1,
+            round: 1,
             turn: 0,
             players: 2,
             points: 50,
@@ -32,7 +32,7 @@ it('creates a default new game', (done) => {
         {
           code: gameCode,
           id: expect.any(String),
-          rounds: 1,
+          round: 1,
           turn: 0,
           players: 2,
           points: 50,
@@ -57,7 +57,7 @@ it('creates a new game', (done) => {
           game: {
             code: gameCode,
             id: expect.any(String),
-            rounds: 1,
+            round: 1,
             turn: 0,
             players: 3,
             points: 100,
@@ -68,7 +68,7 @@ it('creates a new game', (done) => {
         {
           code: gameCode,
           id: expect.any(String),
-          rounds: 1,
+          round: 1,
           turn: 0,
           players: 3,
           points: 100,
@@ -94,7 +94,7 @@ it('joins a created game', (done) => {
           game: {
             code: gameCode,
             id: expect.any(String),
-            rounds: 1,
+            round: 1,
             turn: 0,
             players: 2,
             points: 50,
@@ -133,7 +133,7 @@ it('re-joins a created game', (done) => {
           game: {
             code: gameCode,
             id: expect.any(String),
-            rounds: 1,
+            round: 1,
             turn: 0,
             players: 2,
             points: 50,

@@ -41,16 +41,14 @@ function update(game, payload) {
 }
 
 function createForGame(game) {
-  const usersInGame = User.filter({ gameId: game.id })
-  usersInGame.forEach((user) => {
+  game.users.forEach((user) => {
     const score = TileService.getScore(user.tiles)
     Round.create({ score, number: game.round, game, user })
   })
 }
 
 function getForGame(game) {
-  const usersInGame = User.filter({ gameId: game.id })
-  return usersInGame.map((user) => {
+  return game.users.map((user) => {
     const userRounds = Round.filter({ userId: user.id, gameId: game.id })
     const scores = userRounds.map((userRound) => userRound.score)
     const total = scores.reduce((total, score) => total + score, 0)

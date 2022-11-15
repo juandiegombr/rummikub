@@ -53,7 +53,7 @@ const Socket = {
     })
   },
   startTurn: (gameCode) => {
-    const game = Game.getByCode(gameCode)
+    const game = Game.get({ code: gameCode })
     const firstPlayer = User.get({ gameId: game.id, order: game.turn })
     const firstPlayerSocket = getById(firstPlayer.socketId)
     firstPlayerSocket.emit('game:turn')
@@ -61,7 +61,7 @@ const Socket = {
   reJoinGame: (socket, gameCode) => {
     const userId = socket.handshake.auth.token
     const user = User.get({ id: userId })
-    const game = Game.getByCode(gameCode)
+    const game = Game.get({ code: gameCode })
     const grid = DB.getGrid(gameCode)
     const remainingTiles = Tile.filter({ gameId: game.id, area: null })
     socket.emit('game:start', user.tiles.map(Serializer.tile))

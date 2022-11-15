@@ -3,7 +3,7 @@ function gameSerializer(game) {
     id: game.id,
     code: game.code,
     turn: game.turn,
-    rounds: game.rounds,
+    round: game.round,
     players: game.players,
     points: game.points,
   }
