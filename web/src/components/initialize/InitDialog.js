@@ -4,8 +4,6 @@ import { Http } from 'services/http'
 import { Socket } from 'services/socket'
 import { ButtonIcon } from 'system-ui/button'
 import { Radio } from 'system-ui/radio'
-import { Transition } from 'system-ui/transition'
-
 
 const generateGameCode = () => {
   const values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -117,7 +115,7 @@ const InitDialog = ({ onConfirm }) => {
                   onClick={toggleSettings}
                 />
               </div>
-              <Transition show={showSettings} duration={200}>
+              {showSettings &&
                 <div className="initialize-dialog__config-content">
                   <div className="initialize-dialog__config-item">
                     <span>Players</span>
@@ -136,7 +134,7 @@ const InitDialog = ({ onConfirm }) => {
                     </div>
                   </div>
                 </div>
-              </Transition>
+              }
             </div>
             <button className="ui-button" type="submit">Confirm</button>
           </form>
