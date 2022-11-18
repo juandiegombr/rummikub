@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Http } from 'services/http'
 import { Socket } from 'services/socket'
+import { useStorage } from 'services/storage'
 import { ButtonIcon } from 'system-ui/button'
 import { Radio } from 'system-ui/radio'
+import { Show } from 'system-ui/show'
 
 const generateGameCode = () => {
   const values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -21,6 +23,7 @@ const InitDialog = ({ onConfirm }) => {
   const [players, setPlayers]  = useState('2')
   const [points, setPoints]  = useState('50')
   const [showSettings, setSettingsVisibility]  = useState(false)
+  const Storage = useStorage()
 
   useEffect(() => {
     nameRef.current.focus()
@@ -40,7 +43,7 @@ const InitDialog = ({ onConfirm }) => {
 
     await createUser({ name })
     await joinOrCreateGame({ gameCode, players, points })
-    localStorage.setItem('gameCode', gameCode)
+    Storage.set('gameCode', gameCode)
     Socket.init()
     Socket.emit('game:join', { gameCode })
     onConfirm()
@@ -51,7 +54,7 @@ const InitDialog = ({ onConfirm }) => {
       body: JSON.stringify({ name }),
     }
     const user = await Http.post('/user/create/', options).then(response => response.json())
-    localStorage.setItem('userId', user.id)
+    Storage.set('userId', user.id)
     return user
   }
 
@@ -115,7 +118,7 @@ const InitDialog = ({ onConfirm }) => {
                   onClick={toggleSettings}
                 />
               </div>
-              {showSettings &&
+              <Show when={showSettings}>
                 <div className="initialize-dialog__config-content">
                   <div className="initialize-dialog__config-item">
                     <span>Players</span>
@@ -134,7 +137,7 @@ const InitDialog = ({ onConfirm }) => {
                     </div>
                   </div>
                 </div>
-              }
+              </Show>
             </div>
             <button className="ui-button" type="submit">Confirm</button>
           </form>

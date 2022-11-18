@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
 import { Tile } from "components/tile"
 import { Initialize } from "components/initialize"
 import { Grid } from "components/grid"
 import { PlayersContainer } from "components/player"
-
-import { Socket } from 'services/socket'
+import { Menu } from "components/menu"
+import { useStorage } from "services/storage"
 
 import "./App.css"
 
@@ -16,12 +16,10 @@ export default function App() {
   const [tiles, setTiles] = useState([])
   const [grid, setGrid] = useState([])
   const [selectedTile, setSelectedTile] = useState(null)
+  const Storage = useStorage()
 
-  useEffect(() => {
-    Socket.init()
-  }, [])
-
-  const player = players.find((player) => player.id === localStorage.userId)
+  const userId = Storage.get('userId')
+  const player = players.find((player) => player.id === userId)
 
   return (
     <div className="app">
@@ -34,6 +32,7 @@ export default function App() {
         rounds={rounds}
         setRounds={setRounds}
       />
+      <Menu/>
       <PlayersContainer players={players}/>
       <Grid
         player={player}

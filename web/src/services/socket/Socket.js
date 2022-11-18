@@ -1,12 +1,14 @@
 import { io } from 'socket.io-client'
 
+import { Storage } from 'services/storage'
+
 let socket
 let config = {}
 
 const getConfig = () => {
   return {
     ...config,
-    gameCode: localStorage.gameCode,
+    gameCode: Storage.get('gameCode'),
   }
 }
 
@@ -16,7 +18,7 @@ const init = () => {
     {
       transports: ['websocket'],
       auth: (cb) => {
-        cb({ token: localStorage.userId })
+        cb({ token: Storage.get('userId') })
       },
     },
   )
@@ -46,7 +48,7 @@ const emit = (event, data) => {
 }
 
 const reconnect = () => {
-  socket.auth.token = localStorage.userId
+  socket.auth.token = Storage.get('userId')
   socket.disconnect().connect()
 }
 

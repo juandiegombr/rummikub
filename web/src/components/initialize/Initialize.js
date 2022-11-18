@@ -6,6 +6,7 @@ import { InitDialog } from './InitDialog'
 import { WaitingDialog } from './WaitingDialog'
 import { Error } from './Error'
 import { GameSummary } from 'components/game-summary'
+import { useStorage } from 'services/storage'
 
 import './Initialize.css'
 
@@ -26,10 +27,17 @@ const Initialize = ({
 }) => {
   const [showRounds, setShowRounds] = useState(false)
   const [status, setStatus] = useState(null)
+  const Storage = useStorage()
 
   useEffect(() => {
     reJoinToGame()
   }, [])
+
+  useEffect(() => {
+    if (!Storage.get('userId') || !Storage.get('gameCode')) {
+      reset()
+    }
+  }, [Storage])
 
   const initSocketGame = () => {
     Socket.on('game:start', (tiles) => {
@@ -67,12 +75,15 @@ const Initialize = ({
   }
 
   const reJoinToGame = async () => {
-    const userId = localStorage.userId
-    const gameCode = localStorage.gameCode
+    const userId = Storage.get('userId')
+    const gameCode = Storage.get('gameCode')
 
     if (userId && gameCode) {
       try {
-        const response = await Http.post(`/game/${gameCode}/rejoin/`)
+        const options = {
+          body: JSON.stringify({ gameCode }),
+        }
+        const response = await Http.post('/game/rejoin/', options)
         if (response.status === 404) throw new Error()
         if (response.status === 403) throw new Error()
         Socket.init()
@@ -80,18 +91,28 @@ const Initialize = ({
         initSocketGame()
       } catch (error) {
         setStatus(STATUS.INIT)
-        localStorage.clear()
+        Storage.clear()
       }
       return
     }
 
     setStatus(STATUS.INIT)
-    localStorage.clear()
+    Storage.clear()
   }
 
   const confirmRound = () => {
     setShowRounds(false)
     Socket.emit('game:round:confirm')
+  }
+
+  const reset = () => {
+    setPlayers([])
+    setTiles([])
+    setGrid([])
+    setSelectedTile(null)
+    setTurn(false)
+    setRounds([])
+    setStatus(STATUS.INIT)
   }
 
   if (showRounds) {

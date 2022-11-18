@@ -9,6 +9,7 @@ Game.modelRelations.push({
 })
 
 function UserModel(data) {
+  if (!data) return
   const user = JSON.parse(JSON.stringify(data))
   Object.defineProperty(user,
     'game',

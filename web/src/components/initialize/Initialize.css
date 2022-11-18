@@ -32,9 +32,13 @@
 }
 
 .initialize-dialog__code {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: fit-content;
   margin: auto;
   padding: 8px 16px;
+  padding-right: 8px;
   border-radius: 4px;
   color: rgba(0,0,0,0.6);
   background-color: rgba(0,0,0,0.05);
