@@ -1,6 +1,6 @@
 .ui-dialog {
   position: absolute;
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   left: 0;
@@ -12,7 +12,22 @@
 }
 
 .ui-dialog--show {
+  display: flex;
   background-color: rgba(0,0,0,0.2);
+}
+
+.ui-dialog--start .ui-dialog__content {
+  opacity: 0;
+  transform: translateY(80vh);
+}
+
+.ui-dialog--end .ui-dialog__content {
+  opacity: 1;
+  transform: translateY(0vh);
+}
+
+.ui-dialog--show .ui-dialog__content {
+  opacity: 1;
 }
 
 .ui-dialog--in .ui-dialog__content {
@@ -21,14 +36,6 @@
 
 .ui-dialog--out .ui-dialog__content {
   animation: bounce-top-bottom 1s ease;
-}
-
-.ui-dialog--start .ui-dialog__content {
-  transform: translateY(80vh);
-}
-
-.ui-dialog--end .ui-dialog__content {
-  transform: translateY(0vh);
 }
 
 @keyframes bounce-bottom-top {

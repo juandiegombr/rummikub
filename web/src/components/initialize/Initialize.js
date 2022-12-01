@@ -116,6 +116,8 @@ const Initialize = ({
     setStatus(STATUS.INIT)
   }
 
+  /* eslint-disable */ console.log('status', status)
+
   return (
     <>
       {status === STATUS.WAITING && <Error

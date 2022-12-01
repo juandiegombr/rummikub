@@ -5,25 +5,34 @@ import './Dialog.css'
 
 const Dialog = ({ show, children }) => {
   const [isVisible, setVisibility] = useState(false)
+  const [isTransitionActive, setTransitionStatus] = useState(false)
 
   useEffect(() => {
     if (show) {
+      setTransitionStatus(true)
       setVisibility(true)
     }
 
     if (!show && isVisible) {
       setTimeout(() => {
         setVisibility(false)
-      }, 500)
+        setTransitionStatus(false)
+      }, 1000)
     }
-  }, [])
+  }, [show])
 
   const dialogClassName = () => {
     let className = 'ui-dialog ui-dialog--start'
-    if (show) {
-      className = className + 'ui-dialog--show ui-dialog--in ui-dialog--end'
+    if (isTransitionActive) {
+      className = className + ' ui-dialog--show'
     }
-    if (!show) {
+    if (show) {
+      className = className + ' ui-dialog--end'
+    }
+    if (show && isTransitionActive) {
+      className = className + ' ui-dialog--in ui-dialog--end'
+    }
+    if (!show && isTransitionActive) {
       className = className + ' ui-dialog--out'
     }
     return className
