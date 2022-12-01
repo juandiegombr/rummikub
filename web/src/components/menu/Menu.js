@@ -11,8 +11,6 @@ const Menu = () => {
   const Storage = useStorage()
 
   const handleClick = (event) => {
-    /* eslint-disable */ console.log('event.target', event.target)
-    /* eslint-disable */ console.log('ref.current', ref.current)
     const isClickOutside = !event.target.contains(ref.current)
     if (isClickOutside && showMenu) {
       setMenuVisibility(false)

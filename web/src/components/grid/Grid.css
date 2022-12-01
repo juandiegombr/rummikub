@@ -21,13 +21,24 @@
   transform: translateX(calc(100% + 32px));
 }
 
-.player-zone .tile__button {
+.player-zone .ui-game-button {
   position: absolute;
   top: unset;
   left: unset;
   bottom: 0;
   right: 0;
-  transform: translateX(calc(200% + 32px + 16px));
+  transform: translate(calc(100% + 32px), -100px);
+  width: 60px;
+}
+
+.player-zone .ui-game-button:disabled:active {
+  box-shadow: var(--game-button-height);
+  transform: translate(calc(100% + 32px), -100px)
+}
+
+.player-zone .ui-game-button:active {
+  box-shadow: var(--game-button-height--active);
+  transform: translate(calc(100% + 32px), -97px)
 }
 
 .player-zone .player--self {

@@ -1,8 +1,8 @@
 import { Player } from 'components/player'
 import { TileSpot } from 'components/tile-spot'
 import { TileBack } from 'components/tile/TileBack'
-import { TileButton } from 'components/tile/TileButton'
 import { Socket } from 'services/socket'
+import { GameButton } from 'system-ui/game-button'
 
 import './Grid.css'
 
@@ -161,7 +161,7 @@ const Grid = ({
             />
           )
         })}
-        <TileButton onClick={play} disabled={!turn}/>
+        <GameButton onClick={play} disabled={!turn}>Play</GameButton>
         <TileBack id="player-10-1" onClick={pass} disabled={!turn}/>
         {player && <Player player={player} self/>}
       </div>

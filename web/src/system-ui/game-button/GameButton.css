@@ -1,0 +1,41 @@
+.ui-game-button {
+  --game-button-height: 0px 4px 0px rgba(0, 0, 0, 0.2), 0px 2px 0px #FF385C, 0px 1px 0px #FF385C, 0px 4px 0px #FF385C;
+  --game-button-height--active: 0px 1px 0px rgba(0, 0, 0, 0.2), 0px 1px 0px #FF385C;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 100%;
+  border: none;
+  border-radius: 30px;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #FF385C;
+  box-shadow: var(--game-button-height);
+  cursor: pointer;
+}
+
+.ui-game-button:disabled {
+  cursor: not-allowed;
+}
+
+.ui-game-button:focus-visible {
+  outline: none;
+  box-shadow: white 0px 0px 0px 2px, rgb(34 34 34) 0px 0px 0px 4px;
+}
+
+.ui-game-button:hover {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05));
+}
+
+.ui-game-button:disabled:active {
+  box-shadow: var(--game-button-height);
+  transform: translate(calc(100% + 32px), -100px)
+}
+
+.ui-game-button:active {
+  box-shadow: var(--game-button-height--active);
+  transform: translateY(3px);
+}

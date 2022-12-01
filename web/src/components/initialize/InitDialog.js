@@ -4,6 +4,7 @@ import { Http } from 'services/http'
 import { Socket } from 'services/socket'
 import { useStorage } from 'services/storage'
 import { ButtonIcon } from 'system-ui/button'
+import { GameButton } from 'system-ui/game-button'
 import { Radio } from 'system-ui/radio'
 import { Show } from 'system-ui/show'
 
@@ -139,7 +140,7 @@ const InitDialog = ({ onConfirm }) => {
                 </div>
               </Show>
             </div>
-            <button className="ui-button" type="submit">Confirm</button>
+            <GameButton type="submit">Confirm</GameButton>
           </form>
         </div>
       </div>,
