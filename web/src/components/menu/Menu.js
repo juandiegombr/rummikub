@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { useStorage } from 'services/storage'
-import { ButtonIcon } from 'system-ui/button'
+import { GameButton } from 'system-ui/game-button'
+import { Icon } from 'system-ui/icon'
 
 import './Menu.css'
 
@@ -32,14 +33,17 @@ const Menu = () => {
   return (
     <div className="menu">
       <div className="menu__dropdown" ref={ref}>
-        <ButtonIcon
+        <GameButton
           aria-label="Open game settings"
           className="ui-dropdown__button"
           variant="secondary"
+          shape="rounded"
           icon="MENU"
           type="button"
           onClick={() => setMenuVisibility(value => !value)}
-        />
+        >
+          <Icon icon="MENU" size={18}/>
+        </GameButton>
         { showMenu && (
           <div className="ui-dropdown__menu">
             <button onClick={exitGame}>

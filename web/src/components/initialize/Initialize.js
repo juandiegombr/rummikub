@@ -40,8 +40,11 @@ const Initialize = ({
     }
   }, [Storage])
 
-  const initSocketGame = () => {
+  const initSocketGame = (animation) => {
     Socket.on('game:start', (tiles) => {
+      if (animation) {
+        clearTimeout(animation)
+      }
       setStatus(null)
       setTiles(tiles)
       setGrid([])
@@ -116,8 +119,6 @@ const Initialize = ({
     setStatus(STATUS.INIT)
   }
 
-  /* eslint-disable */ console.log('status', status)
-
   return (
     <>
       {status === STATUS.WAITING && <Error
@@ -135,11 +136,11 @@ const Initialize = ({
       <Dialog show={status === STATUS.INIT}>
         <InitDialog
           onConfirm={() => {
-            initSocketGame()
-            setStatus(null)
-            setTimeout(() => {
+            const animation = setTimeout(() => {
               setStatus(STATUS.WAITING)
             }, 1000)
+            initSocketGame(animation)
+            setStatus(null)
           }}
         />
       </Dialog>
