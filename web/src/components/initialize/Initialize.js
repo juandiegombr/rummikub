@@ -9,6 +9,7 @@ import { GameSummary } from 'components/game-summary'
 import { useStorage } from 'services/storage'
 
 import './Initialize.css'
+import { Dialog } from 'system-ui/dialog'
 
 const STATUS = {
   INIT: 'init',
@@ -115,37 +116,33 @@ const Initialize = ({
     setStatus(STATUS.INIT)
   }
 
-  if (showRounds) {
-    return <GameSummary rounds={rounds} onConfirm={confirmRound}/>
-  }
-
-  if (status === STATUS.ERROR) {
-    return <Error
-      onRetry={() => setStatus(null)}
-      onPass={() => {
-        const spot = { x: 10, y: 1 }
-        Socket.emit('game:pass', spot)
-        setStatus(null)
-      }}
-    />
-  }
-
-  if (status === STATUS.INIT) {
-    return (
-      <InitDialog
-        onConfirm={() => {
-          initSocketGame()
-          setStatus(STATUS.WAITING)
+  return (
+    <>
+      {status === STATUS.WAITING && <Error
+        onRetry={() => setStatus(null)}
+        onPass={() => {
+          const spot = { x: 10, y: 1 }
+          Socket.emit('game:pass', spot)
+          setStatus(null)
         }}
-      />
-    )
-  }
-
-  if (status === STATUS.WAITING) {
-    return <WaitingDialog />
-  }
-
-  return null
+      />}
+      {showRounds && <GameSummary rounds={rounds} onConfirm={confirmRound}/>}
+      <Dialog show={status === STATUS.WAITING}>
+        <WaitingDialog/>
+      </Dialog>
+      <Dialog show={status === STATUS.INIT}>
+        <InitDialog
+          onConfirm={() => {
+            initSocketGame()
+            setStatus(null)
+            setTimeout(() => {
+              setStatus(STATUS.WAITING)
+            }, 1000)
+          }}
+        />
+      </Dialog>
+    </>
+  )
 }
 
 export { Initialize }

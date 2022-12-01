@@ -1,0 +1,58 @@
+.ui-dialog {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  color: #2e2e2e;
+  overflow: hidden;
+}
+
+.ui-dialog--show {
+  background-color: rgba(0,0,0,0.2);
+}
+
+.ui-dialog--in .ui-dialog__content {
+  animation: bounce-bottom-top 1s ease;
+}
+
+.ui-dialog--out .ui-dialog__content {
+  animation: bounce-top-bottom 1s ease;
+}
+
+.ui-dialog--start .ui-dialog__content {
+  transform: translateY(80vh);
+}
+
+.ui-dialog--end .ui-dialog__content {
+  transform: translateY(0vh);
+}
+
+@keyframes bounce-bottom-top {
+  0% {
+    opacity: 0;
+    transform: translateY(80vh);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-30px);
+  }
+  80% { transform: translateY(10px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes bounce-top-bottom {
+  0% { transform: translateY(0); }
+  20% { transform: translateY(10px); }
+  40% {
+    opacity: 1;
+    transform: translateY(-30px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(80vh);
+  }
+}
