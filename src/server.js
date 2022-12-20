@@ -9,6 +9,7 @@ const DB = require('./db')
 const { Game, User } = require('./models')
 const { initializeSocketService } = require('./socket')
 const { Serializer } = require('./serializer')
+const { Logger } = require('./services/logger')
 
 const app = express()
 app.use(cors())
@@ -23,7 +24,9 @@ initializeSocketService(io)
 
 app.post('/api/user/create/', (req, res) => {
   const name = req.body.name
+  Logger.send(`Creating a new user: ${name}`)
   const user = User.create({ name })
+  Logger.send(`Created a new user: ${name}`)
   res.json(user)
 })
 
