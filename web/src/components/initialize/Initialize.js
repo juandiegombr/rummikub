@@ -10,6 +10,7 @@ import { useStorage } from 'services/storage'
 
 import './Initialize.css'
 import { Dialog } from 'system-ui/dialog'
+import { Audio } from 'services/audio'
 
 const STATUS = {
   INIT: 'init',
@@ -70,6 +71,7 @@ const Initialize = ({
     Socket.on('game:pass:ko', () => {
     })
     Socket.on('game:turn', () => {
+      Audio.play(Audio.TURN)
       setTurn(true)
     })
     Socket.on('game:finish', (rounds) => {

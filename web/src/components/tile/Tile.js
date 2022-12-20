@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import { Tile } from "domain/tile"
 
 import './Tile.css'
+import { Audio } from "services/audio"
 
 const TileComponent = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onClick, disabled }) => {
   const tileRef = useRef()
@@ -120,6 +121,7 @@ const TileComponent = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onC
       data-area={area}
       onClick={() => {
         if (disabled) return
+        Audio.play(Audio.SELECT)
         onClick(tile)
       }}
       style={{ transform: getTransformValue(), zIndex: active ? 99 : 0 }}
