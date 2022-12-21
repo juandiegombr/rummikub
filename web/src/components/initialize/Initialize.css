@@ -102,7 +102,7 @@
   box-shadow: white 0px 0px 0px 2px, rgb(34 34 34) 0px 0px 0px 4px;
 }
 
-.initialize-dialog .code-button {
+.initialize-dialog__form .code-button {
   position: absolute;
   right: 10px;
   bottom: 10px;

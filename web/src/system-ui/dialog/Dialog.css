@@ -16,6 +16,16 @@
   background-color: rgba(0,0,0,0.2);
 }
 
+.ui-dialog__content {
+  min-width: 320px;
+  background-color: white;
+  border-radius: 16px;
+  padding: 32px;
+  padding-top: 40px;
+  box-shadow: rgb(0 0 0 / 20%) 0px 6px 20px;
+  text-align: center;
+}
+
 .ui-dialog--start .ui-dialog__content {
   opacity: 0;
   transform: translateY(80vh);

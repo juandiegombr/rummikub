@@ -4,6 +4,7 @@ import { Http } from 'services/http'
 import { Socket } from 'services/socket'
 import { useStorage } from 'services/storage'
 import { ButtonIcon } from 'system-ui/button'
+import { Dialog } from 'system-ui/dialog'
 import { GameButton } from 'system-ui/game-button'
 import { Radio } from 'system-ui/radio'
 import { Show } from 'system-ui/show'
@@ -20,7 +21,7 @@ const generateGameCode = () => {
     .join('')
 }
 
-const InitDialog = ({ onConfirm }) => {
+const InitDialog = ({ show, onConfirm }) => {
   const nameRef = useRef()
   const codeRef = useRef()
   const [players, setPlayers] = useState('2')
@@ -29,8 +30,8 @@ const InitDialog = ({ onConfirm }) => {
   const Storage = useStorage()
 
   useEffect(() => {
-    nameRef.current.focus()
-  }, [])
+    nameRef.current?.focus()
+  }, [show])
 
   const toggleSettings = () => {
     setSettingsVisibility((value) => !value)
@@ -92,121 +93,115 @@ const InitDialog = ({ onConfirm }) => {
   }
 
   return (
-    <div className="initialize-dialog__overlay">
-      <div
-        role="dialog"
-        aria-labelledby="initialize-title"
-        className="initialize-dialog"
-      >
-        <h2 id="initialize-title" className="initialize-dialog__title">
-          Welcome! 👋
-        </h2>
-        <form className="initialize-dialog__form" onSubmit={onSubmit}>
-          <div className="ui-input">
-            <label htmlFor="name-field" className="ui-input__label">
-              Name:
-            </label>
-            <input
-              id="name-field"
-              ref={nameRef}
-              className="ui-input__input"
-              type="text"
-              name="name"
-              placeholder="Write your name here"
-            />
-          </div>
-          <div className="ui-input">
-            <label htmlFor="game-code-field" className="ui-input__label">
-              Game code:
-            </label>
-            <input
-              id="game-code-field"
-              ref={codeRef}
-              className="ui-input__input"
-              type="text"
-              name="game-code"
-              placeholder="Write your code here"
-            />
+    <Dialog show={show}>
+      <h2 id="initialize-title" className="initialize-dialog__title">
+        Welcome! 👋
+      </h2>
+      <form className="initialize-dialog__form" onSubmit={onSubmit}>
+        <div className="ui-input">
+          <label htmlFor="name-field" className="ui-input__label">
+            Name:
+          </label>
+          <input
+            id="name-field"
+            ref={nameRef}
+            className="ui-input__input"
+            type="text"
+            name="name"
+            placeholder="Write your name here"
+          />
+        </div>
+        <div className="ui-input">
+          <label htmlFor="game-code-field" className="ui-input__label">
+            Game code:
+          </label>
+          <input
+            id="game-code-field"
+            ref={codeRef}
+            className="ui-input__input"
+            type="text"
+            name="game-code"
+            placeholder="Write your code here"
+          />
+          <ButtonIcon
+            className="code-button"
+            aria-label="Generate game code"
+            icon="ZAP"
+            type="button"
+            onClick={generateCode}
+          />
+        </div>
+        <div className="initialize-dialog__config">
+          <div className="initialize-dialog__config-header">
+            <span>Configure a new game</span>
             <ButtonIcon
-              className="code-button"
-              aria-label="Generate game code"
-              icon="ZAP"
+              aria-label="Open game settings"
+              variant="ghost"
+              icon="SETTINGS"
               type="button"
-              onClick={generateCode}
+              onClick={toggleSettings}
             />
           </div>
-          <div className="initialize-dialog__config">
-            <div className="initialize-dialog__config-header">
-              <span>Configure a new game</span>
-              <ButtonIcon
-                aria-label="Open game settings"
-                variant="ghost"
-                icon="SETTINGS"
-                type="button"
-                onClick={toggleSettings}
-              />
-            </div>
-            <Show when={showSettings}>
-              <div className="initialize-dialog__config-content">
-                <div className="initialize-dialog__config-item">
-                  <span>Players</span>
-                  <div className="initialize-dialog__config-item-selector">
-                    <Radio
-                      label="2"
-                      name="players"
-                      value="2"
-                      selected={players}
-                      onChange={setPlayers}
-                    />
-                    <Radio
-                      label="3"
-                      name="players"
-                      value="3"
-                      selected={players}
-                      onChange={setPlayers}
-                    />
-                    <Radio
-                      label="4"
-                      name="players"
-                      value="4"
-                      selected={players}
-                      onChange={setPlayers}
-                    />
-                  </div>
-                </div>
-                <div className="initialize-dialog__config-item">
-                  <span>Score</span>
-                  <div className="initialize-dialog__config-item-selector">
-                    <Radio
-                      label="50"
-                      name="points"
-                      value="50"
-                      selected={points}
-                      onChange={setPoints}
-                    />
-                    <Radio
-                      label="100"
-                      name="points"
-                      value="100"
-                      selected={points}
-                      onChange={setPoints}
-                    />
-                    <Radio
-                      label="150"
-                      name="points"
-                      value="150"
-                      selected={points}
-                      onChange={setPoints}
-                    />
-                  </div>
+          <Show when={showSettings}>
+            <div className="initialize-dialog__config-content">
+              <div className="initialize-dialog__config-item">
+                <span>Players</span>
+                <div className="initialize-dialog__config-item-selector">
+                  <Radio
+                    label="2"
+                    name="players"
+                    value="2"
+                    selected={players}
+                    onChange={setPlayers}
+                  />
+                  <Radio
+                    label="3"
+                    name="players"
+                    value="3"
+                    selected={players}
+                    onChange={setPlayers}
+                  />
+                  <Radio
+                    label="4"
+                    name="players"
+                    value="4"
+                    selected={players}
+                    onChange={setPlayers}
+                  />
                 </div>
               </div>
-            </Show>
-          </div>
-          <GameButton type="submit">Confirm</GameButton>
-        </form>
-      </div>
-    </div>
+              <div className="initialize-dialog__config-item">
+                <span>Score</span>
+                <div className="initialize-dialog__config-item-selector">
+                  <Radio
+                    label="50"
+                    name="points"
+                    value="50"
+                    selected={points}
+                    onChange={setPoints}
+                  />
+                  <Radio
+                    label="100"
+                    name="points"
+                    value="100"
+                    selected={points}
+                    onChange={setPoints}
+                  />
+                  <Radio
+                    label="150"
+                    name="points"
+                    value="150"
+                    selected={points}
+                    onChange={setPoints}
+                  />
+                </div>
+              </div>
+            </div>
+          </Show>
+        </div>
+        <GameButton type="submit">Confirm</GameButton>
+      </form>
+    </Dialog>
   )
 }
 

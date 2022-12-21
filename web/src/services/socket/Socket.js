@@ -46,10 +46,16 @@ const reconnect = () => {
   socket.disconnect().connect()
 }
 
+const debug = (message, payload) => {
+  console.log(getInstance()['_callbacks'][`$${message}`])
+  return getInstance()['_callbacks'][`$${message}`][0](payload)
+}
+
 export const Socket = {
   init,
   reconnect,
   getId,
   on,
   emit,
+  debug,
 }

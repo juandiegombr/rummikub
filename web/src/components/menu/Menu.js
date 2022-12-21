@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 
+import { Socket } from 'services/socket'
 import { useStorage } from 'services/storage'
 import { GameButton } from 'system-ui/game-button'
 import { Icon } from 'system-ui/icon'
 
 import './Menu.css'
+
+const isDebugModeOn = () => {
+  const searchParams = new URLSearchParams(window.location.search)
+  return process.env.NODE_ENV === 'development' || searchParams.get('debug')
+}
 
 const Menu = () => {
   const [showMenu, setMenuVisibility] = useState(false)
@@ -12,7 +18,7 @@ const Menu = () => {
   const Storage = useStorage()
 
   const handleClick = (event) => {
-    const isClickOutside = !event.target.contains(ref.current)
+    const isClickOutside = !ref.current.contains(event.target)
     if (isClickOutside && showMenu) {
       setMenuVisibility(false)
     }
@@ -25,9 +31,30 @@ const Menu = () => {
     }
   }, [handleClick])
 
+  const closeMenu = () => {
+    setMenuVisibility(false)
+  }
+
   const exitGame = () => {
     Storage.clear()
-    setMenuVisibility(false)
+    closeMenu()
+  }
+
+  const debugGameFinish = () => {
+    const rounds = [
+      {
+        userName: 'John Doe',
+        scores: [1, 2, 3],
+        total: 6,
+      },
+      {
+        userName: 'Phileas Fogg',
+        scores: [-1, -2, -3],
+        total: -6,
+      },
+    ]
+    Socket.debug('game:finish', rounds)
+    closeMenu()
   }
 
   return (
@@ -46,7 +73,17 @@ const Menu = () => {
         </GameButton>
         {showMenu && (
           <div className="ui-dropdown__menu">
-            <button onClick={exitGame}>Salir de la partida</button>
+            {isDebugModeOn() && (
+              <button
+                className="ui-dropdown__menu-item"
+                onClick={debugGameFinish}
+              >
+                Debug
+              </button>
+            )}
+            <button className="ui-dropdown__menu-item" onClick={exitGame}>
+              Salir de la partida
+            </button>
           </div>
         )}
       </div>

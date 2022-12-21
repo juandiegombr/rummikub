@@ -5,7 +5,6 @@ import { Audio } from 'services/audio'
 import { Http } from 'services/http'
 import { Socket } from 'services/socket'
 import { useStorage } from 'services/storage'
-import { Dialog } from 'system-ui/dialog'
 
 import './Initialize.css'
 
@@ -133,21 +132,18 @@ const Initialize = ({
           }}
         />
       )}
-      {showRounds && <GameSummary rounds={rounds} onConfirm={confirmRound} />}
-      <Dialog show={status === STATUS.WAITING}>
-        <WaitingDialog />
-      </Dialog>
-      <Dialog show={status === STATUS.INIT}>
-        <InitDialog
-          onConfirm={() => {
-            const animation = setTimeout(() => {
-              setStatus(STATUS.WAITING)
-            }, 1000)
-            initSocketGame(animation)
-            setStatus(null)
-          }}
-        />
-      </Dialog>
+      <GameSummary show={showRounds} rounds={rounds} onConfirm={confirmRound} />
+      <WaitingDialog show={status === STATUS.WAITING} />
+      <InitDialog
+        show={status === STATUS.INIT}
+        onConfirm={() => {
+          const animation = setTimeout(() => {
+            setStatus(STATUS.WAITING)
+          }, 1000)
+          initSocketGame(animation)
+          setStatus(null)
+        }}
+      />
     </>
   )
 }

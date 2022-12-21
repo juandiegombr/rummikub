@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 
 import './Dialog.css'
 
-const Dialog = ({ show, children }) => {
+const Dialog = ({ show, children, ...props }) => {
   const [isVisible, setVisibility] = useState(false)
   const [isTransitionActive, setTransitionStatus] = useState(false)
 
@@ -38,8 +38,10 @@ const Dialog = ({ show, children }) => {
     return className
   }
 
+  if (!isVisible) return null
+
   return createPortal(
-    <div className={dialogClassName()}>
+    <div className={dialogClassName()} role="dialog" {...props}>
       <div className="ui-dialog__content">{children}</div>
     </div>,
     document.getElementById('dialog'),
