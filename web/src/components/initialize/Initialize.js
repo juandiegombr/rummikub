@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
-import { Socket } from 'services/socket'
-import { Http } from 'services/http'
 
-import { InitDialog } from './InitDialog'
-import { WaitingDialog } from './WaitingDialog'
-import { Error } from './Error'
 import { GameSummary } from 'components/game-summary'
+import { Audio } from 'services/audio'
+import { Http } from 'services/http'
+import { Socket } from 'services/socket'
 import { useStorage } from 'services/storage'
+import { Dialog } from 'system-ui/dialog'
 
 import './Initialize.css'
-import { Dialog } from 'system-ui/dialog'
-import { Audio } from 'services/audio'
+
+import { Error } from './Error'
+import { InitDialog } from './InitDialog'
+import { WaitingDialog } from './WaitingDialog'
 
 const STATUS = {
   INIT: 'init',
@@ -68,8 +69,7 @@ const Initialize = ({
       setGrid(grid)
       setTurn(false)
     })
-    Socket.on('game:pass:ko', () => {
-    })
+    Socket.on('game:pass:ko', () => {})
     Socket.on('game:turn', () => {
       Audio.play(Audio.TURN)
       setTurn(true)
@@ -123,17 +123,19 @@ const Initialize = ({
 
   return (
     <>
-      {status === STATUS.WAITING && <Error
-        onRetry={() => setStatus(null)}
-        onPass={() => {
-          const spot = { x: 10, y: 1 }
-          Socket.emit('game:pass', spot)
-          setStatus(null)
-        }}
-      />}
-      {showRounds && <GameSummary rounds={rounds} onConfirm={confirmRound}/>}
+      {status === STATUS.WAITING && (
+        <Error
+          onRetry={() => setStatus(null)}
+          onPass={() => {
+            const spot = { x: 10, y: 1 }
+            Socket.emit('game:pass', spot)
+            setStatus(null)
+          }}
+        />
+      )}
+      {showRounds && <GameSummary rounds={rounds} onConfirm={confirmRound} />}
       <Dialog show={status === STATUS.WAITING}>
-        <WaitingDialog/>
+        <WaitingDialog />
       </Dialog>
       <Dialog show={status === STATUS.INIT}>
         <InitDialog

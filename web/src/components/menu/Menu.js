@@ -40,15 +40,13 @@ const Menu = () => {
           shape="rounded"
           icon="MENU"
           type="button"
-          onClick={() => setMenuVisibility(value => !value)}
+          onClick={() => setMenuVisibility((value) => !value)}
         >
-          <Icon icon="MENU" size={18}/>
+          <Icon icon="MENU" size={18} />
         </GameButton>
-        { showMenu && (
+        {showMenu && (
           <div className="ui-dropdown__menu">
-            <button onClick={exitGame}>
-              Salir de la partida
-            </button>
+            <button onClick={exitGame}>Salir de la partida</button>
           </div>
         )}
       </div>

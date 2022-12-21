@@ -1,5 +1,5 @@
-import { screen, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
+import { act, screen } from '@testing-library/react'
 
 const setupPortal = () => {
   const portalRootId = 'dialog'
@@ -40,8 +40,6 @@ export const SocketServer = {
   },
 }
 
-
-
 jest.mock('socket.io-client', () => {
   const socket = {
     emit: jest.fn(),
@@ -53,7 +51,6 @@ jest.mock('socket.io-client', () => {
     io: () => socket,
   }
 })
-
 
 jest.mock('services/socket', () => {
   const originalModule = jest.requireActual('services/socket')
@@ -84,4 +81,3 @@ const toBeListening = (eventName) => {
 }
 
 expect.extend({ toBeListening })
-

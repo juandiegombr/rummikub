@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+
 import { Http } from 'services/http'
 import { Socket } from 'services/socket'
 import { useStorage } from 'services/storage'
@@ -11,18 +12,20 @@ const generateGameCode = () => {
   const values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   const getRandomIndex = () => Math.floor(Math.random() * values.length)
 
-  return Array.from({ length: 4 }).map(() => {
-    const index = getRandomIndex()
-    return values[index]
-  }).join('')
+  return Array.from({ length: 4 })
+    .map(() => {
+      const index = getRandomIndex()
+      return values[index]
+    })
+    .join('')
 }
 
 const InitDialog = ({ onConfirm }) => {
   const nameRef = useRef()
   const codeRef = useRef()
-  const [players, setPlayers]  = useState('2')
-  const [points, setPoints]  = useState('50')
-  const [showSettings, setSettingsVisibility]  = useState(false)
+  const [players, setPlayers] = useState('2')
+  const [points, setPoints] = useState('50')
+  const [showSettings, setSettingsVisibility] = useState(false)
   const Storage = useStorage()
 
   useEffect(() => {
@@ -30,7 +33,7 @@ const InitDialog = ({ onConfirm }) => {
   }, [])
 
   const toggleSettings = () => {
-    setSettingsVisibility(value => !value)
+    setSettingsVisibility((value) => !value)
   }
 
   const onSubmit = async (event) => {
@@ -53,7 +56,9 @@ const InitDialog = ({ onConfirm }) => {
     const options = {
       body: JSON.stringify({ name }),
     }
-    const user = await Http.post('/user/create/', options).then(response => response.json())
+    const user = await Http.post('/user/create/', options).then((response) =>
+      response.json(),
+    )
     Storage.set('userId', user.id)
     return user
   }
@@ -70,7 +75,9 @@ const InitDialog = ({ onConfirm }) => {
     const options = {
       body: JSON.stringify({ code: gameCode, players, points }),
     }
-    return Http.post('/game/create/', options).then(response => response.json())
+    return Http.post('/game/create/', options).then((response) =>
+      response.json(),
+    )
   }
 
   const joinGame = ({ gameCode }) => {
@@ -86,16 +93,40 @@ const InitDialog = ({ onConfirm }) => {
 
   return (
     <div className="initialize-dialog__overlay">
-      <div role="dialog" aria-labelledby="initialize-title" className="initialize-dialog">
-        <h2 id="initialize-title" className="initialize-dialog__title">Welcome! 👋</h2>
+      <div
+        role="dialog"
+        aria-labelledby="initialize-title"
+        className="initialize-dialog"
+      >
+        <h2 id="initialize-title" className="initialize-dialog__title">
+          Welcome! 👋
+        </h2>
         <form className="initialize-dialog__form" onSubmit={onSubmit}>
           <div className="ui-input">
-            <label htmlFor="name-field" className="ui-input__label">Name:</label>
-            <input id="name-field" ref={nameRef} className="ui-input__input" type="text" name="name" placeholder="Write your name here"/>
+            <label htmlFor="name-field" className="ui-input__label">
+              Name:
+            </label>
+            <input
+              id="name-field"
+              ref={nameRef}
+              className="ui-input__input"
+              type="text"
+              name="name"
+              placeholder="Write your name here"
+            />
           </div>
           <div className="ui-input">
-            <label htmlFor="game-code-field" className="ui-input__label">Game code:</label>
-            <input id="game-code-field" ref={codeRef} className="ui-input__input" type="text" name="game-code" placeholder="Write your code here"/>
+            <label htmlFor="game-code-field" className="ui-input__label">
+              Game code:
+            </label>
+            <input
+              id="game-code-field"
+              ref={codeRef}
+              className="ui-input__input"
+              type="text"
+              name="game-code"
+              placeholder="Write your code here"
+            />
             <ButtonIcon
               className="code-button"
               aria-label="Generate game code"
@@ -106,9 +137,7 @@ const InitDialog = ({ onConfirm }) => {
           </div>
           <div className="initialize-dialog__config">
             <div className="initialize-dialog__config-header">
-              <span>
-                Configure a new game
-              </span>
+              <span>Configure a new game</span>
               <ButtonIcon
                 aria-label="Open game settings"
                 variant="ghost"
@@ -122,17 +151,53 @@ const InitDialog = ({ onConfirm }) => {
                 <div className="initialize-dialog__config-item">
                   <span>Players</span>
                   <div className="initialize-dialog__config-item-selector">
-                    <Radio label="2" name="players" value="2" selected={players} onChange={setPlayers}/>
-                    <Radio label="3" name="players" value="3" selected={players} onChange={setPlayers}/>
-                    <Radio label="4" name="players" value="4" selected={players} onChange={setPlayers}/>
+                    <Radio
+                      label="2"
+                      name="players"
+                      value="2"
+                      selected={players}
+                      onChange={setPlayers}
+                    />
+                    <Radio
+                      label="3"
+                      name="players"
+                      value="3"
+                      selected={players}
+                      onChange={setPlayers}
+                    />
+                    <Radio
+                      label="4"
+                      name="players"
+                      value="4"
+                      selected={players}
+                      onChange={setPlayers}
+                    />
                   </div>
                 </div>
                 <div className="initialize-dialog__config-item">
                   <span>Score</span>
                   <div className="initialize-dialog__config-item-selector">
-                    <Radio label="50" name="points" value="50" selected={points} onChange={setPoints}/>
-                    <Radio label="100" name="points" value="100" selected={points} onChange={setPoints}/>
-                    <Radio label="150" name="points" value="150" selected={points} onChange={setPoints}/>
+                    <Radio
+                      label="50"
+                      name="points"
+                      value="50"
+                      selected={points}
+                      onChange={setPoints}
+                    />
+                    <Radio
+                      label="100"
+                      name="points"
+                      value="100"
+                      selected={points}
+                      onChange={setPoints}
+                    />
+                    <Radio
+                      label="150"
+                      name="points"
+                      value="150"
+                      selected={points}
+                      onChange={setPoints}
+                    />
                   </div>
                 </div>
               </div>

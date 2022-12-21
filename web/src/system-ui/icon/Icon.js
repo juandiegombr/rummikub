@@ -15,7 +15,7 @@ const ICONS = {
 }
 const Icon = ({ icon, size, color, ...props }) => {
   const IconComponent = ICONS[icon]
-  return <IconComponent width={size} height={size} {...props}/>
+  return <IconComponent width={size} height={size} {...props} />
 }
 
 export { Icon }

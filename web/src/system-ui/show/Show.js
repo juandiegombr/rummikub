@@ -9,9 +9,7 @@ const Show = ({ when, children }) => {
     return className
   }
 
-  return <div className={classNames()}>
-    {children}
-  </div>
+  return <div className={classNames()}>{children}</div>
 }
 
 export { Show }

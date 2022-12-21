@@ -38,14 +38,12 @@ const Dialog = ({ show, children }) => {
     return className
   }
 
-  return (createPortal(
+  return createPortal(
     <div className={dialogClassName()}>
-      <div className='ui-dialog__content'>
-        {children}
-      </div>
+      <div className="ui-dialog__content">{children}</div>
     </div>,
     document.getElementById('dialog'),
-  ))
+  )
 }
 
 export { Dialog }

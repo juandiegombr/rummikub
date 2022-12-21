@@ -1,7 +1,8 @@
 import { useStorage } from 'services/storage'
-import { Player } from './Player'
 
 import './Player.css'
+
+import { Player } from './Player'
 
 const getOrderedPlayers = (players, userId) => {
   const myPosition = players.findIndex((player) => player.id === userId)
@@ -20,8 +21,8 @@ const PlayersContainer = ({ players }) => {
   }
 
   return (
-    <div className='players-container'>
-      {getOrderedPlayers(players, userId ).map((player) => {
+    <div className="players-container">
+      {getOrderedPlayers(players, userId).map((player) => {
         return <Player key={player.id} player={player} />
       })}
     </div>

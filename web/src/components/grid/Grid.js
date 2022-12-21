@@ -6,17 +6,21 @@ import { GameButton } from 'system-ui/game-button'
 
 import './Grid.css'
 
-const GRID_SPOTS = Array.from({ length: 5 }).map((_, row) => {
-  return Array.from({ length: 20 }).map((_, column) => {
-    return { area: 'grid', x: column, y: row }
+const GRID_SPOTS = Array.from({ length: 5 })
+  .map((_, row) => {
+    return Array.from({ length: 20 }).map((_, column) => {
+      return { area: 'grid', x: column, y: row }
+    })
   })
-}).reduce((acc, row) => [...acc, ...row], [])
+  .reduce((acc, row) => [...acc, ...row], [])
 
-const PLAYER_SPOTS = Array.from({ length: 3 }).map((_, row) => {
-  return Array.from({ length: 10 }).map((_, column) => {
-    return { area: 'player', x: column, y: row }
+const PLAYER_SPOTS = Array.from({ length: 3 })
+  .map((_, row) => {
+    return Array.from({ length: 10 }).map((_, column) => {
+      return { area: 'player', x: column, y: row }
+    })
   })
-}).reduce((acc, row) => [...acc, ...row], [])
+  .reduce((acc, row) => [...acc, ...row], [])
 
 const Grid = ({
   player,
@@ -28,7 +32,6 @@ const Grid = ({
   selectedTile,
   setSelectedTile,
 }) => {
-
   const moveFromGridToGrid = (spot) => {
     const movedTile = {
       ...selectedTile,
@@ -56,8 +59,7 @@ const Grid = ({
     }
     const updatedTiles = tiles.filter((tile) => tile.id !== movedTile.id)
     setTiles(updatedTiles)
-    const updatedGrid = [...grid,
-      movedTile]
+    const updatedGrid = [...grid, movedTile]
     setGrid(updatedGrid)
     setSelectedTile(null)
   }
@@ -139,7 +141,7 @@ const Grid = ({
   return (
     <>
       <div id="grid-zone" className="grid-zone">
-        { GRID_SPOTS.map((spot, index) => {
+        {GRID_SPOTS.map((spot, index) => {
           return (
             <TileSpot
               key={'spot-' + index}
@@ -151,7 +153,7 @@ const Grid = ({
         })}
       </div>
       <div id="player-zone" className="player-zone">
-        { PLAYER_SPOTS.map((spot, index) => {
+        {PLAYER_SPOTS.map((spot, index) => {
           return (
             <TileSpot
               key={'spot-' + index}
@@ -161,9 +163,11 @@ const Grid = ({
             />
           )
         })}
-        <GameButton onClick={play} disabled={!turn}>Play</GameButton>
-        <TileBack id="player-10-1" onClick={pass} disabled={!turn}/>
-        {player && <Player player={player} self/>}
+        <GameButton onClick={play} disabled={!turn}>
+          Play
+        </GameButton>
+        <TileBack id="player-10-1" onClick={pass} disabled={!turn} />
+        {player && <Player player={player} self />}
       </div>
     </>
   )

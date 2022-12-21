@@ -13,15 +13,12 @@ const getConfig = () => {
 }
 
 const init = () => {
-  socket = io(
-    process.env.REACT_APP_WEBSOCKET_HOST,
-    {
-      transports: ['websocket'],
-      auth: (cb) => {
-        cb({ token: Storage.get('userId') })
-      },
+  socket = io(process.env.REACT_APP_WEBSOCKET_HOST, {
+    transports: ['websocket'],
+    auth: (cb) => {
+      cb({ token: Storage.get('userId') })
     },
-  )
+  })
 }
 
 const getInstance = () => {
@@ -39,10 +36,7 @@ const on = (...args) => {
 const emit = (event, data) => {
   const config = getConfig()
   if (config.gameCode) {
-    return getInstance().emit(
-      event,
-      { gameCode: config.gameCode, data },
-    )
+    return getInstance().emit(event, { gameCode: config.gameCode, data })
   }
   return getInstance().emit(event, { data })
 }

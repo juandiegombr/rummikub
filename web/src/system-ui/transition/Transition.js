@@ -25,11 +25,11 @@ const Transition = ({ show, duration, children }) => {
     return className
   }
 
-  return <div className={transitionClassName()}>
-    <div className='ui-transition__content'>
-      {children}
+  return (
+    <div className={transitionClassName()}>
+      <div className="ui-transition__content">{children}</div>
     </div>
-  </div>
+  )
 }
 
 export { Transition }

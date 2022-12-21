@@ -1,11 +1,21 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from 'react'
 
-import { Tile } from "domain/tile"
+import { Tile } from 'domain/tile'
+import { Audio } from 'services/audio'
 
 import './Tile.css'
-import { Audio } from "services/audio"
 
-const TileComponent = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onClick, disabled }) => {
+const TileComponent = ({
+  area,
+  tile,
+  spot,
+  selected,
+  onDrag,
+  onMove,
+  onDrop,
+  onClick,
+  disabled,
+}) => {
   const tileRef = useRef()
   const staticActive = useRef(false)
   const originalPosition = useRef({})
@@ -18,37 +28,37 @@ const TileComponent = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onC
       x: tileRef.current.getBoundingClientRect().left,
       y: tileRef.current.getBoundingClientRect().top,
     }
-    document.addEventListener("mousemove", move)
-    document.addEventListener("mouseup", leave)
+    document.addEventListener('mousemove', move)
+    document.addEventListener('mouseup', leave)
 
-    document.addEventListener("touchmove", move)
-    document.addEventListener("touchend", leave)
+    document.addEventListener('touchmove', move)
+    document.addEventListener('touchend', leave)
 
     return () => {
-      document.removeEventListener("mousemove", move)
-      document.removeEventListener("mouseup", leave)
+      document.removeEventListener('mousemove', move)
+      document.removeEventListener('mouseup', leave)
 
-      document.removeEventListener("touchmove", move)
-      document.removeEventListener("touchend", leave)
+      document.removeEventListener('touchmove', move)
+      document.removeEventListener('touchend', leave)
     }
   }, [])
 
   useEffect(() => {
-    if(!spot) return
+    if (!spot) return
 
     const spotElement = document.getElementById(`${area}-${spot.x}-${spot.y}`)
-    if(!spotElement) {
+    if (!spotElement) {
       return
     }
     const currentTranslation = {
-      x: spotElement.getBoundingClientRect().left - originalPosition.current.x ,
+      x: spotElement.getBoundingClientRect().left - originalPosition.current.x,
       y: spotElement.getBoundingClientRect().top - originalPosition.current.y,
     }
     setCurrentTranslation(currentTranslation)
   }, [spot])
 
   const getCursorPosition = (event) => {
-    if (event.type === "touchstart" || event.type === "touchmove") {
+    if (event.type === 'touchstart' || event.type === 'touchmove') {
       return { x: event.touches[0].clientX, y: event.touches[0].clientY }
     } else {
       return { x: event.clientX, y: event.clientY }
@@ -105,7 +115,7 @@ const TileComponent = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onC
     const translate = `translate(${currentTranslation.x}px, ${currentTranslation.y}px)`
     const rotate = `rotate(5deg) scale(1.05)`
     if (active) {
-      return translate + " " + rotate
+      return translate + ' ' + rotate
     }
     return translate
   }
@@ -126,10 +136,11 @@ const TileComponent = ({ area, tile, spot, selected, onDrag, onMove, onDrop, onC
       }}
       style={{ transform: getTransformValue(), zIndex: active ? 99 : 0 }}
     >
-      {Tile.isBonus(tile)
-        ? <div className="tile__bonus"></div>
-        : <div className="tile__number">{tile.value}</div>
-      }
+      {Tile.isBonus(tile) ? (
+        <div className="tile__bonus"></div>
+      ) : (
+        <div className="tile__number">{tile.value}</div>
+      )}
       <div className="tile__brand">
         <div className="tile__brand-letter">Rummikub</div>
       </div>

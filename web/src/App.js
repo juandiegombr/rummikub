@@ -5,7 +5,6 @@ import { Initialize } from 'components/initialize'
 import { Menu } from 'components/menu'
 import { PlayersContainer } from 'components/player'
 import { Tile } from 'components/tile'
-
 import { useStorage } from 'services/storage'
 
 import './App.css'

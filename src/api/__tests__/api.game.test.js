@@ -16,30 +16,26 @@ it('creates a default new game', (done) => {
     .send({ code: gameCode })
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
-      expect(res.body).toEqual(
-        {
-          game: {
-            code: gameCode,
-            id: expect.any(String),
-            round: 1,
-            turn: 0,
-            players: 2,
-            points: 50,
-          }
-        }
-      )
-      expect(Game.get({ code: gameCode })).toEqual(
-        {
+      expect(res.body).toEqual({
+        game: {
           code: gameCode,
           id: expect.any(String),
           round: 1,
           turn: 0,
           players: 2,
           points: 50,
-          users: expect.any(Array),
-          tiles: expect.any(Array),
-        }
-      )
+        },
+      })
+      expect(Game.get({ code: gameCode })).toEqual({
+        code: gameCode,
+        id: expect.any(String),
+        round: 1,
+        turn: 0,
+        players: 2,
+        points: 50,
+        users: expect.any(Array),
+        tiles: expect.any(Array),
+      })
     })
     .end(done)
 })
@@ -52,30 +48,26 @@ it('creates a new game', (done) => {
     .send({ code: gameCode, players: '3', points: '100' })
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
-      expect(res.body).toEqual(
-        {
-          game: {
-            code: gameCode,
-            id: expect.any(String),
-            round: 1,
-            turn: 0,
-            players: 3,
-            points: 100,
-          }
-        }
-      )
-      expect(Game.get({ code: gameCode })).toEqual(
-        {
+      expect(res.body).toEqual({
+        game: {
           code: gameCode,
           id: expect.any(String),
           round: 1,
           turn: 0,
           players: 3,
           points: 100,
-          users: expect.any(Array),
-          tiles: expect.any(Array),
-        }
-      )
+        },
+      })
+      expect(Game.get({ code: gameCode })).toEqual({
+        code: gameCode,
+        id: expect.any(String),
+        round: 1,
+        turn: 0,
+        players: 3,
+        points: 100,
+        users: expect.any(Array),
+        tiles: expect.any(Array),
+      })
     })
     .end(done)
 })
@@ -89,18 +81,16 @@ it('joins a created game', (done) => {
     .send({ gameCode })
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
-      expect(res.body).toEqual(
-        {
-          game: {
-            code: gameCode,
-            id: expect.any(String),
-            round: 1,
-            turn: 0,
-            players: 2,
-            points: 50,
-          }
-        }
-      )
+      expect(res.body).toEqual({
+        game: {
+          code: gameCode,
+          id: expect.any(String),
+          round: 1,
+          turn: 0,
+          players: 2,
+          points: 50,
+        },
+      })
     })
     .end(done)
 })
@@ -128,18 +118,16 @@ it('re-joins a created game', (done) => {
     .set('x-user-id', user.id)
     .expect((res) => {
       expect(res.statusCode).toEqual(200)
-      expect(res.body).toEqual(
-        {
-          game: {
-            code: gameCode,
-            id: expect.any(String),
-            round: 1,
-            turn: 0,
-            players: 2,
-            points: 50,
-          }
-        }
-      )
+      expect(res.body).toEqual({
+        game: {
+          code: gameCode,
+          id: expect.any(String),
+          round: 1,
+          turn: 0,
+          players: 2,
+          points: 50,
+        },
+      })
     })
     .end(done)
 })

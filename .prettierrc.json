@@ -4,8 +4,7 @@
   "singleQuote": true,
   "importOrder": [
     "<THIRD_PARTY_MODULES>",
-    "^components",
-    "^services",
+    "^(./actions|./api|./db|./domain|./helpers|./models|./serializer|./services|./socket)",
     "^[./]"
   ],
   "importOrderSeparation": true,
