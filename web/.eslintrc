@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "react-app",
+    "react-app/jest"
+  ],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": ["warn", {}, {"usePrettierrc": true}]
+  },
+  "env": {
+    "browser": true,
+    "es6": true
+  }
+}

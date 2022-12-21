@@ -1,11 +1,11 @@
-const DB = require('../../db')
-const { Game, Tile, User } = require('../../models')
-const { Serializer } = require('../../serializer')
+import DB from '../../db/index.js'
+import { Game, Tile, User } from '../../models/index.js'
+import { Serializer } from '../../serializer/index.js'
 
 let io = null
 
 function init(instance) {
-  return io = instance
+  return (io = instance)
 }
 
 function getById(socketId) {
@@ -36,7 +36,7 @@ const Socket = {
   countClients,
   startGame: async (game) => {
     const clients = await Socket.getClientsFromRoom(game.code)
-    clients.forEach(client => {
+    clients.forEach((client) => {
       const userId = getId(client)
       const user = User.get({ id: userId })
       client.emit('game:start', user.tiles.map(Serializer.tile))
@@ -45,7 +45,7 @@ const Socket = {
   updateGameStatus: async (game) => {
     const remainingTiles = Tile.filter({ gameId: game.id, area: null })
     const clients = await Socket.getClientsFromRoom(game.code)
-    clients.forEach(client => {
+    clients.forEach((client) => {
       client.emit('game:summary', {
         users: game.users.map(Serializer.userSummary),
         remainingTiles: remainingTiles.length,
@@ -81,4 +81,4 @@ const Socket = {
   },
 }
 
-module.exports = { Socket }
+export { Socket }

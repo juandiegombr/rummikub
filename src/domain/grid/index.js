@@ -1,3 +1,1 @@
-const { Grid } = require('./grid')
-
-module.exports = { Grid }
+export { Grid } from './grid.js'

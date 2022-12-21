@@ -1,0 +1,13 @@
+{
+  "semi": false,
+  "trailingComma": "all",
+  "singleQuote": true,
+  "importOrder": [
+    "<THIRD_PARTY_MODULES>",
+    "^components",
+    "^services",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
+}

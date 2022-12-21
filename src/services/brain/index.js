@@ -1,3 +1,1 @@
-const { Brain } = require('./brain')
-
-module.exports = { Brain }
+export { Brain } from './brain.js'

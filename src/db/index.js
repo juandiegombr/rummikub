@@ -1,3 +1,3 @@
-const DB = require('./DB')
+import * as DB from './DB.js'
 
-module.exports = DB
+export default DB

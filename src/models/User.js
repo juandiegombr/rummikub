@@ -1,40 +1,35 @@
-const { v4 } = require('uuid')
-const { Game } = require('./Game')
+import { v4 } from 'uuid'
+
+import { Game } from './Game.js'
 
 let USERS = {}
 
 Game.modelRelations.push({
   name: 'users',
-  func: (game) => filter({ gameId: game.id })
+  func: (game) => filter({ gameId: game.id }),
 })
 
 function UserModel(data) {
   if (!data) return
   const user = JSON.parse(JSON.stringify(data))
-  Object.defineProperty(user,
-    'game',
-    {
+  Object.defineProperty(user, 'game', {
+    enumerable: true,
+    configurable: true,
+    get() {
+      const freshUser = USERS[this.id]
+      if (freshUser.gameId) {
+        return Game.get({ id: freshUser.gameId })
+      }
+    },
+  })
+  modelRelations.forEach((relation) => {
+    Object.defineProperty(user, relation.name, {
       enumerable: true,
       configurable: true,
       get() {
-        const freshUser = USERS[this.id]
-        if (freshUser.gameId) {
-          return Game.get({ id: freshUser.gameId })
-        }
+        return relation.func(this)
       },
-    }
-  )
-  modelRelations.forEach((relation) => {
-    Object.defineProperty(user,
-      relation.name,
-      {
-        enumerable: true,
-        configurable: true,
-        get() {
-          return relation.func(this)
-        },
-      }
-    )
+    })
   })
   return user
 }
@@ -56,7 +51,7 @@ function get(query) {
   const user = Object.values(USERS).find((user) => {
     const queryParams = Object.entries(query)
     return queryParams.every(([key, value]) => {
-        return user[key] === value
+      return user[key] === value
     })
   })
   return UserModel(user)
@@ -66,15 +61,15 @@ function filter(query) {
   const users = Object.values(USERS).filter((user) => {
     const queryParams = Object.entries(query)
     return queryParams.every(([key, value]) => {
-        return user[key] === value
+      return user[key] === value
     })
   })
   return users.map(UserModel)
 }
 
 function update(user, payload) {
-  USERS[user.id] = {...USERS[user.id], ...payload}
-  return UserModel(USERS[user.id] )
+  USERS[user.id] = { ...USERS[user.id], ...payload }
+  return UserModel(USERS[user.id])
 }
 
 const modelRelations = []
@@ -90,7 +85,7 @@ const User = {
   },
   reset: () => {
     USERS = {}
-  }
+  },
 }
 
-module.exports = { User }
+export { User }

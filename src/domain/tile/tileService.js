@@ -1,6 +1,15 @@
-const { Tile } = require("./tile")
+import { Tile } from './tile.js'
 
-const COLORS = ['red', 'blue', 'orange', 'black', 'red', 'blue', 'orange', 'black']
+const COLORS = [
+  'red',
+  'blue',
+  'orange',
+  'black',
+  'red',
+  'blue',
+  'orange',
+  'black',
+]
 const TILES_FOR_BRAND = 13
 
 const generateTile = (value, color) => {
@@ -14,11 +23,14 @@ const generateTile = (value, color) => {
 const generateTiles = () => {
   const bonusTiles = [generateTile(0, 'bonus'), generateTile(0, 'bonus')]
   const tiles = COLORS.map((color) => {
-    return Array
-      .from({ length: TILES_FOR_BRAND })
-      .map((_, index) => generateTile(index + 1, color))
+    return Array.from({ length: TILES_FOR_BRAND }).map((_, index) =>
+      generateTile(index + 1, color),
+    )
   })
-  return [...bonusTiles, ...tiles ].reduce((acc, colorTiles) => acc.concat(colorTiles), [])
+  return [...bonusTiles, ...tiles].reduce(
+    (acc, colorTiles) => acc.concat(colorTiles),
+    [],
+  )
 }
 
 const shuffle = (tiles) => {
@@ -47,4 +59,4 @@ const TileService = {
   getScore,
 }
 
-module.exports = { TileService }
+export { TileService }

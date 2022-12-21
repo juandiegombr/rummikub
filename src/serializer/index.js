@@ -1,6 +1,6 @@
-const { gameSerializer } = require('./game')
-const { userSummarySerializer } = require('./user')
-const { tileSerializer } = require('./tile')
+import { gameSerializer } from './game.js'
+import { tileSerializer } from './tile.js'
+import { userSummarySerializer } from './user.js'
 
 const Serializer = {
   game: gameSerializer,
@@ -8,4 +8,4 @@ const Serializer = {
   tile: tileSerializer,
 }
 
-module.exports = { Serializer }
+export { Serializer }

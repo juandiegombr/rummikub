@@ -1,5 +1,5 @@
-const { Game, Tile, User } = require('../models')
-const { TileService } = require('../domain/tile')
+import { TileService } from '../domain/tile/index.js'
+import { Game, Tile, User } from '../models/index.js'
 
 function createGame(gameSettings) {
   const game = Game.create(gameSettings)
@@ -11,7 +11,9 @@ function createTiles(game) {
   const gameTiles = Tile.filter({ gameId: game.id })
   gameTiles.forEach(Tile.remove)
   const tiles = TileService.generateTiles()
-  const shuffledTiles = TileService.shuffle(tiles).map((tile) => Tile.create({ ...tile, game }))
+  const shuffledTiles = TileService.shuffle(tiles).map((tile) =>
+    Tile.create({ ...tile, game }),
+  )
   return shuffledTiles
 }
 
@@ -63,12 +65,14 @@ function createDebugGame() {
   const env = process.env.NODE_ENV
   if (env === 'test') return
   const game = Game.create({ code: 'AAAA' })
-  TileService.generateTiles().reverse().map((tile) => Tile.create({ ...tile, game }))
+  TileService.generateTiles()
+    .reverse()
+    .map((tile) => Tile.create({ ...tile, game }))
 }
 
 createDebugGame()
 
-module.exports = {
+export {
   User,
   Game,
   Tile,

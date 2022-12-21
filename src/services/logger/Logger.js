@@ -4,7 +4,7 @@ const Logger = {
       console.log(message, data)
     }
     console.log(message)
-  }
+  },
 }
 
-module.exports = { Logger }
+export { Logger }

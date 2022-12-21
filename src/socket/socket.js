@@ -1,11 +1,11 @@
-const { Logger } = require('../services/logger')
-const DB = require('../db')
-const { Game, Tile, User } = require('../models')
-const { Socket } = require('../services/socket')
-const { play } = require('../actions/play')
-const { join } = require('../actions/join')
-const { roundStart } = require('../actions/roundStart')
-const { Serializer } = require('../serializer')
+import { join } from '../actions/join.js'
+import { play } from '../actions/play.js'
+import { roundStart } from '../actions/roundStart.js'
+import DB from '../db/index.js'
+import { Game, Tile, User } from '../models/index.js'
+import { Serializer } from '../serializer/index.js'
+import { Logger } from '../services/logger/index.js'
+import { Socket } from '../services/socket/index.js'
 
 function initializeSocketService(io) {
   Socket.init(io)
@@ -39,7 +39,7 @@ function initializeSocketService(io) {
     socket.on('game:move', async ({ gameCode, data: move }) => {
       DB.move(gameCode, move)
       const clients = await Socket.getClientsFromRoom(gameCode)
-      clients.forEach(client => {
+      clients.forEach((client) => {
         const grid = DB.getGrid(gameCode)
         client.emit('game:move', grid.map(Serializer.tile))
       })
@@ -56,12 +56,17 @@ function initializeSocketService(io) {
       await play.execute({ socket, gameCode, data })
     })
 
-    socket.on('game:pass', async ({ gameCode, data: spot  }) => {
+    socket.on('game:pass', async ({ gameCode, data: spot }) => {
       const userId = Socket.getId(socket)
       const user = User.get({ id: userId })
       const game = Game.get({ code: gameCode })
       const unassignedTile = Tile.get({ gameId: game.id, area: null })
-      const tile = Tile.update(unassignedTile, { area: 'player', userId, spotX: spot.x, spotY: spot.y })
+      const tile = Tile.update(unassignedTile, {
+        area: 'player',
+        userId,
+        spotX: spot.x,
+        spotY: spot.y,
+      })
       const grid = DB.getGrid(gameCode)
 
       socket.emit('game:pass:ok', { tiles: user.tiles, tile, grid })
@@ -75,8 +80,8 @@ function initializeSocketService(io) {
     socket.on('disconnect', () => {
       socket.broadcast.emit('LEAVED')
       Logger.send('Websocket: User disconnected')
-    });
+    })
   })
 }
 
-module.exports = { initializeSocketService }
+export { initializeSocketService }

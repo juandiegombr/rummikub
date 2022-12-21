@@ -1,3 +1,1 @@
-const { initializeSocketService } = require('./socket')
-
-module.exports = { initializeSocketService }
+export { initializeSocketService } from './socket.js'

@@ -1,3 +1,1 @@
-const { Socket } = require('./Socket')
-
-module.exports = { Socket }
+export { Socket } from './Socket.js'

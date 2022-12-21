@@ -1,12 +1,6 @@
-const { Game } = require('./Game')
-const { Tile } = require('./Tile')
-const { User } = require('./User')
-const { Round } = require('./Round')
+import { Game } from './Game.js'
+import { Round } from './Round.js'
+import { Tile } from './Tile.js'
+import { User } from './User.js'
 
-
-module.exports = {
-  Game,
-  Tile,
-  User,
-  Round
-}
+export { Game, Tile, User, Round }

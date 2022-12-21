@@ -1,5 +1,5 @@
-const { Grid } = require('../../domain/grid')
-const { Group } = require('../../domain/group')
+import { Grid } from '../../domain/grid/index.js'
+import { Group } from '../../domain/group/index.js'
 
 function count(tiles) {
   const groups = Grid.getGroups(tiles)
@@ -14,7 +14,12 @@ function hasSomeTilesFromPlayer({ newCommonTiles, userTiles }) {
   return userTiles.some((tile) => newCommonTileIds.includes(tile.id))
 }
 
-function validate({ commonTiles = [], newCommonTiles, userTiles = [], isFirstMove }) {
+function validate({
+  commonTiles = [],
+  newCommonTiles,
+  userTiles = [],
+  isFirstMove,
+}) {
   if (isFirstMove) {
     return validateCommonTilesInFirstMove({ newCommonTiles, userTiles })
   }
@@ -40,7 +45,11 @@ function hasMissingCommonTiles({ commonTiles, newCommonTiles }) {
   return !commonTiles.every((tile) => newCommonTileIds.includes(tile.id))
 }
 
-function validateCommonTiles({ commonTiles = [], newCommonTiles, userTiles = [] }) {
+function validateCommonTiles({
+  commonTiles = [],
+  newCommonTiles,
+  userTiles = [],
+}) {
   if (Grid.isEmpty(newCommonTiles)) {
     return false
   }
@@ -59,4 +68,4 @@ const Brain = {
   validate,
 }
 
-module.exports = { Brain }
+export { Brain }

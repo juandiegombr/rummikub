@@ -1,6 +1,6 @@
-const { v4 } = require('uuid')
+import { v4 } from 'uuid'
 
-const { generateGameCode } = require('../helpers')
+import { generateGameCode } from '../helpers/index.js'
 
 let GAMES = {}
 
@@ -9,16 +9,13 @@ function GameModel(data) {
 
   const game = JSON.parse(JSON.stringify(data))
   modelRelations.forEach((relation) => {
-    Object.defineProperty(game,
-      relation.name,
-      {
-        enumerable: true,
-        configurable: true,
-        get() {
-          return relation.func(this)
-        },
-      }
-    )
+    Object.defineProperty(game, relation.name, {
+      enumerable: true,
+      configurable: true,
+      get() {
+        return relation.func(this)
+      },
+    })
   })
   return game
 }
@@ -32,7 +29,7 @@ const getDefaultGameSettings = () => {
 }
 
 function create(payload) {
-  const gameSettings = {...getDefaultGameSettings(), ...payload}
+  const gameSettings = { ...getDefaultGameSettings(), ...payload }
   const game = {
     id: v4(),
     code: gameSettings.code,
@@ -49,14 +46,14 @@ function get(query) {
   const game = Object.values(GAMES).find((user) => {
     const queryParams = Object.entries(query)
     return queryParams.every(([key, value]) => {
-        return user[key] === value
+      return user[key] === value
     })
   })
   return GameModel(game)
 }
 
 function update(game, payload) {
-  GAMES[game.id] = {...GAMES[game.id], ...payload}
+  GAMES[game.id] = { ...GAMES[game.id], ...payload }
   return GameModel(GAMES[game.id])
 }
 
@@ -72,7 +69,7 @@ const Game = {
   },
   reset: () => {
     GAMES = {}
-  }
+  },
 }
 
-module.exports = { Game }
+export { Game }

@@ -1,13 +1,14 @@
-import { useState } from "react"
+import { useState } from 'react'
 
-import { Tile } from "components/tile"
-import { Initialize } from "components/initialize"
-import { Grid } from "components/grid"
-import { PlayersContainer } from "components/player"
-import { Menu } from "components/menu"
-import { useStorage } from "services/storage"
+import { Grid } from 'components/grid'
+import { Initialize } from 'components/initialize'
+import { Menu } from 'components/menu'
+import { PlayersContainer } from 'components/player'
+import { Tile } from 'components/tile'
 
-import "./App.css"
+import { useStorage } from 'services/storage'
+
+import './App.css'
 
 export default function App() {
   const [players, setPlayers] = useState([])
@@ -33,7 +34,7 @@ export default function App() {
           rounds={rounds}
           setRounds={setRounds}
         />
-        <PlayersContainer players={players}/>
+        <PlayersContainer players={players} />
         <Grid
           player={player}
           turn={turn}
@@ -56,8 +57,8 @@ export default function App() {
               onMove={() => null}
               onClick={setSelectedTile}
             />
-          )})
-        }
+          )
+        })}
         {grid.map((tile) => {
           return (
             <Tile
@@ -71,10 +72,10 @@ export default function App() {
               onClick={setSelectedTile}
               disabled={!turn}
             />
-          )})
-        }
+          )
+        })}
       </div>
-      <Menu/>
+      <Menu />
     </>
   )
 }

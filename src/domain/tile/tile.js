@@ -11,4 +11,4 @@ const Tile = {
   isCommon,
 }
 
-module.exports = { Tile }
+export { Tile }

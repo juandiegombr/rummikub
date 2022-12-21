@@ -1,4 +1,4 @@
-const { TileService } = require('./tileService')
-const { Tile } = require('./tile')
+import { Tile } from './tile.js'
+import { TileService } from './tileService.js'
 
-module.exports = { Tile, TileService }
+export { Tile, TileService }

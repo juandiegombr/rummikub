@@ -1,8 +1,8 @@
-const DB = require('../db')
-const { Game, User, Tile, Round } = require("../models")
-const { Serializer } = require('../serializer')
-const { Brain } = require('../services/brain')
-const { Socket } = require('../services/socket')
+import DB from '../db/index.js'
+import { Game, Round, Tile, User } from '../models/index.js'
+import { Serializer } from '../serializer/index.js'
+import { Brain } from '../services/brain/index.js'
+import { Socket } from '../services/socket/index.js'
 
 async function execute({ socket, gameCode, data: newCommonTiles }) {
   const game = Game.get({ code: gameCode })
@@ -37,7 +37,7 @@ async function execute({ socket, gameCode, data: newCommonTiles }) {
 
   const clients = await Socket.getClientsFromRoom(gameCode)
   const grid = DB.getGrid(gameCode)
-  clients.forEach(client => {
+  clients.forEach((client) => {
     client.emit('game:move', grid.map(Serializer.tile))
   })
   Socket.updateGameStatus(game)
@@ -53,9 +53,9 @@ function sendInvalidPlay({ socket }) {
 
 function prepareNewRound(game) {
   DB.createTiles(game)
-  Game.update(game, { round: game.round + 1})
+  Game.update(game, { round: game.round + 1 })
   const users = User.filter({ gameId: game.id })
-  users.forEach(user => {
+  users.forEach((user) => {
     User.update(user, { isFirstMove: true })
   })
 }
@@ -66,7 +66,7 @@ async function finishRound({ socket, gameCode }) {
   const clients = await Socket.getClientsFromRoom(gameCode)
   const grid = DB.getGrid(gameCode)
   const rounds = Round.getForGame(game)
-  clients.forEach(client => {
+  clients.forEach((client) => {
     client.emit('game:move', grid.map(Serializer.tile))
     client.emit('game:finish', rounds)
   })
@@ -78,4 +78,4 @@ const play = {
   execute,
 }
 
-module.exports = { play }
+export { play }

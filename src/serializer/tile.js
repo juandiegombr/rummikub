@@ -10,4 +10,4 @@ function tileSerializer(tile) {
   }
 }
 
-module.exports = { tileSerializer }
+export { tileSerializer }

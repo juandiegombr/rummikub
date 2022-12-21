@@ -3,8 +3,8 @@ function userSummarySerializer(user) {
     id: user.id,
     name: user.name,
     tiles: user.tiles.length,
-    turn: user.order === user.game.turn
+    turn: user.order === user.game.turn,
   }
 }
 
-module.exports = { userSummarySerializer }
+export { userSummarySerializer }

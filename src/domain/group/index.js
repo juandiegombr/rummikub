@@ -1,3 +1,1 @@
-const { Group } = require('./group')
-
-module.exports = { Group }
+export { Group } from './group.js'

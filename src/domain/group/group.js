@@ -1,17 +1,21 @@
-const { Tile } = require("../tile")
+import { Tile } from '../tile/index.js'
 
 const areTilesConsecutive = (group) => {
-  const areTilesConsecutive = group.reduce(({previousValue}, tile) => {
-    if (Tile.isBonus(tile) || previousValue === 0) {
-      return { previousValue: tile.value, result: true }
-    }
+  const areTilesConsecutive = group.reduce(
+    ({ previousValue }, tile) => {
+      if (Tile.isBonus(tile) || previousValue === 0) {
+        return { previousValue: tile.value, result: true }
+      }
 
-    const isConsecutive = Number.isInteger(previousValue) && previousValue + 1 === tile.value
-    if (isConsecutive) {
-      return { previousValue: tile.value, result: true }
-    }
-    return { previousValue: tile.value, result: false }
-  }, { previousValue: null, result: false})
+      const isConsecutive =
+        Number.isInteger(previousValue) && previousValue + 1 === tile.value
+      if (isConsecutive) {
+        return { previousValue: tile.value, result: true }
+      }
+      return { previousValue: tile.value, result: false }
+    },
+    { previousValue: null, result: false },
+  )
 
   return areTilesConsecutive.result
 }
@@ -69,4 +73,4 @@ const Group = {
   value,
 }
 
-module.exports = { Group }
+export { Group }

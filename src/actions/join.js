@@ -1,6 +1,6 @@
-const { Game, User, Tile } = require("../models")
-const { Logger } = require('../services/logger')
-const { Socket } = require('../services/socket')
+import { Game, Tile, User } from '../models/index.js'
+import { Logger } from '../services/logger/index.js'
+import { Socket } from '../services/socket/index.js'
 
 function assignTiles(game, user) {
   const unassignedTiles = Tile.filter({ gameId: game.id, userId: null })
@@ -57,4 +57,4 @@ const join = {
   execute,
 }
 
-module.exports = { join }
+export { join }

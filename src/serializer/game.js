@@ -9,4 +9,4 @@ function gameSerializer(game) {
   }
 }
 
-module.exports = { gameSerializer }
+export { gameSerializer }

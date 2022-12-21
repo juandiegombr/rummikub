@@ -1,6 +1,6 @@
-const { Game, User, Tile } = require("../models")
-const { Serializer } = require('../serializer')
-const { Socket } = require('../services/socket')
+import { Game, Tile, User } from '../models/index.js'
+import { Serializer } from '../serializer/index.js'
+import { Socket } from '../services/socket/index.js'
 
 function assignTiles(game, user) {
   const unassignedTiles = Tile.filter({ gameId: game.id, userId: null })
@@ -49,4 +49,4 @@ const roundStart = {
   execute,
 }
 
-module.exports = { roundStart }
+export { roundStart }

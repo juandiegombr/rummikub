@@ -1,7 +1,6 @@
-const { v4 } = require('uuid')
-const { TileService } = require('../domain/tile')
-const { Tile } = require('./Tile')
-const { User } = require('./User')
+import { v4 } from 'uuid'
+
+import { TileService } from '../domain/tile/index.js'
 
 let ROUNDS = {}
 
@@ -21,7 +20,7 @@ function get(query) {
   return Object.values(ROUNDS).find((user) => {
     const queryParams = Object.entries(query)
     return queryParams.every(([key, value]) => {
-        return user[key] === value
+      return user[key] === value
     })
   })
 }
@@ -30,13 +29,13 @@ function filter(query) {
   return Object.values(ROUNDS).filter((user) => {
     const queryParams = Object.entries(query)
     return queryParams.every(([key, value]) => {
-        return user[key] === value
+      return user[key] === value
     })
   })
 }
 
 function update(game, payload) {
-  ROUNDS[game.id] = {...ROUNDS[game.id], ...payload}
+  ROUNDS[game.id] = { ...ROUNDS[game.id], ...payload }
   return ROUNDS[game.id]
 }
 
@@ -72,7 +71,7 @@ const Round = {
   },
   reset: () => {
     ROUNDS = {}
-  }
+  },
 }
 
-module.exports = { Round }
+export { Round }

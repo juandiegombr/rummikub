@@ -1,4 +1,3 @@
-
 function isEmpty(grid) {
   return grid.length === 0
 }
@@ -44,4 +43,4 @@ const Grid = {
   getGroups,
 }
 
-module.exports = { Grid }
+export { Grid }

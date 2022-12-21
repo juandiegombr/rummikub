@@ -1,48 +1,42 @@
-const { v4 } = require('uuid')
+import { v4 } from 'uuid'
 
-const { Game } = require('./Game')
-const { User } = require('./User')
+import { Game } from './Game.js'
+import { User } from './User.js'
 
 let TILES = {}
 
 Game.modelRelations.push({
   name: 'tiles',
-  func: (game) => filter({ gameId: game.id })
+  func: (game) => filter({ gameId: game.id }),
 })
 
 User.modelRelations.push({
   name: 'tiles',
-  func: (user) => filter({ userId: user.id })
+  func: (user) => filter({ userId: user.id }),
 })
 
 function TileModel(data) {
   const tile = JSON.parse(JSON.stringify(data))
-  Object.defineProperty(tile,
-    'user',
-    {
-      enumerable: true,
-      configurable: true,
-      get() {
-        const freshTile = TILES[this.id]
-        if (freshTile.userId) {
-          return User.get({ id: freshTile.userId })
-        }
-      },
-    }
-  )
-  Object.defineProperty(tile,
-    'game',
-    {
-      enumerable: true,
-      configurable: true,
-      get() {
-        const freshTile = TILES[this.id]
-        if (freshTile.gameId) {
-          return Game.get({ id: freshTile.gameId })
-        }
-      },
-    }
-  )
+  Object.defineProperty(tile, 'user', {
+    enumerable: true,
+    configurable: true,
+    get() {
+      const freshTile = TILES[this.id]
+      if (freshTile.userId) {
+        return User.get({ id: freshTile.userId })
+      }
+    },
+  })
+  Object.defineProperty(tile, 'game', {
+    enumerable: true,
+    configurable: true,
+    get() {
+      const freshTile = TILES[this.id]
+      if (freshTile.gameId) {
+        return Game.get({ id: freshTile.gameId })
+      }
+    },
+  })
   return tile
 }
 
@@ -70,7 +64,7 @@ function get(query) {
   return Object.values(TILES).find((user) => {
     const queryParams = Object.entries(query)
     return queryParams.every(([key, value]) => {
-        return user[key] === value
+      return user[key] === value
     })
   })
 }
@@ -79,13 +73,13 @@ function filter(query) {
   return Object.values(TILES).filter((user) => {
     const queryParams = Object.entries(query)
     return queryParams.every(([key, value]) => {
-        return user[key] === value
+      return user[key] === value
     })
   })
 }
 
 function update(tile, payload) {
-  TILES[tile.id] = {...TILES[tile.id], ...payload}
+  TILES[tile.id] = { ...TILES[tile.id], ...payload }
   return TILES[tile.id]
 }
 
@@ -95,7 +89,7 @@ function updateGrid(updatedTiles) {
     update(tile, {
       ...updatedTile,
       userId: null,
-      area: 'grid'
+      area: 'grid',
     })
   })
 }
@@ -112,7 +106,7 @@ const Tile = {
   },
   reset: () => {
     TILES = {}
-  }
+  },
 }
 
-module.exports = { Tile }
+export { Tile }

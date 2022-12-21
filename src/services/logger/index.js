@@ -1,3 +1,1 @@
-const { Logger } = require('./Logger')
-
-module.exports = { Logger }
+export { Logger } from './Logger.js'

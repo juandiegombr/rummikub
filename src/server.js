@@ -1,15 +1,19 @@
-const cors = require('cors')
-const express = require('express')
-const bodyParser = require('body-parser')
-const http = require('http')
-const { Server } = require("socket.io")
-const path = require('path')
+import bodyParser from 'body-parser'
+import cors from 'cors'
+import express from 'express'
+import http from 'http'
+import path from 'path'
+import { Server } from 'socket.io'
+import { fileURLToPath } from 'url'
 
-const DB = require('./db')
-const { Game, User } = require('./models')
-const { initializeSocketService } = require('./socket')
-const { Serializer } = require('./serializer')
-const { Logger } = require('./services/logger')
+import DB from './db/index.js'
+import { Game, User } from './models/index.js'
+import { Serializer } from './serializer/index.js'
+import { Logger } from './services/logger/index.js'
+import { initializeSocketService } from './socket/index.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = express()
 app.use(cors())
@@ -60,7 +64,6 @@ app.post('/api/game/rejoin/', (req, res) => {
   const gameCode = req.body.gameCode
   const userId = req.get('x-user-id')
 
-
   const game = Game.get({ code: gameCode })
 
   if (!game) {
@@ -77,7 +80,9 @@ app.post('/api/game/rejoin/', (req, res) => {
 })
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname.replace('/src', '') + '/web/build/index.html'));
+  res.sendFile(
+    path.join(__dirname.replace('/src', '') + '/web/build/index.html'),
+  )
 })
 
-module.exports = { app, server, io }
+export { app, server, io }
