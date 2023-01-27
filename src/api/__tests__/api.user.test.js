@@ -1,7 +1,7 @@
-const request = require('supertest')
+import request from 'supertest'
 
-const DB = require('../../db')
-const { app } = require('../../server')
+import DB from '../../db'
+import { app } from '../../server'
 
 afterEach(() => {
   DB.reset()
@@ -20,7 +20,7 @@ it('creates a user', (done) => {
         gameId: null,
         order: null,
         socketId: null,
-        tiles: []
+        tiles: [],
       })
     })
     .end(done)

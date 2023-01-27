@@ -1,7 +1,6 @@
-const { Game } = require('../Game')
-const { Tile } = require('../Tile')
-const { User } = require('../User')
-
+import { Game } from '../Game'
+import { Tile } from '../Tile'
+import { User } from '../User'
 
 fit('a user has its direct relation with game', () => {
   const user = User.create({ name: 'Ramon' })

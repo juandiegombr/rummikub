@@ -1,8 +1,8 @@
-const request = require('supertest')
+import request from 'supertest'
 
-const DB = require('../../db')
-const { app } = require('../../server')
-const { Game, User } = require('../../models')
+import DB from '../../db'
+import { Game, User } from '../../models'
+import { app } from '../../server'
 
 afterEach(() => {
   DB.reset()

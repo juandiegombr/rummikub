@@ -1,13 +1,11 @@
-const { initGame, resetDB } = require('./game.scenario')
+import { jest } from '@jest/globals'
 
-const { Tile, User } = require('../../models')
-const { Brain } = require('../../services/brain')
-
-jest.mock('../../services/logger')
+import { Brain } from '../../services/brain'
+import { initGame, resetDB } from './game.scenario'
 
 afterEach(resetDB)
 
-it('confirms a valid play', async function(done) {
+it('confirms a valid play', async function (done) {
   Brain.validate = jest.fn(() => true)
   const {
     game,
@@ -18,7 +16,10 @@ it('confirms a valid play', async function(done) {
     secondServer,
   } = await initGame({ gameCode: 'AAAA' })
 
-  await firstClient.emit('game:play', { gameCode: game.code, data: firstUser.tiles })
+  await firstClient.emit('game:play', {
+    gameCode: game.code,
+    data: firstUser.tiles,
+  })
 
   const expectedRounds = [
     {

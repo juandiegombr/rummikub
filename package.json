@@ -1,15 +1,13 @@
 {
   "name": "rummikub",
   "version": "1.0.0",
-  "description": "This project was created just for fun. The goal was learning while playing with docker, docker compose, nginx, react and node.",
+  "description": "This project was created just for fun. The goal was learning while playing with node, sockets and react.",
   "main": "index.js",
   "scripts": {
-    "render": "npm install && cd web && npm install && npm run build",
     "build-web": "cd web && npm install && npm run build",
     "start": "node index.js",
     "start:watch": "nodemon src/index.js",
-    "heroku-postbuild": "cd web && npm install && npm run build",
-    "test": "jest --watchAll"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --watchAll"
   },
   "repository": {
     "type": "git",
@@ -37,6 +35,14 @@
       "<rootDir>/src/**/__tests__/?(*.)(spec|test).{js,jsx}",
       "<rootDir>/src/**/test?(s)/?(*)(Spec).js?(x)",
       "<rootDir>/src/**/?(*.)(spec|test).js?(x)"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.js"
+    ],
+    "transform": {},
+    "moduleDirectories": [
+      "node_modules",
+      "src"
     ]
   },
   "devDependencies": {

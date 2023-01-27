@@ -1,4 +1,4 @@
-const { Brain } = require('../brain')
+import { Brain } from '../brain'
 
 it('validates first move with more than 30', () => {
   const isValid = Brain.validate({
@@ -112,9 +112,7 @@ it('invalidates first move with more than 30 and without player tiles', () => {
       { id: 3, color: 'black', value: 10, spotY: 1, spotX: 3 },
       { id: 4, color: 'blue', value: 10, spotY: 1, spotX: 4 },
     ],
-    userTiles: [
-      { id: 4, color: 'blue', value: 10, spotY: 1, spotX: 4 },
-    ],
+    userTiles: [{ id: 4, color: 'blue', value: 10, spotY: 1, spotX: 4 }],
     isFirstMove: true,
   })
 

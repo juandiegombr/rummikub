@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals'
 
 const SocketServerMock = () => {
   const SOCKETS = {}
@@ -13,24 +14,24 @@ const SocketServerMock = () => {
       sockets: {
         get: (id) => {
           return SOCKETS[id]
-        }
-      }
+        },
+      },
     },
     on,
     in: (room) => {
       return {
         allSockets: () => {
-          const socketsInRoom =  Object.values(SOCKETS).filter((socket) => {
+          const socketsInRoom = Object.values(SOCKETS).filter((socket) => {
             return socket.room === room
           })
-          return Promise.resolve(socketsInRoom.map(socket => socket.id))
-        }
+          return Promise.resolve(socketsInRoom.map((socket) => socket.id))
+        },
       }
     },
     client: (socketId, { userId }) => {
       const EVENTS = {}
       EVENTS['game:start'] = jest.fn()
-      const socketClient =  {
+      const socketClient = {
         id: socketId,
         room: null,
         emit: jest.fn(async (event, payload) => {
@@ -38,7 +39,7 @@ const SocketServerMock = () => {
           await triggeredEvent(payload)
         }),
       }
-      const socketServer =  {
+      const socketServer = {
         id: socketId,
         room: null,
         on: jest.fn((event, callback) => {
@@ -47,7 +48,7 @@ const SocketServerMock = () => {
         to: (room) => {
           SOCKETS[socketId].room = room
           return {
-            emit: jest.fn()
+            emit: jest.fn(),
           }
         },
         emit: jest.fn(),
@@ -55,7 +56,7 @@ const SocketServerMock = () => {
           SOCKETS[socketId].room = room
         },
         broadcast: {
-          emit: jest.fn()
+          emit: jest.fn(),
         },
         handshake: {
           auth: { token: userId },
@@ -66,9 +67,9 @@ const SocketServerMock = () => {
       connectionEvent(socketServer)
       const client = socketClient
       const server = socketServer
-      return [ client, server ]
-    }
+      return [client, server]
+    },
   }
 }
 
-module.exports = SocketServerMock
+export default SocketServerMock

@@ -1,7 +1,7 @@
-const { Brain } = require('../brain')
+import { Brain } from '../brain'
 
 it('invalidate an empty grid', () => {
-  const isValid = Brain.validate({ newCommonTiles: []})
+  const isValid = Brain.validate({ newCommonTiles: [] })
 
   expect(isValid).toBeFalsy()
 })
@@ -12,9 +12,7 @@ it('invalidates a group less than three tiles', () => {
       { color: 'orange', value: 1, spotY: 1, spotX: 1 },
       { color: 'red', value: 1, spotY: 1, spotX: 2 },
     ],
-    userTiles: [
-      { color: 'orange', value: 1, spotY: 1, spotX: 1 },
-    ]
+    userTiles: [{ color: 'orange', value: 1, spotY: 1, spotX: 1 }],
   })
 
   expect(isValid).toBeFalsy()
@@ -28,9 +26,7 @@ it('validates a value group with unique colors', () => {
       { color: 'black', value: 1, spotY: 1, spotX: 3 },
       { color: 'blue', value: 1, spotY: 1, spotX: 4 },
     ],
-    userTiles: [
-      { color: 'orange', value: 1, spotY: 1, spotX: 1 },
-    ]
+    userTiles: [{ color: 'orange', value: 1, spotY: 1, spotX: 1 }],
   })
 
   expect(isValid).toBeTruthy()
@@ -44,9 +40,7 @@ it('validates a value group with unique colors and bonus tile', () => {
       { color: 'orange', value: 1, spotY: 1, spotX: 3 },
       { color: 'blue', value: 1, spotY: 1, spotX: 4 },
     ],
-    userTiles: [
-      { color: 'bonus', value: 0, spotY: 1, spotX: 1 },
-    ]
+    userTiles: [{ color: 'bonus', value: 0, spotY: 1, spotX: 1 }],
   })
 
   expect(isValid).toBeTruthy()
@@ -60,9 +54,7 @@ it('invalidates a value group with duplicated colors', () => {
       { color: 'black', value: 1, spotY: 1, spotX: 3 },
       { color: 'blue', value: 1, spotY: 1, spotX: 4 },
     ],
-    userTiles: [
-      { color: 'red', value: 1, spotY: 1, spotX: 1 },
-    ]
+    userTiles: [{ color: 'red', value: 1, spotY: 1, spotX: 1 }],
   })
 
   expect(isValid).toBeFalsy()
@@ -76,9 +68,7 @@ it('validates a stair group with unique colors', () => {
       { color: 'red', value: 3, spotY: 1, spotX: 3 },
       { color: 'red', value: 4, spotY: 1, spotX: 4 },
     ],
-    userTiles: [
-      { color: 'red', value: 1, spotY: 1, spotX: 1 },
-    ]
+    userTiles: [{ color: 'red', value: 1, spotY: 1, spotX: 1 }],
   })
 
   expect(isValid).toBeTruthy()
@@ -92,9 +82,7 @@ it('validates a stair group with unique colors and bonus tile', () => {
       { color: 'red', value: 3, spotY: 1, spotX: 3 },
       { color: 'red', value: 4, spotY: 1, spotX: 4 },
     ],
-    userTiles: [
-      { color: 'red', value: 1, spotY: 1, spotX: 1 },
-    ]
+    userTiles: [{ color: 'red', value: 1, spotY: 1, spotX: 1 }],
   })
 
   expect(isValid).toBeTruthy()
@@ -108,9 +96,7 @@ it('validates a group with bonus tile in the middle', () => {
       { color: 'bonus', value: 0, spotY: 1, spotX: 3 },
       { color: 'red', value: 4, spotY: 1, spotX: 4 },
     ],
-    userTiles: [
-      { color: 'red', value: 1, spotY: 1, spotX: 1 },
-    ]
+    userTiles: [{ color: 'red', value: 1, spotY: 1, spotX: 1 }],
   })
 
   expect(isValid).toBeTruthy()
@@ -124,9 +110,7 @@ it('invalidate a stair group with different colors', () => {
       { color: 'red', value: 3, spotY: 1, spotX: 3 },
       { color: 'red', value: 4, spotY: 1, spotX: 4 },
     ],
-    userTiles: [
-      { color: 'red', value: 1, spotY: 1, spotX: 1 },
-    ]
+    userTiles: [{ color: 'red', value: 1, spotY: 1, spotX: 1 }],
   })
 
   expect(isValid).toBeFalsy()
@@ -139,9 +123,7 @@ it('invalidates the grid without player tiles', () => {
       { id: 2, color: 'red', value: 1, spotY: 1, spotX: 2 },
       { id: 3, color: 'black', value: 1, spotY: 1, spotX: 3 },
     ],
-    userTiles: [
-      { id: 4, color: 'blue', value: 1, spotY: 1, spotX: 4 },
-    ]
+    userTiles: [{ id: 4, color: 'blue', value: 1, spotY: 1, spotX: 4 }],
   })
 
   expect(isValid).toBeFalsy()
@@ -160,9 +142,7 @@ it('invalidates the grid when the user has taken tiles from the common', () => {
       { id: 3, color: 'black', value: 10, spotY: 1, spotX: 3 },
       { id: 4, color: 'blue', value: 10, spotY: 1, spotX: 3 },
     ],
-    userTiles: [
-      { id: 1, color: 'orange', value: 10, spotY: 1, spotX: 4 },
-    ]
+    userTiles: [{ id: 1, color: 'orange', value: 10, spotY: 1, spotX: 4 }],
   })
 
   expect(isValid).toBeFalsy()
