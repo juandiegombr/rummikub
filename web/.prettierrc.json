@@ -4,7 +4,7 @@
   "singleQuote": true,
   "importOrder": [
     "<THIRD_PARTY_MODULES>",
-    "^(components|domain|services|system-ui)",
+    "^(pages|components|domain|services|system-ui)",
     ".css$",
     "^[./]"
   ],
