@@ -62,6 +62,16 @@ jest.mock('services/socket', () => {
   }
 })
 
+jest.mock('services/audio', () => {
+  const originalModule = jest.requireActual('services/audio')
+  return {
+    Audio: {
+      ...originalModule,
+      play: jest.fn(),
+    },
+  }
+})
+
 beforeEach(() => {
   setupPortal()
 })

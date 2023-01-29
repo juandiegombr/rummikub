@@ -120,9 +120,17 @@ const Initialize = ({
     setStatus(STATUS.INIT)
   }
 
+  const onConfirm = () => {
+    const animation = setTimeout(() => {
+      setStatus(STATUS.WAITING)
+    }, 1000)
+    initSocketGame(animation)
+    setStatus(null)
+  }
+
   return (
     <>
-      {status === STATUS.WAITING && (
+      {status === STATUS.ERROR && (
         <Error
           onRetry={() => setStatus(null)}
           onPass={() => {
@@ -134,16 +142,7 @@ const Initialize = ({
       )}
       <GameSummary show={showRounds} rounds={rounds} onConfirm={confirmRound} />
       <WaitingDialog show={status === STATUS.WAITING} />
-      <InitDialog
-        show={status === STATUS.INIT}
-        onConfirm={() => {
-          const animation = setTimeout(() => {
-            setStatus(STATUS.WAITING)
-          }, 1000)
-          initSocketGame(animation)
-          setStatus(null)
-        }}
-      />
+      <InitDialog show={status === STATUS.INIT} onConfirm={onConfirm} />
     </>
   )
 }

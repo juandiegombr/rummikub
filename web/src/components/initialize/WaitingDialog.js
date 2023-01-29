@@ -12,8 +12,8 @@ const WaitingDialog = ({ show }) => {
   }
 
   return (
-    <Dialog show={show} aria-labelledby="initialize-title">
-      <h2 id="initialize-title" className="initialize-dialog__title">
+    <Dialog show={show} aria-labelledby="waiting-dialog-title">
+      <h2 id="waiting-dialog-title" className="initialize-dialog__title">
         ⏳ Waiting for a player
       </h2>
       <p className="initialize-dialog__description">

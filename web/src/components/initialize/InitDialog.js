@@ -57,11 +57,10 @@ const InitDialog = ({ show, onConfirm }) => {
     const options = {
       body: JSON.stringify({ name }),
     }
-    const user = await Http.post('/user/create/', options).then((response) =>
-      response.json(),
-    )
+    const response = await Http.post('/user/create/', options).then()
+    const user = await response.json()
     Storage.set('userId', user.id)
-    return user
+    return
   }
 
   const joinOrCreateGame = async ({ gameCode, players, points }) => {
@@ -93,8 +92,8 @@ const InitDialog = ({ show, onConfirm }) => {
   }
 
   return (
-    <Dialog show={show}>
-      <h2 id="initialize-title" className="initialize-dialog__title">
+    <Dialog show={show} aria-labelledby="welcome-dialog-title">
+      <h2 id="welcome-dialog-title" className="initialize-dialog__title">
         Welcome! 👋
       </h2>
       <form className="initialize-dialog__form" onSubmit={onSubmit}>

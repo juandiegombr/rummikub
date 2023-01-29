@@ -29,11 +29,15 @@ const StorageProvider = ({ children }) => {
   /* eslint-disable */
   const [refreshKey, setRefreshKey] = React.useState(generateRandomKey())
 
-  Storage = createStorage({ onChange: () => setRefreshKey(generateRandomKey()) })
+  Storage = createStorage({
+    onChange: () => setRefreshKey(generateRandomKey()),
+  })
 
-  return <StorageContext.Provider value={Storage}>
-    {children}
-  </StorageContext.Provider>
+  return (
+    <StorageContext.Provider value={Storage}>
+      {children}
+    </StorageContext.Provider>
+  )
 }
 
 const useStorage = () => {

@@ -7,19 +7,26 @@ export const withNetwork = (responses) => {
 }
 
 const createResponse = (response) => {
-  const options = { status: response.status || 200 }
-
-  if (!response.responseBody) {
-    return new Response(null, options)
+  if (!response) {
+    return {
+      json: () => Promise.resolve(),
+      status: 200,
+    }
   }
 
-  const blob = new Blob([JSON.stringify(response.responseBody, null, 2)], {
-    type: 'application/json',
-  })
-  return new Response(blob, options)
+  if (!response.responseBody) {
+    return {
+      json: () => Promise.resolve(),
+      status: response.status || 200,
+    }
+  }
+
+  return {
+    json: () => Promise.resolve(response.responseBody),
+    status: response.status || 200,
+  }
 }
 
 const getResponseForRequest = (request, responses) => {
-  /* eslint-disable */ console.log('request', request.url)
   return responses.find((response) => request.url.includes(response.url))
 }

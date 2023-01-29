@@ -73,7 +73,7 @@
     ]
   },
   "devDependencies": {
-    "jest-watch-typeahead": "^2.2.2",
+    "jest-watch-typeahead": "^0.6.5",
     "prettier": "^2.8.1"
   },
   "jest": {
